@@ -28,16 +28,8 @@
 								Image
 							</a>	
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="tab_<?php echo $methodid; ?>_picture" data-toggle="tab" href="#content_<?php echo $methodid; ?>_picture" role="tab" aria-controls="content_<?php echo $methodid; ?>_picture" aria-selected="true">
-								Image
-							</a>	
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="tab_<?php echo $methodid; ?>_picture" data-toggle="tab" href="#content_<?php echo $methodid; ?>_picture" role="tab" aria-controls="content_<?php echo $methodid; ?>_picture" aria-selected="true">
-								Test
-							</a>	
-						</li>
+						
+						
 					</ul>
 					
 					<div class="tab-content">
