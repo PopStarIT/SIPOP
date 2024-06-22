@@ -30,7 +30,7 @@
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" id="tab_<?php echo $methodid; ?>_picture" data-toggle="tab" href="#content_<?php echo $methodid; ?>_picture" role="tab" aria-controls="content_<?php echo $methodid; ?>_picture" aria-selected="true">
-								Test Haris
+								Test Haris x
 							</a>	
 						</li>
 					</ul>
@@ -176,8 +176,8 @@
 											 //
 											// print_r($_POST);
 									         ?>
-										   									  									      
-												<div class="row" style="margin-top:8px;">
+										   															
+												<div class="row" style="margin-top:8px;" max-width="5000">
 													<div class="col-xl-12 grid_container_<?php echo $methodid ?>_detail_spec">
 														<table  id="table_<?php echo $methodid ?>_detail_spec"></table>
 								                        <div id="ptable_<?php echo $methodid ?>_detail_spec"></div>                                                      
