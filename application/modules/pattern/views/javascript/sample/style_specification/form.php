@@ -117,10 +117,7 @@
 				style_spec_header_id2: $('#form_<?php echo $methodid ?>_detail_style_spec_header_id').val()
 			},
 			//	colNames: ['#', 'DETAIL_ID', 'ID', 'SIZE', 'POINT OF MEASURE', 'BASIC', 'SIZE XS', 'SIZE S', 'SIZE M', 'SIZE L', 'SIZE XL', 'SIZE XXL', '#'],
-			colNames: ['#', 'DETAIL_ID', 'ID', 'SIZE', 'POINT OF MEASURE', 'BASIC', 'SIZE XS', 'PATTERN XS', 'ALLOWANCE', 'SIZE S', 'PATTERN S', 'ALLOWANCE',
-				'SIZE M', 'PATTERN M', 'ALLOWANCE', 'SIZE L', 'PATTERN l', 'ALLOWANCE', 'SIZE XL', 'PATTERN XL', 'ALLOWANCE', 'SIZE XXL', 'PATTERN XXL', 'ALLOWANCE', '#'
-			],
-
+			colNames: ['#', 'DETAIL_ID', 'ID', 'SIZE', 'POINT OF MEASURE', 'BASIC', 'SIZE XS', 'PATTERN XS', 'ALLOWANCE XS', 'SIZE S', 'PATTERN S', 'ALLOWANCE S', 'SIZE M', 'PATTERN M', 'ALLOWANCE M', 'SIZE L', 'PATTERN L', 'ALLOWANCE L', 'SIZE XL', 'PATTERN XL', 'ALLOWANCE XL', 'SIZE XXL', 'PATTERN XXL', 'ALLOWANCE XXL', '#'],
 			colModel: [{
 					name: 'r13',
 					index: 'r13',
