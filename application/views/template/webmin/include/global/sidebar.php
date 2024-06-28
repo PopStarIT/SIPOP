@@ -1,6 +1,6 @@
 <div class="side-menu-fixed">
-	<div class="scrollbar side-menu-bg">
-		<ul class="nav navbar-nav side-menu" id="sidebarnav">
+	<div class="scrollbar side-menu-bg" style="background-color:#4682B4;">
+		<ul class="nav navbar-nav side-menu" id="sidebarnav" style="background-color:#4682B4;">
 			<?php 
 				$permision = $this->authentication->permission_check(25);
 				if($permision){
@@ -131,6 +131,15 @@
 					<div class="pull-left">
 						<i class="fa fa-puzzle-piece"></i>
 						<span class="right-nav-text">PATTERN</span>
+					</div>
+					<div class="clearfix"></div>
+				</a>
+			</li>
+			<li>
+				<a href="javascript:add_tab(1075,'Pattern','pattern','fa fa-puzzle-piece');">
+					<div class="pull-left">
+						<i class="fa fa-puzzle-piece"></i>
+						<span class="right-nav-text">Test Haris</span>
 					</div>
 					<div class="clearfix"></div>
 				</a>
