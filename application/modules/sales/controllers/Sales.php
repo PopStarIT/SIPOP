@@ -1,6 +1,40 @@
-<?php
-// Encrypted By BricksApp PHP  
-// Author : Nizar Rahmat 
-$encoded = "Pz48P2N1YyB2cyAoICEgcXJzdmFycSgnT05GUkNOR1UnKSkgcmt2ZygnQWIgcXZlcnBnIGZwZXZjZyBucHByZmYgbnl5YmpycScpOw0NUHluZmYgRm55cmYgcmtncmFxZiBQVl9QYmFnZWJ5eXJlIHsgDQ0Jc2hhcGd2YmEgX19wYmFmZ2VocGcoKXsgDQkJY25lcmFnOjpfX3BiYWZnZWhwZygpOyANCX0gDQkNCXNoYXBndmJhIHZhcXJrKCl7DQkJJHBiemNiYXJhZ1sneWJucXlubGJoZyddID0gZ2VocjsNCQkkcGJ6Y2JhcmFnWydpdnJqX3libnEnXSA9ICdmbnlyZic7DQkJDQkJJHFuZnVvYm5lcV9nbm8gPSBuZWVubCgpOw0JCQ0JCSRnbm9fZm55cmYgPSBuZWVubCgnbnl2bmYnID0+ICdmbnlyZicsICdndmd5cicgPT4gJ0ZueXJmJywgJ3ZwYmEnID0+ICdzbiBzbi1mdWJjY3ZhdC1vbmZ4cmcnKTsNCQkkZ25vX2ZueXJmX3ZhaWJ2cHIgPSBuZWVubCgnbnl2bmYnID0+ICdmbnlyZl9jcmVzYmV6bicsICdndmd5cicgPT4gJ0NlYnNiZXpuIFZhaWJ2cHInLCAndnBiYScgPT4gJ3NuIHNuLWZ1YmNjdmF0LW9uZnhyZycpOw0JCQ0JCSRnbm9fZm55cmZfcGJhZ3JhZyA9IG5lZW5sKCk7DQkJJGdub19mbnlyZl9wYmFncmFnW10gPSBuZWVubCgnenJndWJxX3ZxJyA9PiAxMjksICd6cmFoX2FuenInID0+ICdGbnlyZiBCZXFyZScsICd6cmFoX3ZwYmEnID0+ICdzbiBzbi1wYnQnKTsNCQkkZ25vX2ZueXJmX3BiYWdyYWdbXSA9IG5lZW5sKCd6cmd1YnFfdnEnID0+IDEzMCwgJ3pyYWhfYW56cicgPT4gJ1pyemIgRm55cmYnLCAnenJhaF92cGJhJyA9PiAnc24gc24tcGJ0Jyk7DQkJJGdub19mbnlyZlsncGJhZ3JhZyddID0gJGdub19mbnlyZl9wYmFncmFnOw0JCQ0JCSRnbm9fZm55cmZfdmFpYnZwcl9wYmFncmFnID0gbmVlbmwoKTsNCQkkZ25vX2ZueXJmX3ZhaWJ2cHJfcGJhZ3JhZ1tdID0gbmVlbmwoJ3pyZ3VicV92cScgPT4gMjQ3LCAnenJhaF9hbnpyJyA9PiAnQ2Vic2Jlem4gVmFpYnZwcicsICd6cmFoX3ZwYmEnID0+ICdzbiBzbi1ya2dyZWFueS15dmF4Jyk7DQkJDQkJJGdub19mbnlyZl92YWlidnByWydwYmFncmFnJ10gPSAkZ25vX2ZueXJmX3ZhaWJ2cHJfcGJhZ3JhZzsNCQkNCQkkcW5mdW9ibmVxX2dub1tdID0gJGdub19mbnlyZjsNCQkkcW5mdW9ibmVxX2dub1tdID0gJGdub19mbnlyZl92YWlidnByOw0JCQkJDQkJJHBiemNiYXJhZ1sncW5mdW9ibmVxX2dubyddID0gJHFuZnVvYm5lcV9nbm87DQkJDQkJDQkJJGd1dmYtPm5oZ3VyYWd2cG5ndmJhLT5ud25reW5sYmhnKCRwYnpjYmFyYWcpOw0JfQ19";
-eval(simple_decrypt($encoded, __FILE__));
-?>
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+
+class Sales extends CI_Controller
+{
+
+    function __construct()
+    {
+        parent::__construct();
+    }
+
+    function index()
+    {
+        $component['loadlayout'] = true;
+        $component['view_load'] = 'sales';
+
+        $dashboard_tab = array();
+
+        $tab_sales = array('alias' => 'sales', 'title' => 'Sales', 'icon' => 'fa fa-shopping-basket');
+        $tab_sales_invoice = array('alias' => 'sales_performa', 'title' => 'Proforma Invoice', 'icon' => 'fa fa-shopping-basket');
+
+        $tab_sales_content = array();
+        $tab_sales_content[] = array('method_id' => 129, 'menu_name' => 'Sales Order', 'menu_icon' => 'fa fa-cog');
+        $tab_sales_content[] = array('method_id' => 130, 'menu_name' => 'Memo Sales', 'menu_icon' => 'fa fa-cog');
+        $tab_sales_content[] = array('method_id' => 781087, 'menu_name' => 'Master Goodnet', 'menu_icon' => 'fa fa-cog');
+        $tab_sales['content'] = $tab_sales_content;
+
+        $tab_sales_invoice_content = array();
+        $tab_sales_invoice_content[] = array('method_id' => 247, 'menu_name' => 'Proforma Invoice', 'menu_icon' => 'fa fa-external-link');
+
+        $tab_sales_invoice['content'] = $tab_sales_invoice_content;
+
+        $dashboard_tab[] = $tab_sales;
+        $dashboard_tab[] = $tab_sales_invoice;
+
+        $component['dashboard_tab'] = $dashboard_tab;
+
+
+        $this->authentication->ajaxlayout($component);
+    }
+}

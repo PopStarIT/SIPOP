@@ -117,11 +117,12 @@
 				style_spec_header_id2: $('#form_<?php echo $methodid ?>_detail_style_spec_header_id').val()
 			},
 			//	colNames: ['#', 'DETAIL_ID', 'ID', 'SIZE', 'POINT OF MEASURE', 'BASIC', 'SIZE XS', 'SIZE S', 'SIZE M', 'SIZE L', 'SIZE XL', 'SIZE XXL', '#'],
-			colNames: ['#', 'DETAIL_ID', 'ID', 'SIZE', 'POINT OF MEASURE', 'BASIC', 'SIZE XS', 'PATTERN XS', 'ALLOWANCE XS', 'SIZE S', 'PATTERN S', 'ALLOWANCE S', 'SIZE M', 'PATTERN M', 'ALLOWANCE M', 'SIZE L', 'PATTERN L', 'ALLOWANCE L', 'SIZE XL', 'PATTERN XL', 'ALLOWANCE XL', 'SIZE XXL', 'PATTERN XXL', 'ALLOWANCE XXL', '#'],
+			colNames: ['#hehe', 'DETAIL_ID', 'ID', 'SIZE', 'POINT OF MEASURE', 'BASIC', 'SIZE XS', 'PATTERN XS', 'ALLOWANCE XS', 'SIZE S', 'PATTERN S', 'ALLOWANCE S', 'SIZE M', 'PATTERN M', 'ALLOWANCE M', 'SIZE L', 'PATTERN L', 'ALLOWANCE L', 'SIZE XL', 'PATTERN XL', 'ALLOWANCE XL', 'SIZE XXL', 'PATTERN XXL', 'ALLOWANCE XXL', '#'],
 			colModel: [{
 					name: 'r13',
 					index: 'r13',
 					align: 'center',
+
 					width: 30,
 					"searchoptions": {
 						"clearSearch": false
@@ -131,6 +132,7 @@
 					name: 'r1',
 					index: 'r1',
 					width: 50,
+
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -140,6 +142,7 @@
 					name: 'r2',
 					index: 'r2',
 					width: 50,
+
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -149,6 +152,7 @@
 					name: 'r3',
 					index: 'r3',
 					width: 50,
+
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -172,6 +176,7 @@
 				{
 					name: 'r6',
 					index: 'r6',
+					editable: true,
 					width: 30,
 					"searchoptions": {
 						"clearSearch": false
@@ -201,6 +206,7 @@
 					name: 'r7',
 					index: 'r7',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -210,6 +216,7 @@
 					name: 'r8',
 					index: 'r8',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -219,6 +226,7 @@
 					name: 'r9',
 					index: 'r9',
 					width: 30,
+					editable: true,
 					"searchoptions": {
 						"clearSearch": false
 					},
@@ -251,6 +259,7 @@
 					name: 'r10',
 					index: 'r10',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -260,6 +269,7 @@
 					name: 'r11',
 					index: 'r11',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -269,6 +279,7 @@
 					name: 'r12',
 					index: 'r12',
 					width: 30,
+					editable: true,
 					"searchoptions": {
 						"clearSearch": false
 					},
@@ -299,6 +310,7 @@
 					name: 'r13',
 					index: 'r13',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -308,6 +320,7 @@
 					name: 'r14',
 					index: 'r14',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -317,6 +330,7 @@
 					name: 'r15',
 					index: 'r15',
 					width: 30,
+					editable: true,
 					"searchoptions": {
 						"clearSearch": false
 					},
@@ -348,6 +362,7 @@
 					name: 'r16',
 					index: 'r16',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -357,6 +372,7 @@
 					name: 'r17',
 					index: 'r17',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -366,6 +382,7 @@
 					name: 'r18',
 					index: 'r18',
 					width: 30,
+					editable: true,
 					"searchoptions": {
 						"clearSearch": false
 					},
@@ -396,6 +413,7 @@
 					name: 'r19',
 					index: 'r19',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -405,6 +423,7 @@
 					name: 'r20',
 					index: 'r20',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -414,6 +433,7 @@
 					name: 'r21',
 					index: 'r21',
 					width: 30,
+					editable: true,
 					"searchoptions": {
 						"clearSearch": false
 					},
@@ -444,6 +464,7 @@
 					name: 'r22',
 					index: 'r22',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -453,6 +474,7 @@
 					name: 'r23',
 					index: 'r23',
 					width: 50,
+					editable: true,
 					hidden: true,
 					"searchoptions": {
 						"clearSearch": false
@@ -462,6 +484,7 @@
 					name: 'kode',
 					index: 'kode',
 					width: 90,
+					editable: true,
 					editable: false,
 					formatter: function(cellvalue, options, rowObject) {
 						// cellvalue = typeof cellvalue !== 'undefined' ? cellvalue : '0.00';

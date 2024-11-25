@@ -897,4 +897,107 @@ class Main extends CI_Model
 			return array();
 		}
 	}
+	function sp_checklist_add($list)
+	{
+		$this->db_pop->insert('dbo.dt_checklist', array('list' => $list));
+		return $this->db_pop->insert_id();
+	}
+
+	function sp_checklist_edit($checklist_id, $list)
+	{
+		$this->db_pop->where('checklist_id', $checklist_id);
+		$this->db_pop->update('dbo.dt_checklist', array('list' => $list));
+		return true;
+	}
+	public function get_spec()
+	{
+		$this->db_pop->select('id_style, nama_style');
+		$this->db_pop->from('dbo.dt_style');
+		$query = $this->db_pop->get();
+
+		if ($query->num_rows() > 0) {
+			return $query->result_array();
+		} else {
+			return array();
+		}
+	}
+	public function get_list()
+	{
+		$this->db_pop->select('checklist_id, list');
+		$this->db_pop->from('dbo.dt_checklist');
+		$query = $this->db_pop->get();
+
+		if ($query->num_rows() > 0) {
+			return $query->result_array();
+		} else {
+			return array();
+		}
+	}
+	public function get_master_lists()
+	{
+		$this->db_pop->select('*');
+		$this->db_pop->from('dbo.dt_master_list');
+		$query = $this->db_pop->get();
+		return $query->result_array(); // Return as an array
+	}
+
+
+
+	public function get_style_spec_details()
+	{
+		$this->db_pop->select('style_spec_detail_id, style_spec_detail_measure'); // Ganti 'detail' dengan nama kolom yang sesuai
+		$query = $this->db_pop->get('dbo.dt_style_spec_detail');
+
+		if ($query->num_rows() > 0) {
+			return $query->result_array(); // Mengembalikan hasil sebagai array
+		}
+		return [];
+	}
+
+
+
+	public function get_checklist_ids()
+	{
+		$this->db_pop->distinct();
+		$this->db_pop->select('checklist_id');
+		$this->db_pop->from('dbo.view_checklist_detail');
+		$query = $this->db_pop->get();
+
+		return $query->result();
+	}
+
+
+
+	public function show_checklist_id($checklist_id)
+	{
+		$this->db_pop->select('*'); // Ganti '*' dengan kolom yang ingin diambil
+		$this->db_pop->from('dbo.view_checklist_detail');
+		$this->db_pop->where('checklist_id', $checklist_id);
+		$query = $this->db_pop->get();
+
+		return $query->result(); // Mengembalikan semua baris data
+	}
+
+	public function get_list_by_checklist_id($checklist_id)
+	{
+		$this->db_pop->select('list'); // Ganti 'list' dengan nama kolom yang sesuai di tabel dt_checklist
+		$this->db_pop->from('dbo.dt_checklist');
+		$this->db_pop->where('checklist_id', $checklist_id);
+		$query = $this->db_pop->get();
+
+		if ($query->num_rows() > 0) {
+			return $query->row(); // Mengembalikan satu baris data
+		}
+
+		return null; // Jika tidak ada data ditemukan
+	}
+	public function get_master_list_name($master_list_id)
+	{
+		$this->db_pop->select('name'); // Replace 'name' with the actual column name in dt_master_list
+		$this->db_pop->from('dbo.dt_master_list'); // Replace with your actual table name
+		$this->db_pop->where('list_id', $master_list_id);
+		$query = $this->db_pop->get();
+		$row = $query->row();
+		return $row ? $row->name : ''; // Return the 'name' value if found, otherwise return an empty string
+	}
 }
