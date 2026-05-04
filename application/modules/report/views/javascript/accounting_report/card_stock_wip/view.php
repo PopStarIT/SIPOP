@@ -1,0 +1,141 @@
+<script type="text/javascript">  
+	$(function () {
+        "use strict";	
+		$("#table_<?php echo $methodid ?>").jqGrid({
+			url: baseurl+'<?php echo $class_uri ?>/loaddata',
+			mtype : "post",
+			postData:{'q':'1','date_start':'<?php echo date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) ) ?>','date_end':'<?php echo date("Y-m-d") ?>','<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'},
+			//postData:{'q':'1','date_start':'2021-01-01','date_end':'2021-12-31','<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'},
+			datatype: "json",
+			colNames:[
+				'ID'
+				, 'KODE BRG'
+				, 'SALDO AWAL'
+				, 'NO MASUK'
+				, 'TGL MASUK'
+				, 'QTY MASUK'
+				, 'ARR TGL KELUAR'
+				, 'ARR NO KELUAR'
+				, 'ARR QTY KELUAR'
+				, 'UNIT'
+				, 'ITEM_ID'
+			],
+			colModel:[
+				{name:'r1',index:'r1', width:90,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r2',index:'r2', width:150,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r3',index:'r3', width:150,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r4',index:'r4', width:170,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},  
+				{name:'r5',index:'r5', width:100,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},  
+				{name:'r6',index:'r6', width:150,align:'left',cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},  
+				{name:'r7',index:'r7', width:200,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},  
+				{name:'r8',index:'r8', width:200,align:'left',cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}}, 
+				{name:'r9',index:'r9', width:150,align:'left',cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r11',index:'r11', width:90,align:'left',cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r12',index:'r12', width:70,align:'left',cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+			],
+			 iconSet: "fontAwesome",
+            iconSet: "fontAwesome",
+            idPrefix: "g1_",
+            rownumbers: true,
+			rowNum:10,
+			rowList:[10,20,30],
+			pager: '#ptable_<?php echo $methodid ?>',
+            sortname: "r1",
+            sortorder: "asc",
+			shrinkToFit:false,
+			autowidth: true,
+			height: 250,		
+			jsonReader: { repeatitems : false },
+			viewrecords : true,
+			gridview:true
+		}); 
+		$("#table_<?php echo $methodid ?>").jqGrid("setColProp", "rn", {hidedlg: false});
+		$("#table_<?php echo $methodid ?>").jqGrid('navGrid','#ptable_<?php echo $methodid ?>',{edit:false,add:false,del:false,view:false, search: false});  
+		$("#table_<?php echo $methodid ?>").jqGrid('filterToolbar',{stringResult: true,searchOnEnter : false, defaultSearch: 'cn', ignoreCase: false});  
+		
+    });
+					
+	$( document ).ready(function() {
+		$('#form_<?php echo $methodid ?>_date_start').datepicker(
+			{
+				format: 'yyyy-mm-dd',
+				todayBtn: "linked"
+			}
+		);		
+		
+		$('#form_<?php echo $methodid ?>_date_end').datepicker(
+			{
+				format: 'yyyy-mm-dd',
+				todayBtn: "linked"
+			}
+		);						
+	});
+	
+	function search_<?php echo $methodid ?>(){
+		date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+		date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+	  
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', 
+			{
+				postData: {
+					'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+					 ,date_start:date_start
+					 ,date_end:date_end
+				} 
+			
+			}
+		);
+        $('#table_<?php echo $methodid ?>').trigger( 'reloadGrid' );
+	}
+	
+	function print_<?php echo $methodid ?>(format){
+	  date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+      date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+	 // alert(baseurl + '<?php echo $class_uri ?>/loaddata');
+	 // alert(format);
+      window.open(baseurl+'<?php echo $class_uri ?>/print_card_stock?'+'date_start=' +date_start+ '&date_end='+date_end+ '&format='+format+'&baris=0', '_BLANK');
+	}
+	
+	function print_old_<?php echo $methodid ?>(format){
+      date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+      date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+      var data_send={
+         '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+         ,date_start:date_start
+         ,date_end:date_end
+         ,format:format
+         ,print:1
+      }; 
+      $.ajax({
+         type: "POST",
+         url:baseurl + '<?php echo $class_uri ?>/loaddata',
+         data: data_send,
+         dataType : 'json',
+         complete: function(){
+         },
+         success: function(msg){
+            if (!msg.valid){  
+               show_error('show','error',msg.des);
+               return false;
+            }else{
+               download_file('<?php echo $methodid ?>',msg.xfile,msg.namafile,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>'); 
+               return false; 
+            } 
+         }
+      }) ;   
+	}
+
+    function print_perkode_<?php echo $methodid ?>(format){	
+	  var id = jQuery("#table_<?php echo $methodid ?>").jqGrid('getGridParam','selrow');
+	  date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+      date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+	  
+	  if (id) {
+		  var row = jQuery("#table_<?php echo $methodid ?>").jqGrid('getRowData',id);  
+		  //alert (row.r11); 
+		  window.open(baseurl+'<?php echo $class_uri ?>/print_excel_perkode?'+'date_start=' +date_start+ '&date_end='+date_end+ '&format='+format+'&baris='+row.r12, '_BLANK');
+	  }else{
+		  show_error("show",'Error','Please select row');
+	  }
+	}
+</script>

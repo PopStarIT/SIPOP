@@ -1,0 +1,448 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+Class Return_wh2_wh1 extends CI_Controller { 
+
+	function __construct(){ 
+		parent::__construct(); 
+		
+		$this->data_request = $_REQUEST;
+		
+		$module = $this->router->module;
+		$directory = $this->router->directory;
+		$class = $this->router->class;
+		$method = $this->router->method;
+		$directory = trim(str_replace('../modules/'.$module ,'',str_replace('/controllers/','',$directory)),'/');
+		
+		$this->module = $module;
+		if(trim($directory) != ''){
+			$this->directory = $directory;
+		} else {
+			$this->directory = '0';
+			$this->directory2 = '';
+		}
+		$this->class = $class;
+		$this->method = $method;
+	}
+	
+	function mutasi_bahan_baku_table(){
+		$field = array();
+		$field['r1'] = array('sc' => 'r1','ctype' => 'text', 'bypassvalue' => '', 'title' => 'CODE');
+		$field['r2'] = array('sc' => 'r2','ctype' => 'text', 'bypassvalue' => '', 'title' => 'NAME');
+		$field['r3'] = array('sc' => 'r3','ctype' => 'text', 'bypassvalue' => '', 'title' => 'SAT');
+		$field['r4'] = array('sc' => 'r4','ctype' => 'int', 'bypassvalue' => '', 'title' => 'SALDO AWAL', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r5'] = array('sc' => 'r5','ctype' => 'int', 'bypassvalue' => '', 'title' => 'PEMASUKAN', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r6'] = array('sc' => 'r6','ctype' => 'int', 'bypassvalue' => '', 'title' => 'PENGELUARAN', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r7'] = array('sc' => 'r7','ctype' => 'int', 'bypassvalue' => '', 'title' => 'PENYESUAIAN', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r8'] = array('sc' => 'r8','ctype' => 'int', 'bypassvalue' => '', 'title' => 'SALDO AKHIR', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r9'] = array('sc' => 'r9','ctype' => 'int', 'bypassvalue' => '', 'title' => 'STOCK OPNAME', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r10'] = array('sc' => 'r10','ctype' => 'int', 'bypassvalue' => '', 'title' => 'SELISIH', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r11'] = array('sc' => 'r11','ctype' => 'text', 'bypassvalue' => '', 'title' => 'KETERANGAN');
+		
+		$field['r41'] = array('sc' => 'r41','ctype' => 'int', 'bypassvalue' => '', 'title' => 'SALDO AWAL ASSEMBLY', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r51'] = array('sc' => 'r51','ctype' => 'int', 'bypassvalue' => '', 'title' => 'PEMASUKAN ASSEMBLY', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r61'] = array('sc' => 'r61','ctype' => 'int', 'bypassvalue' => '', 'title' => 'PENGELUARAN ASSEMBLY', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r71'] = array('sc' => 'r71','ctype' => 'int', 'bypassvalue' => '', 'title' => 'PENYESUAIAN ASSEMBLY', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r81'] = array('sc' => 'r81','ctype' => 'int', 'bypassvalue' => '', 'title' => 'SALDO AKHIR ASSEMBLY', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r91'] = array('sc' => 'r91','ctype' => 'int', 'bypassvalue' => '', 'title' => 'STOCK OPNAME ASSEMBLY', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r101'] = array('sc' => 'r101','ctype' => 'int', 'bypassvalue' => '', 'title' => 'SELISIH ASSEMBLY', 'data_type' => 'decimal', 'decimal_digit' => 4);
+		$field['r111'] = array('sc' => 'r111','ctype' => 'text', 'bypassvalue' => '', 'title' => 'KETERANGAN ASSEMBLY');
+		
+		return $field;
+	}
+	
+	function pengeluaran_wh1_wh2_table(){
+		$field = array();
+		//$field['r1'] = array('sc' => 'r1','ctype' => 'text', 'bypassvalue' => '', 'title' => 'CODE');
+		$field['r2'] = array('sc' => 'r2','ctype' => 'text', 'bypassvalue' => '', 'title' => 'TRANSFER NO');
+		$field['r3'] = array('sc' => 'r3','ctype' => 'date', 'bypassvalue' => '', 'title' => 'TRANSFER DATE');
+		$field['r4'] = array('sc' => 'r4','ctype' => 'text', 'bypassvalue' => '', 'title' => 'REQUEST NO');
+		$field['r5'] = array('sc' => 'r5','ctype' => 'date', 'bypassvalue' => '', 'title' => 'REQUEST DATE');
+		$field['r6'] = array('sc' => 'r6','ctype' => 'int', 'bypassvalue' => '', 'title' => 'QUANTITY');
+		$field['r7'] = array('sc' => 'r7','ctype' => 'text', 'bypassvalue' => '', 'title' => 'ITEM CODE');
+		$field['r8'] = array('sc' => 'r8','ctype' => 'text', 'bypassvalue' => '', 'title' => 'ITEM NAME');
+		$field['r9'] = array('sc' => 'r9','ctype' => 'text', 'bypassvalue' => '', 'title' => 'UNIT');
+		
+		return $field;
+	}
+	
+	function index(){
+		$this->load->model('main');
+		$component['loadlayout'] = true;
+		$component['view_load'] = 'report/return_wh2_wh1/view';
+		$component['load_js'][] = 'report/return_wh2_wh1/view';
+		
+		$component['page_title'] = "Return Warehouse 2 ke warehouse 1";
+		$dashboard_table = array();
+	
+		$field = $this->mutasi_bahan_baku_table();
+		
+		$dashboard_table['field'] = $field;
+		
+		$component['dashboard_table'] = $dashboard_table;
+		
+		$this->authentication->ajaxlayout($component);
+	}
+	
+	function loaddata(){
+		
+		//$field = $this->mutasi_bahan_baku_table();
+		$field = $this->pengeluaran_wh1_wh2_table();
+		
+		$date_start = isset($_REQUEST['date_start']) ?  $_REQUEST['date_start'] : '';
+		$date_end = isset($_REQUEST['date_end']) ? $_REQUEST['date_end'] : '';
+		$print = isset($_REQUEST['print']) ? $_REQUEST['print'] : 0;
+		$format = isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xlsx';
+		$page = isset($_POST['page'])?$_POST['page']:1; // get the requested page 
+        $rows = isset($_POST['rows'])?$_POST['rows']:10; // get how many rows we want to have into the grid 
+        $sidx = isset($_POST['sidx'])?$_POST['sidx']:'r1'; // get index row - i.e. user click to sort 
+        $sord = isset($_POST['sord'])?$_POST['sord']:'0'; // get the direction 
+		$search = isset($_REQUEST['_search'])?$_REQUEST['_search']:false; 
+		$filterRules =  isset($_POST['filters'])?$_POST['filters']:false;
+				
+		$limit =  $rows;
+		$offset =  $rows * ($page - 1);
+		
+		$order = isset($_REQUEST['order']) ? $_REQUEST['order'] : array();
+		
+		if($sord == 'asc'){
+			$sord = 1;
+		} else {
+			$sord = 2;
+		}
+		
+		$sort =	$sidx. '='.$sord;	
+				
+		if(strlen(trim($date_start)) == 0 ){
+			$date_start = '1900-01-01';
+		}
+		
+		if(strlen(trim($date_end)) == 0 ){
+			$date_end = '9999-12-31';
+		}
+		
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";	
+				
+				
+		//$sp = "dbo.sp_rpt_mutasi_bahan_baku_warehouse";	
+        $sp = "dbo.sp_rpt_return_wh2_wh1";			
+		if($print == 1){
+			$this->rpc_service->setSP(array("sp"=> $sp,"mode"=> $print == 1 ? "2" : "1","debug"=>"1"));
+		} else {
+			$this->rpc_service->setSP($sp);
+		}
+		
+		$this->rpc_service->addField('date_start',$date_start);
+		$this->rpc_service->addField('date_end',$date_end);
+		$this->rpc_service->addField('format',$format);
+		$this->rpc_service->addField('temp_folder',sys_get_temp_dir());
+		$this->rpc_service->addField('sort',$sort);
+		$this->rpc_service->addField('limit',$limit);
+		$this->rpc_service->addField('offset',$offset);
+		
+		
+		$this->rpc_service->setWhere($search,$filterRules,$field);
+		
+		if($print == 1){
+			
+			$result = $this->rpc_service->resultPrint2();
+			echo json_encode($result);
+		} else {
+			$this->authentication->plainlayout();
+			
+			
+			$result = $this->rpc_service->resultJSON_pop();	
+			$data_result = json_decode($result['data'],true);
+			
+			if(isset($data_result['detail']['result_count'])){
+				$records = $data_result['detail']['result_count'];
+				$total = ceil($data_result['detail']['result_count'] / $limit);
+			} else {
+				$records = 0;
+				$total = 0;
+			}
+			
+			$responce = new stdclass();
+			$responce->page = $page;
+			$responce->records = $records;
+			$responce->total = $total;
+			$i=0; 
+			if($data_result){
+				if(isset($data_result['xrow'])){
+					foreach($data_result['xrow'] as $key=>$value){
+						foreach ($value as $k => $v) {
+							$responce->rows[$i][$k] = $v;
+						} 
+						$i++;
+					}
+				}
+			}
+		
+			echo json_encode($responce);
+		}
+	}
+	function print_xls(){
+		$date_start = isset($_REQUEST['date_start']) ?  $_REQUEST['date_start'] : '';
+		$date_end = isset($_REQUEST['date_end']) ? $_REQUEST['date_end'] : '';
+		
+		require_once APPPATH . "/third_party/PHPExcel.php";
+		require_once APPPATH . "/third_party/PHPExcel/IOFactory.php";
+
+		$phpExcel = PHPExcel_IOFactory::load(FCPATH . "/assets/template/warehouse/RETURN_WH2_WH1.xlsx");
+		$phpExcel->setActiveSheetIndex(0);  //set first sheet as active
+
+		//$this->db_pop = $this->load->database('pop', TRUE);
+					 
+		$q = $this->db->query("
+		 SELECT a.warehouse_return_id,
+		 a.warehouse_return_no,
+		 a.warehouse_return_date,
+		 c.item_code,
+		 c.item_name,
+		 b.quantity_warehouse_return,
+		 b.quantity_supply,
+		 d.uom_code AS unit,
+		 b.item_id		
+		 FROM dbo.dt_warehouse_return a
+		 LEFT JOIN  dbo.dt_warehouse_return_detail b ON a.warehouse_return_id=b.warehouse_return_id
+		 LEFT JOIN dbo.dt_mst_item c ON b.item_id = c.item_id
+         LEFT JOIN dbo.ref_uom d ON c.uom_id = d.uom_id
+		 where a.injection = 1::bit AND (a.warehouse_return_date between '$date_start' and '$date_end')");
+		$phpExcel->getActiveSheet()->setCellValueExplicit("A3",$date_start . " s/d " . $date_end, PHPExcel_Cell_DataType::TYPE_STRING);	
+		$styleArray = array(
+			'font'  => array(
+				//'bold'  => true,
+				//'color' => array('rgb' => '249007'),
+				//'size'  => 15,
+				//'name'  => 'Verdana'
+			),
+			'borders' => array(
+				'allborders' => array(
+				  'style' => PHPExcel_Style_Border::BORDER_THIN
+				)
+			  )
+		);
+
+		$styleArray1 = array(
+		'font'  => array(
+			//'bold'  => true,
+			//'color' => array('rgb' => '1a57e3'),
+			//'size'  => 15,
+			//'name'  => 'Verdana'
+		),
+		'borders' => array(
+				'allborders' => array(
+				  'style' => PHPExcel_Style_Border::BORDER_THIN
+				)
+			  )
+		
+		);
+
+		
+		$i = 4;
+		$j = '';
+		$k = 1;
+		$l=1;
+		$jml = 0;
+		foreach ($q->result() as $r){
+			$k = 1 + $i;
+			$j = "$k";
+			$phpExcel->getActiveSheet()->setCellValue("A".$j, $l);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("B".$j, $r->warehouse_return_no, PHPExcel_Cell_DataType::TYPE_STRING);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("C".$j, $r->warehouse_return_date);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("D".$j, $r->item_code, PHPExcel_Cell_DataType::TYPE_STRING);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("E".$j, $r->item_name, PHPExcel_Cell_DataType::TYPE_STRING);
+			$phpExcel->getActiveSheet()->setCellValue("F".$j, $r->quantity_warehouse_return); 
+			$phpExcel->getActiveSheet()->setCellValue("G".$j, $r->quantity_supply);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("H".$j, $r->unit, PHPExcel_Cell_DataType::TYPE_STRING);
+		
+			
+			$phpExcel->getActiveSheet()->getStyle("F$j")->getNumberFormat()->setFormatCode('#,##0.0000');
+			$phpExcel->getActiveSheet()->getStyle("G$j")->getNumberFormat()->setFormatCode('#,##0.0000');
+			
+
+				$phpExcel->getActiveSheet()->getStyle("A$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("B$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("C$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("D$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("E$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("F$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("G$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("H$j")->applyFromArray($styleArray);
+				
+				
+			
+			//$jml = $jml + $r->saldo_awal;
+			//echo $jml . '<br />';
+			//$phpExcel->getActiveSheet()->getStyle("A10:"."A".$j)->getBorders()->getLeft()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+			$l++;
+			$i++;
+		}
+		
+		$filename =  "RETURN_wh2_ke_wh1_"  . $date_start . '_' . $date_end;
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="'.$filename.'.xlsx"');
+		
+		header("Pragma:no-cache");
+		header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+		header("Expires:0");
+
+		$objWriter = PHPExcel_IOFactory::createWriter($phpExcel, 'Excel2007');  //downloadable file is in Excel 2003 format (.xls)
+		$objWriter->save('php://output');  //send it to user, of course you can save it to disk also!
+		 
+		exit; //done.. exiting!	
+		
+	}
+	
+	function print_xls_asli(){
+		
+	
+		require_once APPPATH."/third_party/PHPExcel.php"; 
+		require_once APPPATH."/third_party/PHPExcel/IOFactory.php"; 
+		
+		$phpExcel = PHPExcel_IOFactory::load(FCPATH."/assets/warehouse/MUTASI_BAHAN_BAKU.xlsx");	
+		$phpExcel->setActiveSheetIndex(0);  //set first sheet as active
+		
+		$q = $this->db->query("
+			select 
+				a.item_base_code
+				, a.item_base_name
+				, h.item_category_name as kategori
+				, b.uom_code
+				, COALESCE(c.quantity,0) as saldo_awal 
+				, COALESCE(d.quantity,0) as pemasukan
+				, COALESCE(e.quantity,0) * -1 as pengeluaran
+				, COALESCE(f.quantity,0) as penyesuaian
+				, COALESCE(c.quantity,0) + COALESCE(d.quantity,0) + COALESCE(e.quantity,0) + COALESCE(f.quantity,0) as saldo_akhir
+				, case when (select count(stock_opname_id)  from dbo.dt_stock_opname 
+					where stock_opname_date = '$date_end' and stock_opname_status_id = 1 ) > 0 then COALESCE(c.quantity,0) + COALESCE(d.quantity,0) + COALESCE(e.quantity,0) + COALESCE(f.quantity,0) + COALESCE(g.quantity,0) else 0 end as stock_opname
+				, COALESCE(g.quantity,0) as selisih
+				, case when g.quantity > 0 then 'Selisih Lebih'
+						when g.quantity < 0 then 'Selisih Kurang'
+						when (select count(stock_opname_id)  from dbo.dt_stock_opname 
+					where stock_opname_date = '$date_end' and stock_opname_status_id = 1 ) > 0 then 'Sesuai'
+						else '-'
+						end as keterangan
+				from dbo.dt_mst_item_base a
+					Left Join dbo.ref_uom b ON a.uom_id = b.uom_id
+					Left Join dbo.sp_mutasi_saldo_awal_injection('$date_start') c ON a.item_base_id = c.item_base_id
+					Left Join dbo.sp_mutasi_pemasukan_injection('$date_start','$date_end') d ON a.item_base_id = d.item_base_id
+					Left Join dbo.sp_mutasi_pengeluaran_injection('$date_start','$date_end') e ON a.item_base_id = e.item_base_id
+					Left Join dbo.sp_mutasi_penyesuaian_injection('$date_start','$date_end') f ON a.item_base_id = f.item_base_id
+					Left Join dbo.sp_mutasi_stock_opname_injection('$date_start','$date_end') g ON a.item_base_id = g.item_base_id
+					LEFT JOIN dbo.dt_mst_item_category h ON a.item_category_id = h.item_category_id
+					Left Join dbo.prm_custom_item_type i ON h.custom_item_type_id = i.custom_item_type_id 
+					Left Join dbo.sp_mutasi_saldo_awal_assembly('$date_start') j ON a.item_base_id = j.item_base_id
+					Left Join dbo.sp_mutasi_pemasukan_assembly('$date_start','$date_end') k ON a.item_base_id = k.item_base_id
+					Left Join dbo.sp_mutasi_pengeluaran_assembly('$date_start','$date_end') l ON a.item_base_id = l.item_base_id
+					Left Join dbo.sp_mutasi_penyesuaian_assembly('$date_start','$date_end') m ON a.item_base_id = m.item_base_id
+					Left Join dbo.sp_mutasi_stock_opname_assembly('$date_start','$date_end') n ON a.item_base_id = n.item_base_id
+				WHERE i.custom_item_type_id =1 and (c.quantity>0 OR (COALESCE(c.quantity,0) + COALESCE(d.quantity,0) + COALESCE(e.quantity,0) + COALESCE(f.quantity,0)>0) )
+				order by a.item_base_code  ASC			
+		");
+		
+		
+		$phpExcel->getActiveSheet()->setCellValueExplicit("A3",$date_start . " SAMPAI " . $date_end, PHPExcel_Cell_DataType::TYPE_STRING);	
+		
+		$styleArray = array(
+			'font'  => array(
+				//'bold'  => true,
+				//'color' => array('rgb' => '249007'),
+				//'size'  => 15,
+				//'name'  => 'Verdana'
+			),
+			'borders' => array(
+				'allborders' => array(
+				  'style' => PHPExcel_Style_Border::BORDER_THIN
+				)
+			  )
+		);
+
+		$styleArray1 = array(
+		'font'  => array(
+			//'bold'  => true,
+			//'color' => array('rgb' => '1a57e3'),
+			//'size'  => 15,
+			//'name'  => 'Verdana'
+		),
+		'borders' => array(
+				'allborders' => array(
+				  'style' => PHPExcel_Style_Border::BORDER_THIN
+				)
+			  )
+		
+		);
+
+		
+		$i = 5;
+		$j = '';
+		$k = 1;
+		$l=1;
+		$jml = 0;
+		foreach ($q->result() as $r){
+			$k = 1 + $i;
+			$j = "$k";
+			$phpExcel->getActiveSheet()->setCellValue("A".$j, $l);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("B".$j, $r->item_base_code, PHPExcel_Cell_DataType::TYPE_STRING);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("C".$j, $r->item_base_name, PHPExcel_Cell_DataType::TYPE_STRING);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("D".$j, $r->kategori, PHPExcel_Cell_DataType::TYPE_STRING);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("E".$j, $r->uom_code, PHPExcel_Cell_DataType::TYPE_STRING);
+			$phpExcel->getActiveSheet()->setCellValue("F".$j, $r->saldo_awal);
+			$phpExcel->getActiveSheet()->setCellValue("G".$j, $r->pemasukan);
+			$phpExcel->getActiveSheet()->setCellValue("H".$j, $r->pengeluaran);
+			$phpExcel->getActiveSheet()->setCellValue("I".$j, $r->penyesuaian);
+			$phpExcel->getActiveSheet()->setCellValue("J".$j, $r->saldo_akhir);
+			$phpExcel->getActiveSheet()->setCellValue("K".$j, $r->stock_opname);
+			$phpExcel->getActiveSheet()->setCellValue("L".$j, $r->selisih);
+			$phpExcel->getActiveSheet()->setCellValueExplicit("M".$j, $r->keterangan, PHPExcel_Cell_DataType::TYPE_STRING);
+
+			$phpExcel->getActiveSheet()->getStyle("F$j")->getNumberFormat()->setFormatCode('#,##0.0000');
+			$phpExcel->getActiveSheet()->getStyle("G$j")->getNumberFormat()->setFormatCode('#,##0.0000');
+			$phpExcel->getActiveSheet()->getStyle("H$j")->getNumberFormat()->setFormatCode('#,##0.0000');
+			$phpExcel->getActiveSheet()->getStyle("I$j")->getNumberFormat()->setFormatCode('#,##0.0000');
+			$phpExcel->getActiveSheet()->getStyle("J$j")->getNumberFormat()->setFormatCode('#,##0.0000');
+			$phpExcel->getActiveSheet()->getStyle("K$j")->getNumberFormat()->setFormatCode('#,##0.0000');
+			$phpExcel->getActiveSheet()->getStyle("L$j")->getNumberFormat()->setFormatCode('#,##0.0000');
+
+				$phpExcel->getActiveSheet()->getStyle("A$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("B$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("C$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("D$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("E$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("F$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("G$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("H$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("I$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("J$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("K$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("L$j")->applyFromArray($styleArray);
+				$phpExcel->getActiveSheet()->getStyle("M$j")->applyFromArray($styleArray);
+			
+			$jml = $jml + $r->saldo_awal;
+			//echo $jml . '<br />';
+			//$phpExcel->getActiveSheet()->getStyle("A10:"."A".$j)->getBorders()->getLeft()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+			$l++;
+			$i++;
+		} 
+		
+		//$x = $k+1;
+		//$phpExcel->getActiveSheet()->setCellValue("G".$x, $jml);
+		
+		$filename =  "MUTASI_BAHAN_BAKU_"  . $date_start . '_' . $date_end;
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="'.$filename.'.xlsx"');
+		
+		header("Pragma:no-cache");
+		header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+		header("Expires:0");
+
+		$objWriter = PHPExcel_IOFactory::createWriter($phpExcel, 'Excel2007');  //downloadable file is in Excel 2003 format (.xls)
+		$objWriter->save('php://output');  //send it to user, of course you can save it to disk also!
+		 
+		exit; //done.. exiting!	
+		
+	}
+}
+
+?>

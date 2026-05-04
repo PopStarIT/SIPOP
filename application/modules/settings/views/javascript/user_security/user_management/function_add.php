@@ -1,0 +1,21 @@
+<script type="text/javascript">
+	function nav_button_<?php echo $function ?>() {
+		$('#panel_content_<?php echo $methodid ?>').hide();
+		$('#panel_content_form_<?php echo $methodid ?>').show();
+
+		$('.form_title_<?php echo $methodid ?>').html('New User');
+		$('#form_<?php echo $methodid ?>_username').prop('readonly', false);
+		$('#form_<?php echo $methodid ?>_user_id').val('');
+		$('#form_<?php echo $methodid ?>_username').val('');
+		$('#form_<?php echo $methodid ?>_password').val('');
+		$('#form_<?php echo $methodid ?>_confirm_password').val('');
+		$('#form_<?php echo $methodid ?>_name').val('');
+		$('#form_<?php echo $methodid ?>_email').val('');
+		$('#form_<?php echo $methodid ?>_phone').val('');
+		$('#form_<?php echo $methodid ?>_pilih_id').val('');
+
+		setTimeout(function() {
+			$('.tab_scrollbar').getNiceScroll().resize();
+		}, 100);
+	}
+</script>

@@ -1,0 +1,61 @@
+//----tabel rincian pengeluaran ------------------
+		
+		 $("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid({
+			url: baseurl+'<?php echo $class_uri ?>/loaddata_rincian_keluar',
+			mtype : "post",
+			postData:{'q':'1','date_start':'<?php echo date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) ) ?>','date_end':'<?php echo date("Y-m-d") ?>','<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>','item_id':'8374'},
+			datatype: "json",
+						
+			colNames:['item base id','item id','KODE BASE','KODE DETAIL','QUANTITY', 'DOKUMEN'],
+			colModel:[
+				{name:'r1',index:'r1', width:80,hidden: true},
+				{name:'r2',index:'r2', width:80,hidden: true},
+				{name:'r3',index:'r3', width:100},
+				{name:'r4',index:'r4', width:100,align:'center'},  
+				{name:'r5',index:'r5', width:150,align:'right',formatter:'formatNumerics'},  
+				{name:'r6',index:'r6', width:200,align:'right',formatter:'formatNumerics'}, 
+			],
+			 iconSet: "fontAwesome",
+            iconSet: "fontAwesome",
+            idPrefix: "g1_",
+            rownumbers: true,
+			rowNum:10,
+			rowList:[10,20,30],
+			pager: '#ptable_<?php echo $methodid ?>_pengeluaran_rincian',
+            sortname: "r1",
+            sortorder: "asc",
+			shrinkToFit:false,
+			autowidth: true,
+			height: 250,		
+			jsonReader: { repeatitems : false },
+			viewrecords : true,
+			gridview:true
+		}); 
+		$("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid("setColProp", "rn", {hidedlg: false});
+		
+		$("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid('setGroupHeaders', 
+			{ useColSpanStyle: true, groupHeaders:[
+			{startColumnName: 'r1', numberOfColumns: 3, titleText: '<em><center>ITEM</center></em>'}
+		] });
+		
+		$("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid('navGrid','#ptable_<?php echo $methodid ?>_pengeluaran_rincian',{edit:false,add:false,del:false,view:false, search: false});  
+		$("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid('filterToolbar',{stringResult: true,searchOnEnter : false, defaultSearch: 'cn', ignoreCase: false});
+		
+		
+		
+		
+		
+		 function send_keluar(badgenumber1,nama1,keterangan1,date_start1,date_end1){
+		//alert('coba function Nama=' + nama1 + ', IdAbsen=' + badgenumber1 +', col=' + keterangan1 + ', awal='+ date_start1 + ', akhir='+ date_end1);
+	   $("#table_<?php echo $methodid ?>_report_absen_keterangan").jqGrid('setGridParam',{
+			postData: {
+			           	'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+			           	 ,badgenumber:badgenumber1
+			           	 ,nama:nama1
+			           	 ,i:keterangan1
+			           	 ,date_start:date_start1
+			           	 ,date_end:date_end1
+			           } 
+			    });
+		  $("#table_<?php echo $methodid ?>_report_absen_keterangan").trigger('reloadGrid');
+	  }

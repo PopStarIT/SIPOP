@@ -1,0 +1,178 @@
+<script type="text/javascript">  
+ 
+	$(function () {
+        "use strict";	
+		//alert( baseurl+'<?php echo $class_uri ?>');
+		$("#table_<?php echo $methodid ?>_view_ekspor").jqGrid({
+			url: baseurl+'<?php echo $class_uri ?>/loaddata',
+			mtype : "post",
+			postData:{'q':'1','date_start':'<?php echo date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) ) ?>','date_end':'<?php echo date("Y-m-d") ?>','type_bc_id':0,'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'},
+			datatype: "json",
+			colNames:[
+				'DOK BC'
+				, 'BC NO'
+				, 'BC DATE'
+				, 'PARTNER NAME'
+				, 'DELIVER NO'
+				, 'DELIVER DATE'
+				, 'KODE BARANG'
+				, 'NAMA BARANG'
+				, 'QTY BARANG'
+				, 'QTY BARANG DELIVER'
+				, 'SATUAN'
+				//, 'SATUAN'
+				//, 'DOC STATUS'
+			 ],
+			colModel:[
+				//{name:'r1',index:'r1', width:70,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  ('rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r1',index:'r1', width:70,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  ('rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r2',index:'r2', width:100,align:'center',cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r3',index:'r3', width:100,align:'center',cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r4',index:'r4', width:250,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r5',index:'r5', width:150,cellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},  
+				{name:'r6',index:'r6', width:100,acellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}}, 
+				{name:'r7',index:'r7', width:150,acellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}}, 
+				{name:'r8',index:'r8', width:320,acellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r9',index:'r9', width:110,acellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r10',index:'r10', width:150,acellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				{name:'r11',index:'r11', width:100,acellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				//{name:'r14',index:'r14', width:100,acellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}},
+				
+			//	{name:'r10',index:'r10', width:80,align:'center',acellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}}, 
+			//	{name:'r11',index:'r11', width:170,align:'right',acellattr: function(rowId, tv, rawObject, cm, rdata) {if (rdata.rspan==0) { return  (' style="display: none"');}else if (rdata.rspan>1) { return  (' rowspan="' + rdata.rspan +'"   style=" vertical-align:top"'); }}}, 
+				
+			],
+			 iconSet: "fontAwesome",
+            iconSet: "fontAwesome",
+            idPrefix: "g1_",
+            rownumbers: true,
+			rowNum:10,
+			rowList:[10,20,30],
+			pager: '#ptable_<?php echo $methodid ?>_view_ekspor',
+            sortname: "r1",
+            sortorder: "asc",
+			shrinkToFit:false,
+			autowidth: true,
+			height: 250,		
+			jsonReader: { repeatitems : false },
+			viewrecords : true,
+			caption:"Dokumen Ekspor Di Subcon" ,
+			gridview:true
+		}); 
+		$("#table_<?php echo $methodid ?>_view_ekspor").jqGrid("setColProp", "rn", {hidedlg: false});
+		$("#table_<?php echo $methodid ?>_view_ekspor").jqGrid('navGrid','#ptable_<?php echo $methodid ?>_view_ekspor',{edit:false,add:false,del:false,view:false, search: false});  
+		$("#table_<?php echo $methodid ?>_view_ekspor").jqGrid('filterToolbar',{stringResult: true,searchOnEnter : false, defaultSearch: 'cn', ignoreCase: false});  
+		
+    });
+					
+	$( document ).ready(function() {
+		$('#form_<?php echo $methodid ?>_date_start').datepicker(
+			{
+				format: 'yyyy-mm-dd',
+				todayBtn: "linked"
+			}
+		);		
+		
+		$('#form_<?php echo $methodid ?>_date_end').datepicker(
+			{
+				format: 'yyyy-mm-dd',
+				todayBtn: "linked"
+			}
+		);						
+	});
+	
+	function search_<?php echo $methodid ?>(){
+		date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+		date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+		//type_bc_id = $('#form_<?php echo $methodid ?>_type_bc_id').val(); 
+	    type_bc_id=10;
+		//alert (date_start);
+		$("#table_<?php echo $methodid ?>_view_ekspor").jqGrid('setGridParam', 
+			{
+				postData: {
+					'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+					 ,date_start:date_start
+					 ,date_end:date_end
+					 ,type_bc_id:type_bc_id
+				} 
+			
+			}
+		);
+        $('#table_<?php echo $methodid ?>_view_ekspor').trigger( 'reloadGrid' );
+	}
+	
+	function print_<?php echo $methodid ?>(format){
+	  date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+      date_end = $('#form_<?php echo $methodid ?>_date_end').val(); 
+     // type_bc_id = $('#form_<?php echo $methodid ?>_type_bc_id').val(); 	  
+	  type_bc_id =10; 	  
+	 //alert(baseurl + '<?php echo $class_uri ?>/loaddata');
+	  alert(date_start);
+      window.open(baseurl+'<?php echo $class_uri ?>/print_laporan_pemasukanxx?'+'date_start='+date_start+'&date_end=' +date_end+'&type_bc_id='+type_bc_id+'&format='+format,'_BLANK');
+	}
+	
+	function print_excel_<?php echo $methodid ?>(format){
+	  date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+      date_end = $('#form_<?php echo $methodid ?>_date_end').val(); 
+  	  type_bc_id =10; 	
+	  
+			swal({
+				title: "Confirm Print ?",
+            input: 'select',
+            inputOptions: {
+                'xlsx': 'XLSX',
+            },
+				type: "question",
+				dangerMode: true,
+				showCancelButton: !0,
+				confirmButtonClass: "btn btn-danger m-1",
+				cancelButtonClass: "btn btn-secondary m-1",
+				confirmButtonText: "Print",
+				cancelButtonText: "Cancel",
+				backdrop: true,
+				allowOutsideClick : false,
+			}).then((result) => {
+				if (result.value) {
+               format = result.value;
+               			   
+			    window.open(baseurl+'<?php echo $class_uri ?>/print_excel?'+'date_start='+date_start+'&date_end=' +date_end+'&type_bc_id='+type_bc_id+'&format='+format,'_BLANK');
+			  //   window.open(baseurl+'<?php echo $class_uri ?>/print_bom?'+'bom_id=' +row.r1+ '&format='+format, '_BLANK');
+              
+           
+				} else if (result.dismiss === swal.DismissReason.cancel) {
+					swal.closeModal();	
+				}
+			});
+	}
+	
+	function print_awal_<?php echo $methodid ?>(format){
+      date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+      date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+	 // alert(baseurl + '<?php echo $class_uri ?>/loaddata');
+      var data_send={
+         '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+         ,date_start:date_start
+         ,date_end:date_end
+         ,format:format
+         ,print:1
+      }; 
+      $.ajax({
+         type: "POST",
+         url:baseurl + '<?php echo $class_uri ?>/loaddata',
+         data: data_send,
+         dataType : 'json',
+         complete: function(){
+         },
+         success: function(msg){
+			// alert(msg.namafile);
+            if (!msg.valid){  
+               show_error('show','error',msg.des);
+               return false;
+            }else{
+               download_file('<?php echo $methodid ?>',msg.xfile,msg.namafile,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>'); 
+               return false; 
+            } 
+         }
+      }) ;   
+	}		
+</script>

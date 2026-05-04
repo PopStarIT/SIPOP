@@ -1,0 +1,487 @@
+<script type="text/javascript">
+	var new_subcon_out = 1;
+	var subcon_out_id = 0;
+	var subcon_out_lock_data = 0;
+	var subcon_out_receiver = 1;
+	var subcon_out_open_form = 0;
+	var subcon_out_contract_subcon_id   = 0;
+	
+	$(".form_tab_<?php echo $methodid ?>").on("click", "a", function (e) {
+        e.preventDefault();
+		setTimeout(function(){ 
+			$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20,true).trigger('resize');
+			
+			$("#table_<?php echo $methodid ?>_receiver").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_receiver").setGridWidth($('.grid_container_<?php echo $methodid; ?>_receiver').width() - 20,true).trigger('resize');
+						
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 1000);
+    });
+	
+	$('#form_<?php echo $methodid ?>_purchase_order_detail_item_id,#form_<?php echo $methodid ?>_partner_id,#form_<?php echo $methodid ?>_currencies_id,#form_<?php echo $methodid ?>_purchase_order_date ').on('change', function (event, clickedIndex, newValue, oldValue) {
+		subcon_out_get_purchase_data();
+	});
+	
+	$('#form_<?php echo $methodid ?>_partner_id').on('change', function (event, clickedIndex, newValue, oldValue) {
+		$('#form_<?php echo $methodid ?>_contract_subcon_id').html('');
+		$('#form_<?php echo $methodid ?>_contract_subcon_id').selectpicker('refresh');
+	});
+	
+	$('#form_<?php echo $methodid ?>_contract_subcon_id').on('change', function (event, clickedIndex, newValue, oldValue) {
+		 contract_subcon_id=$('#form_<?php echo $methodid ?>_contract_subcon_id').val();
+		 partner_id=$('#form_<?php echo $methodid ?>_partner_id').val();
+		  //alert (partner_id);
+		   $.ajax({
+				url: baseurl+'loader',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				    ,param:'get_contract_subcon'
+					,partner_id:partner_id
+					,id: contract_subcon_id
+				},
+				dataType: 'json',
+			    method: 'post',
+			    success: function(data){
+				if (data[0]['value'] != null){
+					var val= data[0]['value'] ;
+					var dt_no = val.split('|');
+					
+					//----- dipecah kembali ----
+					// SUBOUT/043-26/MBI/001
+                    // 043/PS-MBI/I/2026
+						
+					var no = dt_no[0] ; 
+					var pecah = no.split('/');
+					var thn_pecah = pecah[3];
+					
+					var nm_pecah = pecah[1];
+					var pecah_lagi=nm_pecah.split('-');
+					var nama_kode=pecah_lagi[1];
+					
+					var tahunDuaDigit = thn_pecah.toString().slice(-3);
+					var code= 'SUBOUT/' + pecah[0] + '-' + $.trim(tahunDuaDigit) +'/' + nama_kode + '/0001';
+					$('#form_<?php echo $methodid ?>_subcon_out_no').val(code);
+					console.log(code);
+					
+					}
+				}
+		   })
+		
+	});
+	
+	
+	$('#form_<?php echo $methodid ?>_detail_item_id').on('change', function (event, clickedIndex, newValue, oldValue) {
+		 item_id=$('#form_<?php echo $methodid ?>_detail_item_id').val();
+		//alert(item_id);
+		if (item_id !=null){
+		  $.ajax({
+				url: baseurl+'loader',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				    ,param:'get_stock_transfer'
+					,id_barang : item_id
+				},
+				dataType: 'json',
+			    method: 'post',
+			    success: function(data){
+					//alert (data.length);
+					//console.log(data);
+					$('#form_<?php echo $methodid ?>_detail_saldo_report').val(data[1]['stock_report']);
+				//	if (data[0]['stock_report'] !=null){
+				//		console.log(data[1]['stock_report']);
+				//		$('#form_<?php echo $methodid ?>_detail_saldo_report').val(data[1]['stock_report']);
+				//	}else{
+				//		$('#form_<?php echo $methodid ?>_detail_saldo_report').val(0)
+				//	}
+				
+				//$('#form_<?php echo $methodid ?>_supply_mat_rpt_mutasi').val(data[1]['stock_report']);	
+				//$('#form_<?php echo $methodid ?>_supply_mat_asset_id').val(data[1]['stock_assets']);
+				//$('#form_<?php echo $methodid ?>_supply_mat_asset_id').val(data[1]['quantity']);
+				}
+			});
+		}else{
+			$('#form_<?php echo $methodid ?>_detail_saldo_report').val(0);
+		}
+	});
+		
+	function subcon_out_get_purchase_data(){
+		if(subcon_out_open_form == 1){
+			partner_id = $('#form_<?php echo $methodid ?>_partner_id').val();
+			currencies_id = $('#form_<?php echo $methodid ?>_currencies_id').val();
+			item_id = $('#form_<?php echo $methodid ?>_detail_item_id').val();
+			date = $('#form_<?php echo $methodid ?>_purchase_order_date').val();
+			
+			$.ajax({
+				url: baseurl+'loader',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+					,param: 'get_purchase_data'
+					,partner_id : partner_id
+					,currencies_id : currencies_id
+					,item_id : item_id
+					,date : date
+				},
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					
+					$('#form_<?php echo $methodid ?>_detail_conversion').val(data[0].conversion);
+					// $('#form_<?php echo $methodid ?>_purchase_order_detail_unit_price').val(data[0].unit_price);
+										
+					change_form_<?php echo $methodid ?>_detail_uom_id(data[0].partner_uom_id);
+													
+					setTimeout(function(){ 
+						$('.tab_scrollbar').getNiceScroll().resize(); 
+					}, 100);
+				}
+			});
+		}		
+	}
+	
+	function cancel_<?php echo $methodid ?>(){
+		$('#panel_content_<?php echo $methodid ?>').show();
+		$('#panel_content_form_<?php echo $methodid ?>').hide();
+		$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+	}
+	
+	function save_<?php echo $methodid ?>(){
+		$('#form_<?php echo $methodid ?>').submit();
+	}
+	
+	var jvalidate = $("#form_<?php echo $methodid ?>").validate({
+		ignore: [],
+		rules: {                                            
+			gl_account_group: {
+				required: true
+			}
+		} 
+	});
+	
+	function edit_<?php echo $methodid?>(id){
+		page_loading("show",'<?php echo $page_title ?>','Please Wait...');
+		$.ajax({
+			url: baseurl+'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				,param: 'data_subcon_out'
+				,id : id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data){
+				page_loading("hide");
+				$('.button_<?php echo $methodid ?>_detail_edit').hide();
+				$('.button_<?php echo $methodid ?>_detail_new').show();		
+				
+				subcon_out_open_form = 1;
+				new_subcon_out = 0;
+				subcon_out_id = data[0].subcon_out_id;
+				subcon_out_lock_data = data[0].lock_data;
+				subcon_out_receiver = data[0].receiver;
+				subcon_out_contract_subcon_id = data[0].contract_subcon_id;
+				
+				$('#form_<?php echo $methodid ?>_subcon_out_id').val(data[0].subcon_out_id);
+				$('#form_<?php echo $methodid ?>_detail_subcon_out_id').val(data[0].subcon_out_id);
+				$('#form_<?php echo $methodid ?>_detail_contract_subcon_id').val(data[0].contract_subcon_id);
+				$('#form_<?php echo $methodid ?>_subcon_out_no').val(data[0].subcon_out_no);
+				$('#form_<?php echo $methodid ?>_subcon_out_date').val(data[0].subcon_out_date);
+				$('#form_<?php echo $methodid ?>_subcon_out_memo').val(data[0].subcon_out_memo);
+				
+				change_form_<?php echo $methodid ?>_partner_id(data[0].partner_id);
+				change_form_<?php echo $methodid ?>_currencies_id(data[0].currencies_id);
+			
+			
+				$("#tab_<?php echo $methodid; ?>_detail").attr("data-toggle","tab");
+				$("#tab_<?php echo $methodid; ?>_detail").removeClass( "tab_disabled");
+				
+				if(data[0].receiver == 0){
+					$('.panel_<?php echo $methodid ?>_panel_detail').show();
+					$('.panel_<?php echo $methodid ?>_panel_receiver').hide();
+				} else {
+					$('.panel_<?php echo $methodid ?>_panel_detail').hide();
+					$('.panel_<?php echo $methodid ?>_panel_receiver').show();
+				}
+				setTimeout(function(){
+					change_form_<?php echo $methodid ?>_contract_subcon_id(data[0].contract_subcon_id);
+					$('.tab_scrollbar').getNiceScroll().resize(); 
+				}, 300);
+			}
+		});
+	}
+	
+	var check_submit = 0;
+	function post_<?php echo $methodid ?>(){
+		if(check_submit == 0) {
+			check_submit = 1;
+			page_loading("show",'Save <?php echo $page_title ?>','Please Wait...');
+			var data = $("#form_<?php echo $methodid ?>").serialize();
+			
+			$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					page_loading("hide");
+					check_submit = 0;
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?>',data.message);	
+						
+						if(new_subcon_out == 1){
+							new_subcon_out = 0;
+							$("#tab_<?php echo $methodid; ?>_detail").attr("data-toggle","tab");
+							$("#tab_<?php echo $methodid; ?>_detail").removeClass( "tab_disabled");
+							$("#tab_<?php echo $methodid; ?>_detail").click();
+							
+							subcon_out_id = data.subcon_out_id;
+							subcon_out_receiver = data.receiver;
+							
+							$('#form_<?php echo $methodid ?>_subcon_out_id').val(subcon_out_id);
+							$('#form_<?php echo $methodid ?>_detail_subcon_out_id').val(subcon_out_id);
+							$('#form_<?php echo $methodid ?>_detail_contract_subcon_id').val(data.contract_subcon_id);
+									
+							setTimeout(function(){ 
+								$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+								$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20,true).trigger('resize');
+								$('.tab_scrollbar').getNiceScroll().resize(); 
+							}, 500);
+							
+							if(subcon_out_receiver == 0){
+								$('.panel_<?php echo $methodid ?>_panel_detail').show();
+								$('.panel_<?php echo $methodid ?>_panel_receiver').hide();
+							} else {
+								$('.panel_<?php echo $methodid ?>_panel_detail').hide();
+								$('.panel_<?php echo $methodid ?>_panel_receiver').show();
+								
+							}
+							
+						} else {
+							new_subcon_out = 1;
+							$('#panel_content_<?php echo $methodid ?>').show();
+							$('#panel_content_form_<?php echo $methodid ?>').hide();
+							$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+						}
+					} else {
+						show_error("show",'Error',data.message);
+					}
+				},
+				error: function(xhr,error){
+					show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+					check_submit = 0;
+				}
+			});
+		}
+	}
+	
+	/* Detail Function */
+	var jvalidate2 = $("#form_<?php echo $methodid ?>_detail").validate({
+		ignore: [],
+		rules: {                                            
+			item_id: {
+				required: true
+			},
+			'quantity_subcon': {
+				min: 0
+			}
+		} 
+	});
+	
+	var check_submit = 0;
+	function add_<?php echo $methodid ?>(){
+		new_subcon_out = 0;
+		if(check_submit == 0) {
+			check_submit = 1;
+			page_loading("show",'<?php echo $page_title ?> Detail','Please Wait...');
+			var data = $("#form_<?php echo $methodid ?>_detail").serialize();
+			$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detail',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					page_loading("hide");
+					check_submit = 0;
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+						
+						$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+						cancel_detail_<?php echo $methodid ?>();
+						$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20,true).trigger('resize');
+									
+					} else {
+						show_error("show",'Error',data.message);
+					}
+				},
+				error: function(xhr,error){
+					show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+					check_submit = 0;
+				}
+			});
+		}
+	}
+	
+	var beforeclick_<?php echo $methodid ?>_receiver = function (rowid, e) {
+		$("#table_<?php echo $methodid ?>_receiver").jqGrid('resetSelection');
+		return(true);
+	}
+	
+	function edit_detail_<?php echo $methodid ?>(subcon_out_detail_id){
+		page_loading("show",'<?php echo $page_title ?>','Please Wait...');
+		$.ajax({
+			url: baseurl+'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				,param: 'data_subcon_out_detail'
+				,id : subcon_out_detail_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data){
+				page_loading("hide");
+				$('#form_<?php echo $methodid ?>_detail_subcon_out_detail_id').val(data[0].subcon_out_detail_id);
+				$('#form_<?php echo $methodid ?>_detail_quantity_subcon').val(data[0].quantity_subcon);
+				$('#form_<?php echo $methodid ?>_detail_conversion').val(data[0].conversion);
+				$('#form_<?php echo $methodid ?>_detail_unit_price').val(data[0].unit_price);
+				$('#form_<?php echo $methodid ?>_detail_subcon_price').val(data[0].subcon_price);
+
+				if(subcon_out_receiver == 0){
+					$('.button_<?php echo $methodid ?>_detail_edit').show();
+					$('.button_<?php echo $methodid ?>_detail_new').hide();	
+					
+					change_form_<?php echo $methodid ?>_detail_item_id(data[0].item_id);
+					change_form_<?php echo $methodid ?>_detail_uom_id(data[0].uom_id);
+				} else {
+					$("#table_<?php echo $methodid ?>_receiver").trigger('reloadGrid');
+				}		
+			}
+		});
+	}
+	
+	function delete_detail_<?php echo $methodid ?>(subcon_out_detail_id){
+		if(check_submit == 0) {
+			swal({
+				title: "Confirm Delete <?php echo $page_title ?> Detail ?",
+				type: "question",
+				dangerMode: true,
+				showCancelButton: !0,
+				confirmButtonClass: "btn btn-danger m-1",
+				cancelButtonClass: "btn btn-secondary m-1",
+				confirmButtonText: "Confirm",
+				cancelButtonText: "Cancel",
+				backdrop: true,
+				allowOutsideClick : false,
+			}).then((result) => {
+				if (result.value) {
+					page_loading("show",'Delete <?php echo $page_title ?> Detail','Please Wait...');
+					$.ajax({
+						url: baseurl+'<?php echo $class_uri ?>/delete_detail',								
+						data: {'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>',subcon_out_detail_id:subcon_out_detail_id},
+						dataType: 'json',
+						method: 'post',
+						success: function(data){
+							page_loading("hide");
+							check_submit = 0;
+							if(data.valid){
+								show_success("show",'Delete <?php echo $page_title ?> Detail',data.message);			
+								$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+								cancel_detail_<?php echo $methodid ?>();
+								
+								setTimeout(function(){ 
+									$('.tab_scrollbar').getNiceScroll().resize(); 
+								}, 100);
+							} else {
+								show_error("show",'Error',data.message);
+							}
+						},
+						error: function(xhr,error){
+							show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+							check_submit = 0;
+						}
+					});
+				} else if (result.dismiss === swal.DismissReason.cancel) {
+					swal.closeModal();	
+					check_submit = 0;
+				}
+			});
+		}
+	}
+	
+	function cancel_detail_<?php echo $methodid ?>(){
+		$('#form_<?php echo $methodid ?>_detail_subcon_out_detail_id').val('');
+		$('#form_<?php echo $methodid ?>_detail_quantity_subcon').val(0);
+		$('#form_<?php echo $methodid ?>_detail_conversion').val(1);
+		$('#form_<?php echo $methodid ?>_detail_unit_price').val(0);;
+		$('#form_<?php echo $methodid ?>_detail_subcon_price').val(0);;
+		
+		$('.button_<?php echo $methodid ?>_detail_edit').hide();
+		$('.button_<?php echo $methodid ?>_detail_new').show();	
+		
+		$("#table_<?php echo $methodid ?>_receiver").trigger('reloadGrid');
+	}	
+	/* End Detail Function */
+	
+	var check_submit = 0;
+	function add_list_<?php echo $methodid ?>(rh_id){
+		page_loading("show",'<?php echo $page_title ?> Detail','Please Wait...');
+		setTimeout(function(){ 
+			var id = jQuery("#table_<?php echo $methodid ?>_receiver").jqGrid('getGridParam','selrow');
+			if (id) {
+				var row = jQuery("#table_<?php echo $methodid ?>_receiver").jqGrid('getRowData',id);   
+				
+				subcon_out_id = $('#form_<?php echo $methodid ?>_subcon_out_id').val();
+				subcon_out_detail_id = rh_id;
+				item_id = parseInt(unwrap_cell_value(row.r1).replace(/,/g, ''));
+				quantity_subcon = parseFloat(unwrap_cell_value(row.r6).replace(/,/g, ''));
+				uom_id = parseInt(unwrap_cell_value(row.r8).replace(/,/g, ''));
+				conversion = parseFloat(unwrap_cell_value(row.r7).replace(/,/g, ''));
+				unit_price = parseFloat(unwrap_cell_value(row.r9).replace(/,/g, ''));
+				subcon_price = parseFloat(unwrap_cell_value(row.r10).replace(/,/g, ''));
+				
+				$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detail',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+					,subcon_out_detail_id:subcon_out_detail_id
+					,subcon_out_id :subcon_out_id
+					,item_id :item_id
+					,quantity_subcon :quantity_subcon
+					,uom_id :uom_id
+					,conversion :conversion
+					,unit_price :unit_price
+					,subcon_price :subcon_price
+					,trans_type :2
+				},
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					
+					page_loading("hide");
+					check_submit = 0;
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+						cancel_detail_<?php echo $methodid ?>();
+						$("#table_<?php echo $methodid ?>_receiver").trigger('reloadGrid');
+						$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+						page_loading("hide");			
+					} else {
+						show_error("show",'Error',data.message);
+					}
+				},
+				error: function(xhr,error){
+					show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+					check_submit = 0;
+				}
+			});
+				
+				
+			} else {
+				show_error("show",'Error','Please select row');
+			}
+			
+		}, 500);	
+		
+	}
+	
+	
+</script>

@@ -1,0 +1,60 @@
+<style>
+/* 1. Paksa body tabel untuk bisa scroll horizontal */
+.ui-jqgrid .ui-jqgrid-bdiv {
+    overflow-x: auto !important;
+    overflow-y: hidden; /* Sembunyikan scroll vertikal jika tidak perlu */
+}
+
+/* 2. Pastikan header tabel ikut bergeser saat di-scroll */
+.ui-jqgrid .ui-jqgrid-hdiv {
+    overflow-x: auto !important; 
+}
+
+/* 3. Hilangkan batasan lebar pada baris tabel di dalam grid */
+.ui-jqgrid .ui-jqgrid-btable {
+    table-layout: auto !important; 
+}
+
+
+#panel_content_<?php echo $methodid ?>{
+       max-width: 100% !important;
+       width: 100% !important;
+       overflow-x: hidden; /* Mencegah pecah layout saat transisi resize */
+    }
+
+</style>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xl-12">
+			<div class="card card-statistics"> 
+				<div class="card-body">
+					<div class="row">
+						<div class="col-xl-12">
+							<div id="accordion">
+								<div class="card">
+								<!--	<div class="card-header" id="headingOne">
+										<h5 class="mb-0">
+											<?php //echo $page_title ?>
+										</h5>
+									</div> -->
+									
+									<div id="panel_content_<?php echo $methodid ?>">
+										<?php $this->load->view($path_template.'/library/content/dashboard_table2'); ?>
+									</div>
+									
+									<div id="panel_content_form_<?php echo $methodid ?>" style="display:none">
+										<?php
+											if(isset($view_load_form)){
+												$this->load->view('content/'.$view_load_form);
+											}
+										?>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

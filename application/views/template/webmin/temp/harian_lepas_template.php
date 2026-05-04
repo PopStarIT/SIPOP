@@ -1,0 +1,298 @@
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <title>ID Card POPSTAR </title>
+   <!-- 
+   $('#IDcard').css(
+		 { 'background-image': 'url(' + image + ')',
+		 '-webkit-print-color-adjust': 'exact', 
+		 'background-repeat': 'no-repeat', 
+		 'background-size': 'cover' });
+	-->
+   <style>
+    :root {
+         --blue: #1e90ff;
+         --white: #ffffff;
+		 --bg_karyawan:url(<?php echo site_url('assets/img/id_card/bg/depan/karyawan_depan.png'); ?>);
+		 --bg_harian_lepas:url(<?php echo site_url('assets/img/id_card/bg/depan/depan_new.png'); ?>)
+      }
+	body {
+			background: #008080;
+		}
+
+		#bg {
+			width: 1000px;
+			height: 450px;
+
+			margin: 0px;
+			float: left;
+
+		}
+	
+	   #rotasigambarid {
+		  margin-left: 50px;
+		   box-shadow: 1px 1px 1px rgba(0,0,0,0.8);
+         -webkit-transform: rotate(-90deg);
+         -moz-transform: rotate(-90deg);
+         -ms-transform: rotate(-90deg);
+         -o-transform: rotate(-90deg);
+         transform: rotate(-90deg);
+       }
+	   
+	    #rotasigambarid_coba {
+		  margin-left: 50px;
+          box-shadow: 2px 2px 2px rgba(0,0,0,0.8);
+       }
+	   
+	   	   
+	   .container2 {
+			font-size: 12px;
+			font-family: sans-serif;
+			margin-top:5px;
+				
+          }
+		.gambardepan{
+		   width :322px ;
+		   height :212px;
+		  /* background:url(<?php echo site_url('assets/img/id_card/bg/depan/depan_terbaru_1.png'); ?>); */
+		   background:url(<?php echo site_url('assets/img/id_card/bg/depan/depan_new1.png'); ?>);
+		   position:relative;
+		   background-repeat: no-repeat;
+		   background-size: 322px 212px;
+		  -webkit-print-color-adjust: exact;
+		 		  		  
+		}
+		
+		.gambardepan_harian_lepas{
+		   width :215px ;
+		   height :325px;
+		   /* background:url(<?php echo site_url('assets/img/id_card/bg/depan/karyawan_depan.png'); ?>); */
+		   background:var(--bg_harian_lepas);
+		   position:relative;
+		   background-repeat: no-repeat;
+		   background-size: 215px 325px;
+		}
+		
+		.gambarbelakang{
+		   background-image: url(<?php echo site_url('assets/img/id_card/bg/belakang/belakang_terbaru1.png'); ?>);
+		   width :322px ;
+		   height :212px;
+		   background-repeat: no-repeat;
+		   background-size: 322px 212px;
+		  -webkit-print-color-adjust: exact;
+		   position:absolute;
+		   margin-left:320px;
+		   margin-top:-213px;
+	     }
+		
+	   .satu{
+		   width :230px ;
+		   height :200px;
+		   position:relative;
+		  }
+		  
+	     .depan_barcode{
+		   position:absolute;
+		   width :250px ;
+		   height :40px;
+		   top:0px;
+		   left:0px;
+		   margin-left:160px;
+		   margin-top:90px;
+		    -webkit-transform: rotate(-90deg);
+           -moz-transform: rotate(-90deg);
+           -ms-transform: rotate(-90deg);
+           -o-transform: rotate(-90deg);
+           transform: rotate(-90deg);
+		  }
+		  
+		 .depan_text1{
+		   position:absolute;
+		   width :230px ; 
+		   height :50px;
+		   top:15px;
+		   left:0px;
+		   margin-left:80px;
+		    margin-top:65px;
+		    -webkit-transform: rotate(-90deg);
+           -moz-transform: rotate(-90deg);
+           -ms-transform: rotate(-90deg);
+           -o-transform: rotate(-90deg);
+           transform: rotate(-90deg);
+		   font-weight: bold;
+		  
+		  }
+		  
+		  .depan_text1_nama {
+			 font-size:12px; 
+		     font-family:sans-serif;
+			 width :60px ;
+			 position:absolute;
+			 margin-left:5px;
+			 text-align : right;
+			
+	       }
+		   
+		   .depan_text1_titik1 {
+		     font-size:12px; 
+		     font-family:sans-serif;
+			 width :8px ;
+			 position:absolute;
+			 margin-left:80px;
+			  
+	       }
+		   
+		   .depan_text1_nama2{
+			   font-size:14px; 
+		     font-family:sans-serif;
+			 width :200px ;
+			  position:absolute;
+			  margin-left:10px;
+			  text-align:center;
+		   }
+		   
+		    .depan_text1_lain{
+			   font-size:12px; 
+		       font-family:sans-serif;
+			   width :200px ;
+			  position:absolute;
+			  margin-left:15px;
+			  text-align:center;
+		   }
+		   
+		   
+		  
+		 .depan_text1_dept{
+		   position:absolute;
+		   width :230px ; 
+		   height :50px;
+		   top:15px;
+		   left:0px;
+		   margin-left:120px;
+		    margin-top:65px;
+		    -webkit-transform: rotate(-90deg);
+           -moz-transform: rotate(-90deg);
+           -ms-transform: rotate(-90deg);
+           -o-transform: rotate(-90deg);
+           transform: rotate(-90deg);
+		   font-weight: bold;
+		 }
+		 
+		 .depan_text1_nik{
+		   position:absolute;
+		   width :230px ; 
+		   height :50px;
+		   top:15px;
+		   left:0px;
+		   margin-left:140px;
+		    margin-top:65px;
+		    -webkit-transform: rotate(-90deg);
+           -moz-transform: rotate(-90deg);
+           -ms-transform: rotate(-90deg);
+           -o-transform: rotate(-90deg);
+           transform: rotate(-90deg);
+		   font-weight: bold;
+		 }
+		 
+		   .depan_dept {
+		     font-size:12px; 
+		     font-family:sans-serif;
+			 width :60px ;
+			 position:absolute;
+			 margin-left:15px;
+	       }
+		   
+		   .depan_titik_dept {
+		     font-size:12px; 
+		     font-family:sans-serif;
+			 width :10px ;
+			 position:absolute;
+			 margin-left:80px;
+			  
+	       }
+		   
+		   .depan_text1_dept2{
+			   font-size:12px; 
+		     font-family:sans-serif;
+			 width :150px ;
+			
+			  position:absolute;
+			  margin-left:90px;
+		   }
+		  
+			  
+	
+		
+		
+		 .belakang1{
+		position:absolute;
+		   width :210px ;
+		   height :40px;
+		   top:10px;
+		   left:0px;
+		   margin-left:-90px;
+		   margin-top:70px;
+		   -webkit-transform: rotate(90deg);
+           -moz-transform: rotate(90deg);
+           -ms-transform: rotate(90deg);
+           -o-transform: rotate(90deg);
+           transform: rotate(90deg);
+		   padding: 5px 0px;
+		  
+		  }
+		   .belakang1_alamat {
+		     font-size:6px; 
+		     font-family:sans-serif;
+			 text-align: center;
+		   }
+		  
+		 .qr_map{
+		   position:absolute;
+		   width :100px ;
+		   height :100px;
+		   top:0px;
+		   left:0px;
+		   margin-left:180px;
+		   margin-top:20px;
+		    -webkit-transform: rotate(90deg);
+           -moz-transform: rotate(90deg);
+           -ms-transform: rotate(90deg);
+           -o-transform: rotate(90deg);
+           transform: rotate(90deg);
+		 
+		  }
+		  
+		  .belakang2{
+			 position:absolute;
+		     width :200px ;
+		     height :50px;
+		     top:10px;
+		     left:0px;
+		     margin-left:28px;
+		     margin-top:70px;
+		     -webkit-transform: rotate(90deg);
+             -moz-transform: rotate(90deg);
+             -ms-transform: rotate(90deg);
+             -o-transform: rotate(90deg);
+             transform: rotate(90deg);
+		     padding: 2px 0px;
+			 font-size:10px; 
+		     font-family:sans-serif;
+			 text-align: left;
+		  }
+	   
+	   
+	</style>
+</head>
+<body>
+   <div class="container2">
+     <div class="gambardepan_harian_lepas">
+	 <!--	 <img id="rotasigambarid_cobaxx" src=<?php //echo site_url('assets/img/id_card/bg/depan/karyawan_depan.png'); ?> width='215px' height='325px' alt='' > -->
+	     <div class='satu'>
+	      <img id="rotasigambarid_coba" src=<?php echo site_url('assets/img/profile/rosidi/rosidi_072847_ROSIDI.JPG'); ?> width='108px' height='120px' alt='' style='border: 2px solid grey;border-radius:50%;position: absolute; margin-top:20%; margin-left:25%;'> 
+		  </div>
+	    </div>
+	 </div>
+  </div>
+</body>
+</html>
+

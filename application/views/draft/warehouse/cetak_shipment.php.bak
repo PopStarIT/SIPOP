@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Packing List</title>
+    <style>
+        /* Gaya Tampilan di Layar (Screen) */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 10px;
+        }
+        .container {
+            background: white;
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header { 
+		  /* border-bottom: 2px solid #333; */
+		  padding-bottom: 0px; 
+		  margin-bottom: 0px; 
+		  text-align: center;
+		}
+		
+        table { 
+		  width: 100%; 
+		  border-collapse: 
+		  collapse; 
+		  margin-top: 20px; 
+		  font-size: 0.7em;
+		 }
+		  /*  td { border: px solid #ddd; padding: 6px; text-align: left; } */
+        td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+        th {  border: 1px solid #ccc; padding: 10px; text-align: center; background-color: #f8f8f8; }
+        
+        .btn-area { margin-top: 20px; text-align: right; }
+        .btn { padding: 10px 20px; cursor: pointer; background: #27ae60; color: white; border: none; border-radius: 5px; }
+		
+		.info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* Membagi 2 kolom */
+            /* gap: 15px 40px;  Jarak vertikal 15px, horizontal 40px */
+			gap: 15px 40px;
+            margin-bottom: 30px;
+			font-size: 0.7em;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
+        }
+		
+		.info-item-nol {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 5px;
+        }
+		
+		.label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .value {
+            text-align: right;
+            color: #000;
+        }
+		
+
+        /* Gaya Khusus Saat Dicetak (Print) */
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; max-width: 100%; margin: 0; }
+            .no-print { display: none; } /* Elemen ini akan hilang di kertas */
+            
+            @page {
+                size: A4;
+                margin: 2cm;
+            }
+        }
+    </style>
+</head>
+<?php 
+ $this->load->model('main');
+ $q = $this->db_pop->query('SELECT a.fabric_shipment_id,b.fabric_shipment_detail_id,a.fabric_shipment_no,a.fabric_shipment_date,a.fabric_shipment_note
+	,b.purchase_order_no,b.item_code,b.fabric_shipment_detail_invoice_number,b.quantity,d.item_base_code,b.weight FROM dbo.dt_fabric_shipment a left join dbo.view_fabric_shipment_detail b ON a.fabric_shipment_id = b.fabric_shipment_id left join public.dt_mst_item c ON b.item_id = c.item_id left join public.dt_mst_item_base d ON c.item_base_id = d.item_base_id WHERE a.fabric_shipment_id='. $fabric_shipment_id .'order by b.fabric_shipment_detail_id ASC ');
+ $r =$q->result();
+
+
+?>
+<body onload="window.print();">
+
+    <div class="container">
+        <div class="header">
+            <h2>DETAIL PACKING LIST</h2>
+        </div>
+   <?php 
+     $jml=0;
+     $jml_amount=0;
+      foreach($q->result() as $r){
+   ?>		
+		<div class="info-grid">
+          <div class="info-item">
+            <span class="label">INVOICE NUMBER</span>
+            <span class="value"><?php echo $r->fabric_shipment_detail_invoice_number ;  ?></span> 
+		  </div>
+        
+          <div class="info-item-nol">
+            <span class="label"></span>
+            <span class="value"></span> 
+		  </div>
+		  
+		   <div class="info-item">
+            <span class="label">DATE</span>
+            <span class="value"><?php echo $r->fabric_shipment_date ;  ?></span> 
+		  </div>
+		  
+		  
+		  <div class="info-item">
+            <span class="label">PO NUMBER</span>
+            <span class="value"><?php echo $r->purchase_order_no ;  ?></span>
+          </div>
+		  
+		   <div class="info-item-nol">
+            <span class="label"></span>
+            <span class="value"></span> 
+		  </div>
+
+          <div class="info-item">
+            <span class="label">Shipment Number</span>
+            <span class="value"><?php echo $r->fabric_shipment_no ;  ?></span>
+           </div>
+		   
+		  <div class="info-item">
+            <span class="label">DESCRIPTION</span>
+            <span class="value"><?php echo $r->fabric_shipment_note ; ?></span>
+          </div>
+		   <div class="info-item-nol">
+            <span class="label"></span>
+            <span class="value"></span> 
+		  </div>
+           <div class="info-item-nol">
+            <span class="label"></span>
+            <span class="value"></span> 
+		  </div>
+		  
+		   <div class="info-item">
+            <span class="label">BUYER</span>
+            <span class="value">PT.POPSTAR</span>
+          </div>
+		  <div class="info-item-nol">
+            <span class="label"></span>
+            <span class="value"></span> 
+		  </div>
+           <div class="info-item-nol">
+            <span class="label"></span>
+            <span class="value"></span> 
+		  </div>
+		  
+		    <div class="info-item">
+            <span class="label">ITEM BASE</span>
+            <span class="value"><?php echo $r->item_base_code; ?></span>
+          </div>
+		  <div class="info-item-nol">
+            <span class="label"></span>
+            <span class="value"></span> 
+		  </div>
+           <div class="info-item-nol">
+            <span class="label"></span>
+            <span class="value"><?php echo number_format($r->weight,4,',','.') ; ?></span> 
+		  </div>
+		  
+		    <div class="info-item">
+            <span class="label">ITEM DETAIL</span>
+            <span class="value"><?php echo $r->item_code ; ?></span>
+          </div>
+		  <div class="info-item-nol">
+            <span class="label"></span>
+            <span class="value"></span> 
+		  </div>
+           <div class="info-item-nol">
+            <span class="label">TOTAL QTY (YRD)</span>
+            <span class="value"><?php echo number_format($r->quantity,4,',','.') ; ?></span> 
+			
+		  </div>
+		</div>
+		
+        <table>
+            <thead>
+                <tr>
+                    <th>COLOUR</th>
+                    <th>LOT</th>
+                    <th>BALE</th>
+					<th>ROLL</th>
+                    <th>WEIGHT (KGM)</th>
+                    <th>QTY (YRD)</th>
+                </tr>
+            </thead>
+			<?php 
+		 $q_dtl = $this->db_pop->query('SELECT a.fabric_shipment_list_colour,a.fabric_shipment_list_lot,a.fabric_shipment_list_bale,a.fabric_shipment_list_roll,a.fabric_shipment_list_weight,a.fabric_shipment_list_quantity FROM dbo.dt_fabric_shipment_list a 
+	where a.fabric_shipment_detail_id='. $r->fabric_shipment_detail_id .' order by a.fabric_shipment_detail_id ASC');
+           foreach($q_dtl->result() as $dtl){
+            ?>
+            <tbody>
+                <tr>
+                    <td><?php echo $dtl->fabric_shipment_list_colour ; ?></td>
+                    <td><?php echo $dtl->fabric_shipment_list_lot ; ?></td>
+                    <td><?php echo $dtl->fabric_shipment_list_bale ; ?></td>
+					<td><?php echo $dtl->fabric_shipment_list_roll ; ?></td>
+                    <td><?php echo $dtl->fabric_shipment_list_weight ; ?></td>
+                    <td><?php echo $dtl->fabric_shipment_list_quantity ; ?></td>
+                </tr>
+            </tbody>
+		<?php 
+           }
+        ?>
+        </table>
+		
+      <br />
+	   <br />
+	<?php 
+      }
+    ?>
+        <div class="btn-area no-print">
+            <p><i>Halaman ini otomatis membuka jendela cetak. Jika tidak muncul, klik tombol di bawah:</i></p>
+            <button class="btn" onclick="window.print()">Cetak Manual</button>
+        </div>
+    </div>
+
+</body>
+</html>

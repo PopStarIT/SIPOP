@@ -1,0 +1,153 @@
+<script type="text/javascript">  
+	$(function () {
+        "use strict";
+        $("#table_<?php echo $methodid ?>").jqGrid({
+			url: baseurl+'<?php echo $class_uri ?>/loaddata',
+			mtype : "post",
+			postData:{'q':'1','date_start':'<?php echo date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) ) ?>','date_end':'<?php echo date("Y-m-d") ?>','<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'},
+			datatype: "json",
+			colNames:[
+				'NOMOR CONTRACT'
+				,'SUBCON OUT'
+				,'SUBCON DATE'
+				,'PARTNER NAME'
+				,'ITEM CODE'
+				,'ITEM NAME'
+				,'QTY SUBCON OUT'
+				,'BC OUT NO'
+				,'BC OUT DATE'
+				,'NO DELIVERY'
+				,'TGL DELIVERY'
+				,'QTY DELIVERY'
+				,'CONVERSION'
+				,'QTY DELIVERY'
+				,'SUBCON IN'
+				,'SUBCON IN DATE'
+				,'QTY SUBCON'
+				,'BC IN NO'
+				,'BC IN DATE'
+				,'GRN NO'
+				,'GRN DATE'
+				,'QTY GRN'
+				,'CONVERSION'
+				,'QTY GRN'
+				,'OUTSTANDING'
+			],
+			colModel:[
+				{name:'r61',index:'r61', width:200},
+				{name:'r62',index:'r62', width:200},
+				{name:'r63',index:'r63', width:100},  
+				{name:'r64',index:'r64', width:100}, 
+				{name:'r65',index:'r65', width:100},
+				{name:'r66',index:'r66', width:300},
+				{name:'r67',index:'r67', width:100},
+				{name:'r68',index:'r68', width:100},
+				{name:'r69',index:'r69', width:100},
+				{name:'r70',index:'r70', width:150},
+				{name:'r71',index:'r71', width:100},
+				{name:'r72',index:'r72', width:100},
+				{name:'r73',index:'r73', width:100},
+				{name:'r74',index:'r74', width:100},
+				{name:'r75',index:'r75', width:200},
+				{name:'r76',index:'r76', width:100},
+				{name:'r77',index:'r77', width:100},
+				{name:'r78',index:'r78', width:100},
+				{name:'r79',index:'r79', width:100},
+				{name:'r80',index:'r80', width:100},
+				{name:'r81',index:'r81', width:100},
+				{name:'r82',index:'r82', width:100},
+				{name:'r83',index:'r83', width:100},
+				{name:'r84',index:'r84', width:100},
+				{name:'r85',index:'r85', width:100},
+			],
+			 iconSet: "fontAwesome",
+            iconSet: "fontAwesome",
+            idPrefix: "g1_",
+            rownumbers: true,
+			rowNum:10,
+			rowList:[10,20,30],
+			pager: '#ptable_<?php echo $methodid ?>',
+            sortname: "r61",
+            sortorder: "asc",
+			shrinkToFit:false,
+			autowidth: true,
+			height: 250,		
+			jsonReader: { repeatitems : false },
+			viewrecords : true,
+			gridview:true
+		}); 
+		$("#table_<?php echo $methodid ?>").jqGrid("setColProp", "rn", {hidedlg: false});
+		
+		$("#table_<?php echo $methodid ?>").jqGrid('setGroupHeaders', 
+			{ useColSpanStyle: true, groupHeaders:[
+			{startColumnName: 'r62', numberOfColumns: 13, titleText: '<em><center>BARANG DIKIRIM</center></em>'},
+			{startColumnName: 'r75', numberOfColumns: 5, titleText: '<em><center>BARANG DITERIMA</center></em>'},
+		] });
+		
+		$("#table_<?php echo $methodid ?>").jqGrid('navGrid','#ptable_<?php echo $methodid ?>',{edit:false,add:false,del:false,view:false, search: false});  
+		$("#table_<?php echo $methodid ?>").jqGrid('filterToolbar',{stringResult: true,searchOnEnter : false, defaultSearch: 'cn', ignoreCase: false});  
+		
+	});
+					
+	$( document ).ready(function() {
+		$('#form_<?php echo $methodid ?>_date_start').datepicker(
+			{
+				format: 'yyyy-mm-dd',
+				todayBtn: "linked"
+			}
+		);		
+		
+		$('#form_<?php echo $methodid ?>_date_end').datepicker(
+			{
+				format: 'yyyy-mm-dd',
+				todayBtn: "linked"
+			}
+		);						
+	});
+	
+	function search_<?php echo $methodid ?>(){
+		date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+		date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+	  
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', 
+			{
+				postData: {
+					'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+					 ,date_start:date_start
+					 ,date_end:date_end
+				} 
+			
+			}
+		);
+        $('#table_<?php echo $methodid ?>').trigger( 'reloadGrid' );
+	}
+	
+	function print_<?php echo $methodid ?>(format){
+      date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+      date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+      var data_send={
+         '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+         ,date_start:date_start
+         ,date_end:date_end
+         ,format:format
+         ,print:1
+      }; 
+      $.ajax({
+         type: "POST",
+         url:baseurl + '<?php echo $class_uri ?>/loaddata',
+         data: data_send,
+         dataType : 'json',
+         complete: function(){
+         },
+         success: function(msg){
+            if (!msg.valid){  
+               show_error('show','error',msg.des);
+               return false;
+            }else{
+               download_file('<?php echo $methodid ?>',msg.xfile,msg.namafile,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>'); 
+               return false; 
+            } 
+         }
+      }) ;   
+	}		
+</script>

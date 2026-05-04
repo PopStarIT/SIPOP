@@ -1,0 +1,253 @@
+<script type="text/javascript">
+    var new_checklist = 1;
+    var checklist_id = 0;
+    var checklist_lock_data = 0;
+
+
+
+
+
+
+    $(".form_tab_<?php echo $methodid ?>").on("click", "a", function(e) {
+        //alert("coba view");
+        e.preventDefault();
+        idsOfSelectedRows_<?php echo $methodid ?>_detail_spec = [];
+
+        setTimeout(function() {
+
+
+            //dari haris
+            $("#table_<?php echo $methodid ?>_header").trigger('reloadGrid');
+
+            $("#table_<?php echo $methodid ?>_header").setGridWidth($('.grid_container_<?php echo $methodid; ?>_header').width() - 20, true).trigger('resize');
+
+
+            $("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+            $("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20, true).trigger('resize');
+
+
+            $('.tab_scrollbar').getNiceScroll().resize();
+        }, 1000);
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function edit_<?php echo $methodid ?>(id) {
+        $.ajax({
+            url: baseurl + 'loader',
+            data: {
+                '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+                param: 'data_checklist',
+                param_pop: 'db_pop',
+                id: id
+            },
+            dataType: 'json',
+            method: 'post',
+            success: function(data) {
+                 console.log(data);
+                $('#form_<?php echo $methodid ?>_checklist_id').val(data[0].checklist_id);
+                $('#form_<?php echo $methodid ?>_list').val(data[0].list);
+                $('#form_detail_<?php echo $methodid ?>_checklist_id').val(data[0].checklist_id);
+                $('#form_detail_<?php echo $methodid ?>_item_code').val(data[0].item_code);
+                $('#form_detail_<?php echo $methodid ?>_item_name').val(data[0].item_name);
+
+                checklist_id = id;
+                checklist_lock_data = data[0].lock_data;
+                new_checklist = 0;
+
+                setTimeout(function() {
+                    $('.tab_scrollbar').getNiceScroll().resize();
+                }, 100);
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    function cancel_<?php echo $methodid ?>() {
+        $('#panel_content_<?php echo $methodid ?>').show();
+        $('#panel_content_form_<?php echo $methodid ?>').hide();
+    }
+
+
+
+    function cancel_detail_<?php echo $methodid ?>() {
+        $('#panel_content_<?php echo $methodid ?>').show();
+        $('#panel_content_form_<?php echo $methodid ?>').hide();
+    }
+
+    function save_<?php echo $methodid ?>() {
+        $('#form_<?php echo $methodid ?>').submit();
+    }
+
+    function save_detail_<?php echo $methodid ?>() {
+        $('#form_detail_<?php echo $methodid ?>').submit();
+    }
+
+
+    var checklist_submit = 0;
+
+    function post_<?php echo $methodid ?>() {
+        if (checklist_submit == 0) {
+            checklist_submit = 1;
+
+
+
+            page_loading("show", '<?php echo $page_title ?>', 'Please Wait...');
+            var data = $("#form_<?php echo $methodid ?>").serialize();
+            $.ajax({
+                url: baseurl + '<?php echo $class_uri ?>/post_add_edit',
+                data: data,
+                dataType: 'json',
+                method: 'post',
+                success: function(data) {
+                    page_loading("hide");
+                    checklist_submit = 0;
+                    if (data.valid) {
+                        show_success("show", '<?php echo 'Berhasil Tambah Data' ?>', data.message, function() {
+                            location.reload();
+                        });
+                        $('#panel_content_<?php echo $methodid ?>').show();
+                        $('#panel_content_form_<?php echo $methodid ?>').hide();
+                        $('#form_<?php echo $methodid ?>_checklist_id').val(data.checklist_id);
+                    } else {
+                        show_error("show", 'Error', data.message);
+                    }
+                },
+                error: function(xhr, error) {
+                    show_error("show", xhr.status.toString() + ' ' + xhr.statusText, 'Please try again');
+                    checklist_submit = 0;
+                }
+            });
+        }
+    }
+
+
+
+    function addSubChecklist(button, listId) {
+        if (listId === 23) { // Hanya untuk master_list_id 23
+            const container = $(button).siblings('.sub-checklist-container');
+            const newRow = `
+            <div class="sub-list-row mt-2 d-flex align-items-center">
+                <input type="text" name="sub_list[]" class="form-control form-control-sm mr-2" style="width: 200px;" placeholder="Enter sub list item">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeSubChecklist(this)">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        `;
+            container.append(newRow);
+        }
+    }
+
+    // Fungsi untuk menghapus sub checklist
+    function removeSubChecklist(button) {
+        $(button).closest('.sub-list-row').remove();
+    }
+
+    // Modifikasi fungsi post_add_edit_detail
+    function post_add_edit_detail_<?php echo $methodid ?>() {
+        if (check_submit == 0) {
+            check_submit = 1;
+            page_loading("show", '<?php echo $page_title ?>', 'Please Wait...');
+
+            var formData = new FormData($("#form_detail_<?php echo $methodid ?>")[0]);
+
+            // Ambil semua nilai sub_list untuk master_list_id 23
+            var subListValues = [];
+            if ($('input[name="check_status[23]"]:checked').length > 0) {
+                $('input[name="sub_list[]"]').each(function() {
+                    if ($(this).val().trim() !== '') {
+                        subListValues.push($(this).val().trim());
+                    }
+                });
+            }
+
+            // Tambahkan sub_list ke formData jika ada
+            if (subListValues.length > 0) {
+                formData.delete('sub_list[]'); // Hapus existing sub_list entries
+                subListValues.forEach(value => {
+                    formData.append('sub_list[]', value);
+                });
+            }
+
+            $.ajax({
+                url: baseurl + '<?php echo $class_uri ?>/post_add_edit_detail',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function(response) {
+                    page_loading("hide");
+                    check_submit = 0;
+                    console.log(response);
+
+                    var data = JSON.parse(response);
+                    if (data.valid) {
+                        show_success("show", '<?php echo 'Berhasil Tambah Data' ?>', data.message, function() {
+                            location.reload();
+                        });
+                        $('#panel_content_<?php echo $methodid ?>').show();
+                        $('#panel_content_form_<?php echo $methodid ?>').hide();
+                        refreshGrid();
+                    } else {
+                        show_error("show", 'Error', data.message);
+                    }
+
+                },
+                error: function(xhr, error) {
+                    page_loading("hide");
+                    check_submit = 0;
+                    show_error("show", xhr.status.toString() + ' ' + xhr.statusText, 'Please try again');
+                }
+            });
+        }
+    }
+
+
+
+    $("#table_781105").click(function() {
+        // var ids = jQuery("#table_781105").jqGrid('getGridParam', 'selarrrow');
+        var id = jQuery("#table_781105").jqGrid('getGridParam', 'selrow');
+
+        // alert(id);
+        if (id) {
+            var row = jQuery("#table_781105").jqGrid('getRowData', id);
+
+
+            $("#table_<?php echo $methodid ?>_marker").jqGrid('setGridParam', {
+                postData: {
+                    '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+                    id: row.r1
+
+                }
+
+            });
+
+
+            $('#table_<?php echo $methodid ?>_marker').trigger('reloadGrid');
+        } else {
+            $("#table_781105").jqGrid('setSelection', id);
+        }
+
+
+    });
+</script>

@@ -1,0 +1,329 @@
+<script type="text/javascript">  
+   
+   $(function () {
+        "use strict";
+		$("#table_<?php echo $methodid ?>_id_card").jqGrid({
+			url: baseurl+'<?php echo $class_uri ?>/loaddata',
+			mtype : "post",
+			postData:{'q':'1','date':'<?php echo date("Y-m-d") ?>','<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'},
+			datatype: "json",
+			colNames:['ID KARYAWAN','NAME DB','NAME','NIK','DEPARTEMEN','DIVISI','SUB DIVISI', 'JABATAN', 'STATUS', 'LOKASI PHOTO','departemen','divisi','status','photo','card_id'],
+			colModel:[
+				{name:'r1',index:'r1', width:70,},
+				{name:'r3',index:'r3', width:200},
+				{name:'r4',index:'r4', width:150},
+				{name:'r5',index:'r5', width:100},
+				{name:'r6',index:'r6', width:100,search: false},  
+				{name:'r7',index:'r7', width:90,search: false},  
+				{name:'r8',index:'r8', width:100,search: true},  
+				{name:'r9',index:'r9', width:100,search: true},
+				{name:'r10',index:'r10', width:100,search: true},
+				{name:'r12',index:'r12', width:100,search: true},
+				{name:'r16',index:'r16',hidden:true, width:100,search: true},
+				{name:'r17',index:'r17',hidden:true, width:100,search: true},
+				{name:'r18',index:'r18',hidden:true, width:100,search: true},
+				{name:'r11',index:'r11',hidden:true, width:100,search: true},
+				{name:'r19',index:'r19',hidden:true, width:100,search: true}
+			],
+			iconSet: "fontAwesome",
+            iconSet: "fontAwesome",
+            idPrefix: "g1_",
+            rownumbers: true,
+			multiselect: true,
+			rowNum:10,
+			rowList:[10,20,30],
+			pager: '#ptable_<?php echo $methodid ?>_id_card',
+            sortname: "r1",
+            sortorder: "asc",
+			shrinkToFit:false,
+			autowidth: true,
+			height: 250,		
+			jsonReader: { repeatitems : false },
+			viewrecords : true,
+			gridview:true,
+			onSelectRow: updateIdsOfSelectedRows_<?php echo $methodid ?>_id_card,
+			onSelectAll: function(aRowids, isSelected) {
+				var i, count, id;
+				for (i = 0, count = aRowids.length; i < count; i++) {
+					id = aRowids[i];
+					//alert (id);
+					//	console.log(id);
+					updateIdsOfSelectedRows_<?php echo $methodid ?>_id_card(id, isSelected);
+				}
+			}
+		 });
+		 $("#table_<?php echo $methodid ?>_id_card").jqGrid("setColProp", "rn", {hidedlg: false});
+				 	
+		$("#table_<?php echo $methodid ?>_id_card").jqGrid('navGrid','#ptable_<?php echo $methodid ?>_id_card',{edit:false,add:false,del:false,view:false, search: false});
+      			
+		$("#table_<?php echo $methodid ?>_id_card").jqGrid('filterToolbar',{stringResult: true,searchOnEnter : false, defaultSearch: 'cn', ignoreCase: false});
+		 
+		});
+
+     var idsOfSelectedRows_<?php echo $methodid ?>_id_card = [],
+		updateIdsOfSelectedRows_<?php echo $methodid ?>_id_card = function(id, isSelected) {
+			//alert(id);
+			var index = $.inArray(id, idsOfSelectedRows_<?php echo $methodid ?>_id_card);
+			if (!isSelected && index >= 0) {
+				idsOfSelectedRows_<?php echo $methodid ?>_id_card.splice(index, 1); // remove id from the list
+				//alert("No");
+			} else if (index < 0) {
+				idsOfSelectedRows_<?php echo $methodid ?>_id_card.push(id);
+				//alert("Ok");
+			}
+		};
+
+     $('#form_template_idcard_id').on('change', function (e) {
+		var optionSelected = $("option:selected", this);
+		var valueSelected = this.value;
+		
+		//alert(valueSelected);
+		if (valueSelected == 'template_karyawan'){
+			$('#template_1').show(); 
+			$('#template_2').hide();
+		}else{
+			$('#template_1').hide(); 
+			$('#template_2').show();
+		}
+     });
+	 
+	  function bg_depan_idcard(){
+		 //$('#panel_background_depan').hide();
+		  $('#panel_background_depan').toggle();
+	 }
+	 
+	function add_idcard_<?php echo $methodid ?>(){
+		$('#panel_content_<?php echo $methodid ?>').hide();
+		$('#panel_content_form_<?php echo $methodid ?>').show();
+		
+		$('#content_form_<?php echo $methodid ?>_add').show(); 
+		$('#content_form_<?php echo $methodid ?>_edit').hide(); 
+		
+		
+		$('#form_<?php echo $methodid ?>_card_id').val('');
+		$('#form_<?php echo $methodid ?>_nama_karyawan').val('');
+		$('#form_<?php echo $methodid ?>_nik').val('');
+		$('#form_<?php echo $methodid ?>_departemen').val('');
+		change_form_<?php echo $methodid ?>_divisi_id();
+		change_form_<?php echo $methodid ?>_departemen_id();
+		$('#form_<?php echo $methodid ?>_link_photo_karyawan').val('');
+		
+		
+	}
+	
+	$('.miring_kiri').prop('checked', false);
+	$('.miring_kiri').click(function(){
+		// style=' -webkit-transform: rotate(-90deg);-moz-transform: rotate(-90deg);-ms-transform: rotate(-90deg);-o-transform: rotate(-90deg);transform: rotate(-90deg);
+		if($('.miring_kiri').prop('checked')){
+			//alert('ok');
+			$('#gbr_depan').attr("style","-webkit-transform: rotate(-90deg);-moz-transform: rotate(-90deg);-ms-transform: rotate(-90deg);-o-transform: rotate(-90deg);transform: rotate(-90deg);margin-left:60px;margin-top:-50px;");
+		}else{
+			//alert('No');
+			$('#gbr_depan').removeAttr("style");
+		}
+		
+		
+	});
+	
+	$('#bg_depan').click(function(){
+		
+	});
+	
+	function template_idcard_<?php echo $methodid ?>(){
+		//alert("template");
+		$('#panel_content_<?php echo $methodid ?>').hide();
+		$('#panel_content_form_<?php echo $methodid ?>').hide();
+		$('#panel_content_form_template_<?php echo $methodid ?>').show();
+		
+		$('#content_form_<?php echo $methodid ?>_template').show(); 
+         
+		 $('#template_1').show(); 
+		 $('#template_2').hide();
+		
+	}
+	
+	function edit_idcard_<?php echo $methodid ?>(){
+		   var rowsData = idsOfSelectedRows_<?php echo $methodid ?>_id_card;
+		   var myArray = [];
+		   var kode='';
+	    if (rowsData.length < 2){
+			if (rowsData.length == 0 ){
+				 show_error('show','error',"Belum dipilih!");
+			}else{
+			   var rowId = rowsData[0];
+			   var row = $('#table_<?php echo $methodid ?>_id_card').jqGrid('getRowData', rowId);
+			   
+			    var id_code = unwrap_cell_value(row.r1).replace(/,/g, '');
+			    var nama_karyawan = unwrap_cell_value(row.r4).replace(/,/g, '');
+				var nik = unwrap_cell_value(row.r5).replace(/,/g, '');
+				var departemen = unwrap_cell_value(row.r16).replace(/,/g, '');
+				var divisi = unwrap_cell_value(row.r17).replace(/,/g, '');
+				var status = unwrap_cell_value(row.r18).replace(/,/g, '');
+				var lokasi_photo = unwrap_cell_value(row.r12).replace(/,/g, '');
+				var card_id = unwrap_cell_value(row.r19).replace(/,/g, '');
+				
+				var img = document.getElementById("gambar_edit");
+				if (lokasi_photo != null){
+				     img.setAttribute("src", baseurl+lokasi_photo);
+				}else{
+					 img.setAttribute("src", baseurl+'assets/img/profile/default.jpeg');
+				}
+			   
+			 $('#panel_content_<?php echo $methodid ?>').hide();
+		     $('#panel_content_form_<?php echo $methodid ?>').show();
+			
+			 //alert(departemen);
+			 $('#content_form_<?php echo $methodid ?>_edit').show(); 
+		     $('#content_form_<?php echo $methodid ?>_add').hide(); 
+			
+			
+			 $('#form_<?php echo $methodid ?>_edit_card_id_edit').val(card_id);
+			 $('#form_<?php echo $methodid ?>_edit_nama_karyawan').val(nama_karyawan);
+			 $('#form_<?php echo $methodid ?>_edit_nik_edit').val(nik);
+			 $('#form_<?php echo $methodid ?>_edit_link_photo_karyawan_edit').val(lokasi_photo);
+			 
+			 change_form_<?php echo $methodid ?>_edit_departemen_edit(departemen);
+			 change_form_<?php echo $methodid ?>_edit_divisi_id_edit(divisi);
+			 change_form_<?php echo $methodid ?>_edit_status_id_edit(status);
+			
+			}
+	     }else{
+			 
+			   show_error('show','error',"Pilih satu data!");
+			 $('#panel_content_<?php echo $methodid ?>').show();
+		      $('#panel_content_form_<?php echo $methodid ?>').hide();
+	    }
+		   for (var i = 0; i < rowsData.length; i++) {
+			   var rowId = rowsData[i];
+			   var row = $('#table_<?php echo $methodid ?>_id_card').jqGrid('getRowData', rowId);
+			   var id_code = unwrap_cell_value(row.r1).replace(/,/g, '');
+			   var name_DB = unwrap_cell_value(row.r3).replace(/,/g, '');
+			   var nik = unwrap_cell_value(row.r5).replace(/,/g, '');
+			   var departemen = unwrap_cell_value(row.r6).replace(/,/g, '');
+			    if (i == 0){
+					kode +=id_code;
+				}else{
+			   kode +=','+id_code;
+				}
+			   myArray.push({
+						'id_code': id_code,
+						'name_DB': name_DB,
+						'nik': nik,
+						'departemen': departemen
+			  });
+			    
+		   }
+	}
+	
+	 function printClick() {
+        var w = window.open();
+        var html = $("#cobaCetak2").html();
+       
+          // how do I write the html to the new window with JQuery?
+         $(w.document.body).html(html);
+      }
+	  
+	   function cetak_<?php echo $methodid ?>(){
+		 var id = jQuery("#table_<?php echo $methodid ?>_id_card").jqGrid('getGridParam','selrow');
+	      if (id)	{
+			  var row = jQuery("#table_<?php echo $methodid ?>_id_card").jqGrid('getRowData',id); 
+			    // $("#form_add_edit").fadeIn("slow");
+				//   $('#form_add_edit').show('slow');
+				
+			//	printClick();
+				 $('#form_<?php echo $methodid ?>_idabsen2').val(row.r5);
+				// http://localhost:8083/SIPOP/hrd/karyawan/id_card/id_card
+			        //var win = window.open(baseurl + '<?php echo $class_uri ?>/id_card/loaddata_cetak?' + row.r5 + '/' +format,'_blank');
+					var win = window.open(baseurl + '<?php echo $class_uri ?>/loaddata_cetak?nik='+ row.r5 +'&nama='+ row.r3 + '&link='+row.r11+ '&nama_alias='+row.r4,'_blank');
+				    win.focus();
+				// alert("nomor id=" + baseurl + '<?php echo $class_uri ?>/id_card/loaddata_cetak');
+			
+		  } else {
+				show_error("show",'Error','Please select row');
+			 }
+		setTimeout(function(){ 
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 100);  
+	  }
+	  
+	   function cetak_new_<?php echo $methodid ?>(){
+		  // idsOfSelectedRows_<?php echo $methodid ?>_id_card = [];
+		   var rowsData = idsOfSelectedRows_<?php echo $methodid ?>_id_card;
+		   var myArray = [];
+		   var kode='';
+		   for (var i = 0; i < rowsData.length; i++) {
+			   var rowId = rowsData[i];
+			   var row = $('#table_<?php echo $methodid ?>_id_card').jqGrid('getRowData', rowId); 
+			   var id_code = unwrap_cell_value(row.r1).replace(/,/g, '');
+			   var name_DB = unwrap_cell_value(row.r3).replace(/,/g, '');
+			   var nik = unwrap_cell_value(row.r5).replace(/,/g, '');
+			   var departemen = unwrap_cell_value(row.r6).replace(/,/g, '');
+			    if (i == 0){
+					kode +=id_code;
+				}else{
+			   kode +=','+id_code;
+				}
+			   myArray.push({
+						'id_code': id_code,
+						'name_DB': name_DB,
+						'nik': nik,
+						'departemen': departemen
+			  });
+			    
+		   }
+		  // console.log(kode);
+		   var win = window.open(baseurl + '<?php echo $class_uri ?>/loaddata_cetak_2?kode='+kode,'_blank');
+				    win.focus();
+	   }
+	
+	function cetak2_<?php echo $methodid ?>(){
+	 var id = jQuery("#table_<?php echo $methodid ?>_absen_karyawan").jqGrid('getGridParam','selrow');
+	      if (id)	{
+			  var row = jQuery("#table_<?php echo $methodid ?>_absen_karyawan").jqGrid('getRowData',id); 
+			    var data_send={
+                   '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+                   ,nik:row.r5
+	             }; 
+                $.ajax({
+                   type: "POST",
+                   url:baseurl + '<?php echo $class_uri ?>/loaddata_cetak',
+                   data: data_send,
+                   dataType : 'json',
+                   success: function(msg){
+				               return msg;
+                   }
+                }) ; 
+	  
+		  } else {
+				show_error("show",'Error','Please select row');
+			 }
+		setTimeout(function(){ 
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 100);
+		
+	  
+	}
+	
+	function search_<?php echo $methodid ?>(){
+		karyawan_name = $('#form_<?php echo $methodid ?>_karyawan_name').val();
+		departemen = $('#form_<?php echo $methodid ?>_karyawan_departemen').val();
+		date = $('#form_<?php echo $methodid ?>_date').val();
+		//date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+	
+		$("#table_<?php echo $methodid ?>_absen_karyawan").jqGrid('setGridParam', 
+			{
+				postData: {
+					'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+					 ,karyawan_name:karyawan_name
+					 ,departemen:departemen
+					 ,date:date
+					
+				} 
+			
+			}
+		);
+      
+	  $('#table_<?php echo $methodid ?>_absen_karyawan').trigger( 'reloadGrid' );
+	}
+	 
+</script>

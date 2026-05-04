@@ -1,0 +1,265 @@
+<script type="text/javascript">  
+	$(function () {
+        "use strict";
+		
+        $("#table_<?php echo $methodid ?>_bb").jqGrid({
+			url: baseurl+'<?php echo $class_uri ?>/loaddata',
+			mtype : "post",
+			postData:{'date_start':'<?php echo date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) ) ?>',
+			'date_end':'<?php echo date("Y-m-d") ?>','<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'},
+			datatype: "json",
+			colNames:['KODE BASE','KODE DETAIL','NAMA DETAIL', 'SAT', 'SALDO AWAL', 'PEMASUKAN', 'PENGELUARAN', 'PENYESUAIAN', 'SALDO AKHIR', 'STOCK OPNAME', 'SELISIH', 'KETERANGAN','item_id'],
+			colModel:[
+				{name:'r1',index:'r1', width:100},
+				{name:'r2',index:'r2', width:100},
+				{name:'r3',index:'r3', width:200},
+				{name:'r4',index:'r4', width:35,align:'center'},  
+				{name:'r5',index:'r5', width:80,align:'right',formatter:'formatNumerics'},  
+				{name:'r6',index:'r6', width:80,align:'right',formatter:'formatNumerics'},
+	//			formatoptions: {
+    //            onClick: function (cellValue, rowId, rowData,e){
+	//					 var row = jQuery("#table_<?php echo $methodid ?>_bb").jqGrid('getRowData');
+    //                     var itemID = row[rowId-1]['r13'];
+	//					 const date_start = $('#form_<?php echo $methodid ?>_date_start').val(),
+	//					       date_end = $('#form_<?php echo $methodid ?>_date_end').val();
+	//					 $('#view_modal_masuk').modal('show');  //---popupshow
+	//					 // send_keterangan(badgenumber,Nama,keterangan,date_start,date_end);
+	//					//  $('#form_<?php echo $methodid ?>_badgenumber3').val(rowData.r2);
+	//				  }
+	//			   }
+	//			}, 
+			   {name:'r7',index:'r7', width:80,align:'right',formatter:'formatNumerics'},  
+	       //       formatter: function(cellValue, options, rowObject) {
+           //           // 1. Format Angka (Ribuan)
+           //           var num = parseFloat(cellValue) || 0;
+           //           var formatted = num.toLocaleString('id-ID');
+	       //     
+           //           // 2. Tentukan Warna berdasarkan nilai
+           //           var color = (num >= 1) ? "red" : "green";
+	       //     
+           //           // 3. Buat Link yang memanggil fungsi modal
+           //           // Kita kirim rowId ke fungsi klik agar data bisa diambil dinamis
+           //           return '<a href="javascript:void(0)" ' +
+           //                  'onclick="handleGridClick(\'' + options.rowId + '\', \'' + cellValue + '\', \'' + cellValue + '\')" ' +
+           //                  'style="color:' + color + '; font-weight:bold; text-decoration:none;">' + 
+           //                  formatted + '</a>';
+           //       }
+			//	},  
+	//			{name:'r7',index:'r7', width:80,align:'right',formatter:'dynamicLinkAndNumeric',
+	//			formatoptions: {
+	//			 onClick: function (cellValue, rowId, rowData,e){
+	//					 var row = jQuery("#table_<?php echo $methodid ?>_bb").jqGrid('getRowData');
+    //                     var itemID = row[rowId-1]['r13'];
+	//					 const date_start = $('#form_<?php echo $methodid ?>_date_start').val(),
+	//					       date_end = $('#form_<?php echo $methodid ?>_date_end').val();
+	//					 $('#view_modal_keluar').modal('show');  //---popupshow
+	//					 send_keluar(itemID,date_start,date_end);
+	//					//  $('#form_<?php echo $methodid ?>_badgenumber3').val(rowData.r2);
+	//				  }
+	//			   }
+	//			},  
+				{name:'r8',index:'r8', width:80,align:'right',formatter:'formatNumerics'},
+				{name:'r9',index:'r9', width:100,align:'right',formatter:'formatNumerics'},
+				{name:'r10',index:'r10', width:100,align:'right',formatter:'formatNumerics'},  
+				{name:'r11',index:'r11', width:70,align:'right',formatter:'formatNumerics'},
+				{name:'r12',index:'r12', width:80},
+				{name:'r13',index:'r13', width:80}
+			],
+			iconSet: "fontAwesome",
+            iconSet: "fontAwesome",
+            idPrefix: "g1_",
+            rownumbers: true,
+			rowNum:10,
+			rowList:[10,20,30],
+			pager: '#ptable_<?php echo $methodid ?>_bb',
+            sortname: "r1",
+            sortorder: "asc",
+			shrinkToFit:true,
+			autowidth: true,
+			height: 250,		
+			jsonReader: { repeatitems : false },
+			viewrecords : true,
+			gridview:true
+		}); 
+		$("#table_<?php echo $methodid ?>_bb").jqGrid("setColProp", "rn", {hidedlg: false});
+		
+		$("#table_<?php echo $methodid ?>_bb").jqGrid('setGroupHeaders', 
+			{ useColSpanStyle: true, groupHeaders:[
+			{startColumnName: 'r1', numberOfColumns: 3, titleText: '<em><center>ITEM</center></em>'}
+		] });
+		
+		$("#table_<?php echo $methodid ?>_bb").jqGrid('navGrid','#ptable_<?php echo $methodid ?>_bb',{edit:false,add:false,del:false,view:false, search: false});  
+		$("#table_<?php echo $methodid ?>_bb").jqGrid('filterToolbar',{stringResult: true,searchOnEnter : false, defaultSearch: 'cn', ignoreCase: false});  
+		
+		//----tabel rincian pengeluaran ------------------
+		
+		 $("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid({
+			url: baseurl+'<?php echo $class_uri ?>/loaddata_rincian_keluar',
+			mtype : "post",
+			postData:{'q':'1','date_start':'<?php echo date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) ) ?>','date_end':'<?php echo date("Y-m-d") ?>','<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>','item_id':'8374'},
+			datatype: "json",
+						
+			colNames:['item base id','item id','KODE BASE','KODE DETAIL','QUANTITY', 'DOKUMEN'],
+			colModel:[
+				{name:'r1',index:'r1', hidden: true},
+				{name:'r2',index:'r2', hidden: true},
+				{name:'r3',index:'r3', width:120},
+				{name:'r4',index:'r4', width:120,align:'center'},  
+				{name:'r5',index:'r5', width:150,align:'right',formatter:'formatNumerics'},  
+				{name:'r6',index:'r6', width:300,align:'left',formatter:'formatNumerics'}, 
+			],
+			 iconSet: "fontAwesome",
+            iconSet: "fontAwesome",
+            idPrefix: "g1_",
+            rownumbers: true,
+			rowNum:10,
+			rowList:[10,20,30],
+			pager: '#ptable_<?php echo $methodid ?>_pengeluaran_rincian',
+            sortname: "r1",
+            sortorder: "asc",
+			shrinkToFit:true,
+			autowidth: true,
+			height: 250,		
+			jsonReader: { repeatitems : false },
+			viewrecords : true,
+			gridview:true
+		}); 
+		$("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid("setColProp", "rn", {hidedlg: false});
+		
+	
+		$("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid('navGrid','#ptable_<?php echo $methodid ?>_pengeluaran_rincian',{edit:false,add:false,del:false,view:false, search: false});  
+		$("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid('filterToolbar',{stringResult: true,searchOnEnter : false, defaultSearch: 'cn', ignoreCase: false});
+		
+		
+    });
+					
+	$( document ).ready(function() {
+		$('#form_<?php echo $methodid ?>_date_start').datepicker(
+			{
+				format: 'yyyy-mm-dd',
+				todayBtn: "linked"
+			}
+		);		
+		
+		$('#form_<?php echo $methodid ?>_date_end').datepicker(
+			{
+				format: 'yyyy-mm-dd',
+				todayBtn: "linked"
+			}
+		);						
+	});
+	
+	 function send_keluar(item_id,date_start,date_end){
+		//alert('coba function Nama=' + nama1 + ', IdAbsen=' + badgenumber1 +', col=' + keterangan1 + ', awal='+ date_start1 + ', akhir='+ date_end1);
+	   $("#table_<?php echo $methodid ?>_pengeluaran_rincian").jqGrid('setGridParam',{
+			postData: {
+			           	'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+			           	 ,item_id:item_id
+			           	 ,date_start:date_start
+			           	 ,date_end:date_end
+			           } 
+			    });
+		  $("#table_<?php echo $methodid ?>_pengeluaran_rincian").trigger('reloadGrid');
+	  }
+	  
+   function handleGridClickxx(rowId, cellValue) {
+       // 1. Ambil data row yang diklik
+       // Gunakan ID tabel PHP yang sama dengan yang kamu pakai
+	
+       var gridSelector = "#table_<?php echo $methodid ?>_bb";
+       var rowData = jQuery(gridSelector).jqGrid('getRowData', rowId);
+	   //var row = jQuery("#table_<?php echo $methodid ?>_bb").jqGrid('getRowData');
+      // var itemID2 = row[rowId-1]['r13'];
+       
+       // 2. Ambil itemID (dari kolom r13 atau kolom lain sesuai kebutuhan)
+       var itemID = rowData['r13'];
+        console.log("Debug ID:", itemID);	   
+      
+       // 3. Ambil tanggal dari input form secara real-time
+       const date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+       const date_end = $('#form_<?php echo $methodid ?>_date_end').val();
+       alert(date_start);
+       // 4. Jalankan perintah modal kamu
+       $('#view_modal_keluar').modal('show');
+       send_keluar(itemID, date_start, date_end);
+    }
+	
+	function handleGridClickxxx(rowId, rawValue) {
+    // rawValue di sini adalah nilai asli r13 sebelum diformat
+    var itemID = rawValue; 
+
+    // Jika itemID ternyata harus mengambil dari kolom LAIN (misal kolom 'ID_SYSTEM')
+    // gunakan getCell agar lebih akurat:
+    // var itemID = jQuery("#table_<?php echo $methodid ?>_bb").jqGrid('getCell', rowId, 'nama_kolom_id_anda');
+
+    const date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+    const date_end = $('#form_<?php echo $methodid ?>_date_end').val();
+
+    console.log("Debug ID:", itemID); // Cek di console F12
+
+    if(itemID !== undefined && itemID !== "") {
+        $('#view_modal_keluar').modal('show');
+        send_keluar(itemID, date_start, date_end);
+    } else {
+        alert("ID tidak ditemukan!");
+    }
+}
+	
+	function search_<?php echo $methodid ?>(){
+		date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+		date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+	  
+		$("#table_<?php echo $methodid ?>_bb").jqGrid('setGridParam', 
+			{
+				postData: {
+					'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+					 ,date_start:date_start
+					 ,date_end:date_end
+				} 
+			
+			}
+		);
+        $('#table_<?php echo $methodid ?>_bb').trigger( 'reloadGrid' );
+	}
+	
+	function print_<?php echo $methodid ?>(format){
+      date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+      date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+      var data_send={
+         '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+         ,date_start:date_start
+         ,date_end:date_end
+         ,format:format
+         ,print:1
+      }; 
+      $.ajax({
+         type: "POST",
+         url:baseurl + '<?php echo $class_uri ?>/loaddata',
+         data: data_send,
+         dataType : 'json',
+         complete: function(){
+         },
+         success: function(msg){
+            if (!msg.valid){  
+               show_error('show','error',msg.des);
+               return false;
+            }else{
+               download_file('<?php echo $methodid ?>',msg.xfile,msg.namafile,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>'); 
+               return false; 
+            } 
+         }
+      }) ;   
+	}
+
+    $('#view_modal_keluar').on('shown.bs.modal', function () {
+      const $container = $('.grid_container_<?php echo $methodid; ?>_pengeluaran_rincian');
+      const $table = $("#table_<?php echo $methodid ?>_pengeluaran_rincian");
+    
+      // Pastikan container ada dan memiliki lebar
+        const containerWidth = $container.width();
+    
+      if (containerWidth > 0) {
+        $table.setGridWidth(containerWidth - 20, true);
+       }
+    });	
+</script>

@@ -1,0 +1,463 @@
+<script type="text/javascript">
+	$('#form_<?php echo $methodid ?>_type_location_id').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let type_location_id = $('#form_<?php echo $methodid ?>_type_location_id').val();
+		//alert (type_location_id);
+		$.ajax({
+			url: baseurl + 'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+					//,param: 'data_type_location'
+					,
+				param: 'get_type_item_location',
+				param_pop: 'db_pop',
+				id: type_location_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data) {
+				page_loading("hide");
+				$('#form_<?php echo $methodid ?>_type_location_code').val(data[0].code);
+			}
+		});
+
+		//generateKode();
+	});
+
+	$('#form_<?php echo $methodid ?>_item_category_id').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let item_category_id = $('#form_<?php echo $methodid ?>_item_category_id').val();
+		//alert (type_location_id);
+		$.ajax({
+			url: baseurl + 'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+					//,param: 'data_type_location'
+					,
+				param: 'get_item_category',
+				param_pop: 'db_pop',
+				id: item_category_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data) {
+				page_loading("hide");
+				$('#form_<?php echo $methodid ?>_item_category_code').val(data[0].code);
+
+
+
+			}
+		});
+
+	});
+
+	$('#form_<?php echo $methodid ?>_warehouse_id').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let warehouse_id = $('#form_<?php echo $methodid ?>_warehouse_id').val();
+		//alert (type_location_id);
+		$.ajax({
+			url: baseurl + 'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+					//,param: 'data_type_location'
+					,
+				param: 'get_warehouse_new',
+				param_pop: 'db_pop',
+				id: warehouse_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data) {
+				page_loading("hide");
+				$('#form_<?php echo $methodid ?>_warehouse_code').val(data[0].code);
+
+
+
+			}
+		});
+
+	});
+
+
+
+	//function generateKode() {
+	function generate_code_<?php echo $methodid ?>() {
+		page_loading("show", '<?php echo $page_title ?>', 'Please Wait...');
+		let location_base_id = $('#form_<?php echo $methodid ?>_location_base_id').val();
+		let location_number = $('#form_<?php echo $methodid ?>_location_number').val();
+		let type_location_code = $('#form_<?php echo $methodid ?>_type_location_code').val();
+		let item_category_code = $('#form_<?php echo $methodid ?>_item_category_code').val();
+		let warehouse_code = $('#form_<?php echo $methodid ?>_warehouse_code').val();
+		let simbol1 = '-';
+		let simbol2 = '/';
+
+		$.ajax({
+			url: baseurl + 'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+					//,param: 'data_type_location'
+					,
+				param: 'get_location_base',
+				param_pop: 'db_pop',
+				id: location_base_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data) {
+				page_loading("hide");
+				console.log(data);
+				//nama = location_name.replace(/\s+/g, '_').toUpperCase();
+				nama = data[0].text;
+				number = location_number.replace(/\s+/g, '_').toUpperCase();
+
+				if (nama === "" || location_number === "") {
+
+					nama = '';
+					number = '';
+					type_location_code = '';
+					item_category_code = '';
+					warehouse_code = '';
+					simbol1 = '';
+					simbol2 = '';
+					show_error("show", 'Error', 'Location Block and Number is null');
+				}
+
+				// Sanitasi: ubah spasi jadi underscore
+				//nama = location_name.replace(/\s+/g, '_').toLowerCase();
+				//number = location_number.replace(/\s+/g, '_').toLowerCase();
+
+				// Gabungkan string
+				//   const template = `ALTER TABLE tabel_anda ADD ${nama} ${tipe};`;
+				const template = 'LD' + simbol1 + nama + simbol1 + type_location_code + simbol2 + item_category_code + simbol2 + warehouse_code + simbol1 + number;
+
+				// Tampilkan ke layar
+				$('#form_<?php echo $methodid ?>_location_code').val(template);
+
+			}
+		});
+
+
+	}
+
+	function cancel_<?php echo $methodid ?>() {
+		$('#panel_content_<?php echo $methodid ?>').show();
+		$('#panel_content_form_<?php echo $methodid ?>').hide();
+		$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+	}
+
+	function save_<?php echo $methodid ?>() {
+		$('#form_<?php echo $methodid ?>').submit();
+	}
+
+
+	function handleEdit_<?php echo $methodid ?>() {
+		var id = jQuery("#table_<?php echo $methodid ?>").jqGrid('getGridParam', 'selrow');
+		if (id) {
+			var row = jQuery("#table_<?php echo $methodid ?>").jqGrid('getRowData', id);
+			$('#panel_content_<?php echo $methodid ?>').hide();
+			$('#panel_content_form_<?php echo $methodid ?>').show();
+
+			$('.form_title_<?php echo $methodid ?>').html('Edit Item');
+
+			edit_<?php echo $methodid ?>(row.r1); // Menggunakan row.r1 sebagai ID
+		} else {
+			show_error("show", 'Error', 'Please select row');
+		}
+	}
+
+	function edit_<?php echo $methodid ?>(id) {
+		page_loading("show", '<?php echo $page_title ?>', 'Please Wait...');
+		$.ajax({
+			url: baseurl + 'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				param: 'data_fabric_subcon_out',
+				param_pop: 'db_pop',
+				id: id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data) {
+				page_loading("hide");
+				$('.button_<?php echo $methodid ?>_detail_edit').hide();
+				$('.button_<?php echo $methodid ?>_detail_new').show();
+
+				subcon_out_open_form = 1;
+				new_subcon_out = 0;
+				subcon_out_id = data[0].subcon_out_id;
+				subcon_out_lock_data = data[0].lock_data;
+				subcon_out_receiver = data[0].receiver;
+				subcon_out_contract_subcon_id = data[0].contract_subcon_id;
+
+				$('#form_<?php echo $methodid ?>_fabric_subcon_out_id').val(data[0].fabric_subcon_out_id);
+				$('#form_<?php echo $methodid ?>_detail_fabric_subcon_out_id').val(data[0].fabric_subcon_out_id);
+				$('#form_<?php echo $methodid ?>_detail_contract_subcon_id').val(data[0].contract_subcon_id);
+				$('#form_<?php echo $methodid ?>_subcon_out_no').val(data[0].fabric_subcon_no);
+				$('#form_<?php echo $methodid ?>_subcon_out_date').val(data[0].fabric_subcon_date);
+				$('#form_<?php echo $methodid ?>_style').val(data[0].style_subcon);
+				$('#form_<?php echo $methodid ?>_no_po').val(data[0].purchase_order_no);
+
+				change_form_<?php echo $methodid ?>_partner_id(data[0].partner_id);
+				// change_form_<?php echo $methodid ?>_currencies_id(data[0].currencies_id);
+
+				$("#tab_<?php echo $methodid; ?>_detail").attr("data-toggle", "tab");
+				$("#tab_<?php echo $methodid; ?>_detail").removeClass("tab_disabled");
+
+				$('.panel_<?php echo $methodid ?>_panel_detail').hide();
+				$('.panel_<?php echo $methodid ?>_panel_receiver').show();
+
+				setTimeout(function() {
+					$("#tab_<?php echo $methodid; ?>_supply").removeAttr("data-toggle");
+					$("#tab_<?php echo $methodid; ?>_supply").addClass("tab_disabled");
+
+					$("#tab_<?php echo $methodid; ?>_detail").attr("data-toggle", "tab");
+					$("#tab_<?php echo $methodid; ?>_detail").removeClass("tab_disabled");
+
+					$("#tab_<?php echo $methodid; ?>_header").attr("data-toggle", "tab");
+					$("#tab_<?php echo $methodid; ?>_header").removeClass("tab_disabled");
+					$("#tab_<?php echo $methodid; ?>_header").click();
+
+					change_form_<?php echo $methodid ?>_contract_subcon_id(data[0].contract_subcon_id);
+					$('.tab_scrollbar').getNiceScroll().resize();
+				}, 300);
+			}
+		});
+	}
+
+	var check_submit = 0;
+
+	function post_<?php echo $methodid ?>() {
+		if (check_submit == 0) {
+			check_submit = 1;
+			page_loading("show", 'Save <?php echo $page_title ?>', 'Please Wait...');
+			var data = $("#form_<?php echo $methodid ?>").serialize();
+			$.ajax({
+				url: baseurl + '<?php echo $class_uri ?>/post_add_edit',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data) {
+					page_loading("hide");
+					check_submit = 0;
+					if (data.valid) {
+						show_success("show", '<?php echo $page_title ?>', data.message);
+
+
+					} else {
+						show_error("show", 'Error', data.message);
+					}
+				},
+				error: function(xhr, error) {
+					//$('#panel_content_<?php echo $methodid ?>').show();
+					//$('#panel_content_form_<?php echo $methodid ?>').hide();
+					//$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+					show_error("show", xhr.status.toString() + ' ' + xhr.statusText, 'Please try again');
+					check_submit = 0;
+				}
+			});
+		}
+	}
+
+	var check_submit = 0;
+
+	function add_<?php echo $methodid ?>() {
+		new_subcon_out = 0;
+		if (check_submit == 0) {
+			check_submit = 1;
+			page_loading("show", '<?php echo $page_title ?> Detail', 'Please Wait...');
+			var data = $("#form_<?php echo $methodid ?>_detail").serialize();
+			$.ajax({
+				url: baseurl + '<?php echo $class_uri ?>/post_add_edit_detail',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data) {
+					page_loading("hide");
+					check_submit = 0;
+					if (data.valid) {
+						show_success("show", '<?php echo $page_title ?> Detail', data.message);
+
+						$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+						cancel_detail_<?php echo $methodid ?>();
+						$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20, true).trigger('resize');
+
+					} else {
+						show_error("show", 'Error', data.message);
+					}
+				},
+				error: function(xhr, error) {
+					show_error("show", xhr.status.toString() + ' ' + xhr.statusText, 'Please try again');
+					check_submit = 0;
+				}
+			});
+		}
+	}
+
+	function edit_<?php echo $methodid ?>(location_id) {
+		page_loading("show", '<?php echo $page_title ?>', 'Please Wait...');
+		//view_item_location'
+		$.ajax({
+			url: baseurl + 'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				param: 'data_item_location',
+				param_pop: 'db_pop',
+				id: location_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data) {
+				page_loading("hide");
+				console.log(data);
+
+				$('#form_<?php echo $methodid ?>_location_id').val(location_id);
+				$('#form_<?php echo $methodid ?>_location_name').val(data[0].location_name);
+				$('#form_<?php echo $methodid ?>_location_number').val(data[0].location_number);
+
+				change_form_<?php echo $methodid ?>_type_location_id(data[0].type_location_id);
+				change_form_<?php echo $methodid ?>_item_category_id(data[0].item_category_id);
+				change_form_<?php echo $methodid ?>_warehouse_id(data[0].warehouse_id);
+
+			}
+		});
+
+	}
+
+	function edit_detail_<?php echo $methodid ?>(subcon_out_detail_id) {
+		page_loading("show", '<?php echo $page_title ?>', 'Please Wait...');
+		$.ajax({
+			url: baseurl + 'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				param: 'data_fabric_subcon_out_detail',
+				param_pop: 'db_pop',
+				id: subcon_out_detail_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data) {
+				page_loading("hide");
+				console.log(data);
+
+				$('#form_<?php echo $methodid ?>_detail_fabric_subcon_out_id').val(data[0].fabric_subcon_out_id);
+				$('#form_<?php echo $methodid ?>_detail_fabric_subcon_out_detail_id').val(data[0].fabric_subcon_out_detail_id);
+				$('#form_<?php echo $methodid ?>_detail_quantity_subcon').val(data[0].quantity_subcon);
+				$('#form_<?php echo $methodid ?>_detail_conversion').val(data[0].conversion);
+				$('#form_<?php echo $methodid ?>_detail_unit_price').val(data[0].unit_price);
+				//$('#form_<?php echo $methodid ?>_detail_subcon_price').val(data[0].subcon_price);
+
+				$('.button_<?php echo $methodid ?>_detail_edit').show();
+				$('.button_<?php echo $methodid ?>_detail_new').hide();
+
+				change_form_<?php echo $methodid ?>_detail_item_id(data[0].item_id);
+				change_form_<?php echo $methodid ?>_detail_uom_id(data[0].uom_id);
+
+
+				//if(subcon_out_receiver == 0){
+				//	$('.button_<?php echo $methodid ?>_detail_edit').show();
+				//	$('.button_<?php echo $methodid ?>_detail_new').hide();	
+				//	
+				//	change_form_<?php echo $methodid ?>_detail_item_id(data[0].item_id);
+				//	change_form_<?php echo $methodid ?>_detail_uom_id(data[0].uom_id);
+				//} else {
+				//	$("#table_<?php echo $methodid ?>_receiver").trigger('reloadGrid');
+				//}		
+			}
+		});
+	}
+
+
+	function cancel_detail_<?php echo $methodid ?>() {
+		//$('#form_<?php echo $methodid ?>_detail_fabric_subcon_out_detail_id').val('');
+		//$('#form_<?php echo $methodid ?>_detail_quantity_subcon').val(0);
+		//$('#form_<?php echo $methodid ?>_detail_conversion').val(1);
+		//$('#form_<?php echo $methodid ?>_detail_unit_price').val(0);;
+		////$('#form_<?php echo $methodid ?>_detail_subcon_price').val(0);;
+		//
+		//$('.button_<?php echo $methodid ?>_detail_edit').hide();
+		//$('.button_<?php echo $methodid ?>_detail_new').show();	
+
+	}
+
+
+	var click_location_<?php echo $methodid ?> = function(row_id, isSelected) {
+
+		var targetInput = $('#form_location_<?php echo $methodid ?>_location_id');
+		var tableDisposisi = $("#table_<?php echo $methodid ?>_detail");
+
+		if (!isSelected) {
+			targetInput.val('');
+		} else {
+
+			targetInput.val(row_id);
+		}
+
+		tableDisposisi.trigger('reloadGrid');
+	};
+
+	function add_<?php echo $methodid ?>() {
+		$('#panel_content_<?php echo $methodid ?>').hide();
+		$('#panel_content_form_<?php echo $methodid ?>').show();
+
+
+
+		setTimeout(function() {
+			$('.tab_scrollbar').getNiceScroll().resize();
+		}, 100);
+	}
+
+	function delete_<?php echo $methodid ?>() {
+		var id = jQuery("#table_<?php echo $methodid ?>").jqGrid('getGridParam', 'selrow');
+		if (id) {
+			var row = jQuery("#table_<?php echo $methodid ?>").jqGrid('getRowData', id);
+			swal({
+				title: "Confirm Delete ?",
+				type: "question",
+				dangerMode: true,
+				showCancelButton: !0,
+				confirmButtonClass: "btn btn-danger m-1",
+				cancelButtonClass: "btn btn-secondary m-1",
+				confirmButtonText: "Confirm",
+				cancelButtonText: "Cancel",
+				backdrop: true,
+				allowOutsideClick: false,
+			}).then((result) => {
+				if (result.value) {
+					page_loading("show", 'Delete <?php echo $page_title ?>', 'Please Wait...');
+					$.ajax({
+						url: baseurl + '<?php echo $class_uri ?>/delete',
+						data: {
+							'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+							location_id: row.r1
+						},
+						dataType: 'json',
+						method: 'post',
+						success: function(data) {
+							page_loading("hide");
+							check_submit = 0;
+							if (data.valid) {
+								show_success("show", 'Delete <?php echo $page_title ?>', data.message);
+								$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+							} else {
+								show_error("show", 'Error', data.message);
+							}
+						},
+						error: function(xhr, error) {
+							show_error("show", xhr.status.toString() + ' ' + xhr.statusText, 'Please try again');
+							check_submit = 0;
+						}
+					});
+				} else if (result.dismiss === swal.DismissReason.cancel) {
+					swal.closeModal();
+				}
+			});
+		} else {
+			show_error("show", 'Error', 'Please select row');
+		}
+	}
+
+	function location_barcode_<?php echo $methodid ?>(id) {
+
+		var location_id = id;
+
+		window.open(baseurl + '<?php echo $class_uri ?>/cetak_barcode_location?' + 'location_id=' + location_id, '_BLANK');
+
+	}
+</script>

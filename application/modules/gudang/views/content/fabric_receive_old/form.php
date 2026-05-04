@@ -1,0 +1,191 @@
+
+<div class="row">
+	<div class="col-xl-12">     
+		<div class="card card-statistics h-100"> 
+			<div class="card-body" style="padding: 1.25rem !important">
+				<h5 class="card-title form_title_<?php echo $methodid ?>"><?php echo $page_title ?></h5>
+				<div class="tab tab-border">
+					<ul class="nav nav-tabs form_tab_<?php echo $methodid ?>" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active show" id="tab_<?php echo $methodid; ?>_header" data-toggle="tab" href="#content_<?php echo $methodid; ?>_header" role="tab" aria-controls="content_<?php echo $methodid; ?>_header" aria-selected="true">
+								Header
+							</a>	
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="tab_<?php echo $methodid; ?>_detail_scan" data-toggle="tab" href="#content_<?php echo $methodid; ?>_detail_scan" role="tab" aria-controls="content_<?php echo $methodid; ?>_detail_scan" aria-selected="true">
+								Detail
+							</a>	
+						</li>
+					
+			
+					</ul>
+					
+					<div class="tab-content">
+						<div class="tab_custom_ecc tab-pane fade active show" id="content_<?php echo $methodid; ?>_header" role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_header">
+							<div class="row panel_<?php echo $methodid ?>_panel_header">
+								<div class="col-xl-12 mb-10 ml-10">
+									<form class="ui grid ecc_form" id="form_<?php echo $methodid ?>" action="javascript:post_<?php echo $methodid ?>()" >
+										<?php 
+											$this->ecc_library->form('hidden','',"form_".$methodid,$this->security->get_csrf_token_name(),$this->security->get_csrf_hash());
+											$this->ecc_library->form('hidden','gfgfd',"form_".$methodid,'fabric_warehouse_receive_id','');
+											//$this->ecc_library->form('hidden','',"form_".$methodid,'purchase_type_id','');
+											//$this->ecc_library->form('hidden','',"form_".$methodid,'this_memo','');
+										?>
+										
+										<div class="row">
+											<div class="col-xl-4">
+												<?php 
+													$this->ecc_library->form('text','Receive No',"form_".$methodid,'fabric_warehouse_receive_no','','','');
+													$this->ecc_library->form('date','Receive Date',"form_".$methodid,'fabric_warehouse_receive_date','','','');
+													
+													
+												?>
+												
+											</div>
+											<div class="col-xl-3">
+											       <?php 
+													//    $this->ecc_library->form('select','Supplier',"form_".$methodid,'partner_id','','','supplier');				
+												    ?>
+													
+											    <div class="select_<?php echo $methodid ?>_from_custom" >
+											   	<?php 
+												  $this->ecc_library->form2('select_pop','Shipment No:',"form_".$methodid,'fabric_shipment_id','','',
+													'data_list_fabric_receive','6');
+												?>
+												</div>	
+												
+											</div>
+										</div>
+										
+										<hr style="margin-right:30px;"/>
+										
+										
+									</form>
+									
+									<div class="ui grid form">
+										<div class="row field">
+											<div class="twelve wide column">
+												<button type="button" class="btn btn-success" onclick="save_<?php echo $methodid ?>()">
+													<i class="fa fa-save"></i> Save Header
+												</button>
+												
+												<button type="button" class="btn btn-info" onclick="cancel_<?php echo $methodid ?>()">
+													<i class="fa fa-arrow-left"></i> Back
+												</button>
+											</div>
+										</div>
+									</div>
+									<br/>
+									<br/>
+									<br/>
+								</div>
+							</div>
+							
+						</div>
+						
+						 <div class="tab_custom_ecc tab-pane fade" id="content_<?php echo $methodid; ?>_detail_scan" role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_detail_scan">
+							<div class="row panel_<?php echo $methodid ?>_panel_detail_scan">
+								<div class="col-xl-12">
+								
+				<!-- <form class="ui grid ecc_form" id="form_<?php echo $methodid ?>_detil_scan" action="javascript:addx_<?php echo $methodid ?>()" enctype="multipart/form-data" method="post"> -->
+										<div class="row">
+										 <div class="col-xl-12">
+										  <div class="row">
+										    <div class="col-xl-4">
+											   <?php
+											     $this->ecc_library->form('hidden','',"form_".$methodid."_detail_scan",$this->security->get_csrf_token_name(),$this->security->get_csrf_hash());
+												  $this->ecc_library->form('hidden','',"form_".$methodid."_detail_scan",'fabric_shipment_id','','','');
+												  $this->ecc_library->form('hidden','',"form_".$methodid."_detail_scan",'fabric_warehouse_receive_id','','','');
+												  $this->ecc_library->form('hidden','',"form_".$methodid."_detail_scan",'fabric_receive_detail_id','','','');
+												  $this->ecc_library->form('hidden','',"form_".$methodid."_detail_scan",'fabric_shipment_list_lot','','','');
+									// $this->ecc_library->form2('select_pop','Purchase Order No:',"form_".$methodid."_detil_scan",'purchase_order_warehouse_id','','','data_list_po_warehouse','6');
+											   ?>
+											   <div class="form-group">
+					                            <label for="fabric_barcode">Barcode Scan</label>
+					                             <div class="input-group">
+						                          <div class="input-group-prepend">
+						                          	<span class="input-group-text"><i class="fa fa-barcode"></i></span>
+						                          </div>
+												   <input  type="text" class="form-control fabric_barcode" id="form_<?php echo $methodid ?>_detail_scan_fabric_barcode"  name="fabric_barcode" onkeypress="scan_receive_<?php echo $methodid ?>(event)" autocomplete='off' />
+						                          <!-- <input  type="hidden" class="form-control fabric_barcode" id="form_<?php echo $methodid ?>_detail_scan_fabric_barcode2"  name="fabric_barcode2" autocomplete='off'/> -->
+					                            </div>
+				                              </div>
+											 </div>
+											 <div class="col-xl-3">
+											    <?php
+												 $this->ecc_library->form2('readonly','Total Lot',"form_".$methodid."_detail_scan",'total_lot','','','');	
+												 //$this->ecc_library->form2('text','Code Barang',"form_".$methodid."_detil_scan",'code_barang','','','');	
+                                                ?>												 
+											</div>
+											<div class="col-xl-3">
+											 <?php
+											  $this->ecc_library->form2('readonly','Total Roll',"form_".$methodid."_detail_scan",'total_roll','','','');
+											  // $this->ecc_library->form2('text','Invoice No',"form_".$methodid."_detil_scan",'fabric_shipment_code','','','');
+										     ?>
+											</div>
+										
+										   </div>
+										 </div>
+										  <div class="col-xl-12">
+										  <div class="row">
+										   <div class="col-xl-3">
+										   <label id="label_message"></label> <br>
+										   </div>
+										  </div>
+										  </div>
+										  
+										   
+									      
+										 </div>
+										 
+										 <div class="row">
+										    <div class="col-xl-10">
+										    <?php 
+								$extra_param = array('methodid'=> $methodid,'extra_param' => array(0 => array('field' => 'fabric_shipment_id','form_id' => 'form_'. $methodid .'_detail_scan_fabric_shipment_id')));
+							//	$extra_param = array('methodid'=> $methodid,'extra_param' => array(0 => array('field' => 'fabric_shipment_id','form_id' => 'form_'. $methodid .'_detail_scan_fabric_shipment_id'),1=> array('field' => 'fabric_shipment_list_lot','form_id' => 'form_'. $methodid .'_detail_scan_fabric_shipment_list_lot')));
+								$this->ecc_library->jqgrid($methodid."_fabric_list", $dashboard_table['field_fabric_list_recive'], $dashboard_table['field_loaddata_list_recive'],$extra_param); 
+									?>
+								          </div>
+										   <div class="col-xl-2">
+										    <?php
+									         $this->ecc_library->form('hidden','',"form_".$methodid."_insert_barcode",'fabric_receive_list_id','','','');
+											 $this->ecc_library->form('hidden','',"form_".$methodid."_insert_barcode",'kode_barcode','','','');
+										    ?>
+										    <div class="form-group" id="group_in_barcode" style="display:none">
+											  <label for="fabric_barcode" id="lbl-insert"><b>Barcode Lot </b></label>
+					                            <div class="input-group" >
+												  <div class="input-group-prepend">
+						                          	<span class="input-group-text"><i class="fa fa-barcode"></i></span>
+						                          </div>
+												   <input  type="text" class="form-control fabric_barcode" id="form_<?php echo $methodid ?>_detail_scan_insert_barcode"  name="insert_barcode" onkeypress="scan_insert_barcode_<?php echo $methodid ?>(event)" autocomplete='off' />
+						                          <!-- <input  type="hidden" class="form-control fabric_barcode" id="form_<?php echo $methodid ?>_detail_scan_fabric_barcode2"  name="fabric_barcode2" autocomplete='off'/> -->
+												  <label id="label_message2"></label> <br>
+					                            </div>
+				                              </div>
+										   </div>
+										 </div>  
+										  <br />
+                            
+									   <div class="row">  
+										    <div class="col-xl-12 grid_container_<?php echo $methodid ?>_detail_receive">
+										      <table id="table_<?php echo $methodid ?>_detail_receive"></table>
+										      <div id="ptable_<?php echo $methodid ?>_detail_receive"></div>
+											</div>
+									     
+									    </div>
+									 </div>
+									 <br />
+									
+								<!--	</form> -->
+								
+								
+						
+								</div>
+							</div>
+		
+					</div>
+				</div>
+			</div>
+		</div>   
+	</div>
+</div>

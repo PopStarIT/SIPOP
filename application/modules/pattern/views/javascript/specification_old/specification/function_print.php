@@ -1,0 +1,169 @@
+<script type="text/javascript">  
+	function nav_button_<?php echo $function ?>()
+	{	
+		var id = jQuery("#table_<?php echo $methodid ?>").jqGrid('getGridParam','selrow');
+		//alert(id);
+		if (id) { 
+			var row = jQuery("#table_<?php echo $methodid ?>").jqGrid('getRowData',id);   
+			//alert(row.r13);
+			//let usernameInput= HTMLInputElement;
+           // let passwordInput= HTMLInputElement;
+		  swal({
+			title: "Confirm Print Specification ?",
+            html: '<div class="form-check"><input type="checkbox" id="xs" class="swal-input" placeholder="xs"><label for="scales">Size XS</label>&nbsp;<input type="checkbox" id="xl" class="swal-input" placeholder="size xl"><label for="scales">Size XL</label> &nbsp;<input type="checkbox" id="xxl" class="swal-input" placeholder="size xxl"><label for="scales">Size XXL</label>&nbsp; <select class="form-control" name="format" id="format" ><option value="pdf">PDF</option><option value="xls">XLS</option> </select></div>',
+				type: "question",
+				dangerMode: true,
+				showCancelButton: !0,
+				confirmButtonClass: "btn btn-danger m-1",
+				cancelButtonClass: "btn btn-secondary m-1",
+				confirmButtonText: "Print",
+				cancelButtonText: "Cancel",
+				backdrop: true,
+				allowOutsideClick : false,
+				focusConfirm: false,
+                  preConfirm: () => {
+					    format = document.getElementById('format').value;
+						xs=document.getElementById('xs').checked;
+						xl=document.getElementById('xl').checked;
+						xxl=document.getElementById('xxl').checked;
+					  var data_send={
+                             '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+                             ,header_id:row.r1
+                             ,format:format
+							 ,xs:xs
+							 ,xl:xl
+							 ,xxl:xxl
+							 ,print:1
+                     };
+					 
+				  if (format=="pdf"){
+				   	//  alert("Oop..sory! Untuk PDF masih dalam proses pengembangan !");
+					$.ajax({
+                             type: "POST",
+                             url:baseurl + '<?php echo $class_uri ?>/loaddata',
+                             data: data_send,
+                             dataType : 'json',
+                             success: function(msg){
+                                if (!msg.valid){  
+                                   show_error('show','error',msg.des);
+                                   return false;
+                                }else{
+								download_file('<?php echo $methodid ?>',msg.xfile,msg.namafile,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>');
+                                //download_file_2('<?php echo $methodid ?>',msg.xfile2,msg.namafile2,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>'); 
+                                   return false; 
+                                } 
+                             }
+                          }) ;
+						  
+				   }else{
+					   $.ajax({
+                             type: "POST",
+                             url:baseurl + '<?php echo $class_uri ?>/loaddata',
+                             data: data_send,
+                             dataType : 'json',
+                             success: function(msg){
+                                if (!msg.valid){  
+                                   show_error('show','error',msg.des);
+                                   return false;
+                                }else{
+								download_file('<?php echo $methodid ?>',msg.xfile,msg.namafile,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>');
+                                //download_file_2('<?php echo $methodid ?>',msg.xfile2,msg.namafile2,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>'); 
+                                   return false; 
+                                } 
+                             }
+                          }) ;
+					  
+					  	
+				   }
+                     				 
+					  
+                  }
+				})
+			//download_excel<?php echo $methodid?>(row.r1);
+			
+		} else {
+			show_error("show",'Error','Please select row');
+		}
+		
+		setTimeout(function(){ 
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 100);
+	}
+	
+	function nav_button2_<?php echo $function ?>()
+	{	
+		var id = jQuery("#table_<?php echo $methodid ?>").jqGrid('getGridParam','selrow');
+		//alert(id);
+		if (id) { 
+			var row = jQuery("#table_<?php echo $methodid ?>").jqGrid('getRowData',id);   
+			//alert(row.r13);
+			//let usernameInput= HTMLInputElement;
+           // let passwordInput= HTMLInputElement;
+		  swal({
+			title: "Confirm Print Specification ?",
+            input: 'select',
+            inputOptions: {
+               'pdf': 'PDF',
+               'xlsx': 'XLSX',
+            },
+			// html: '<input type="checkbox" id="xs" class="swal-input" placeholder="xs"><label for="scales">Size XS</label> &nbsp; <input type="checkbox" id="xl" class="swal-input" placeholder="size xl"><label for="scales">Size xL</label> &nbsp; <input type="checkbox" id="xxl" class="swal-input" placeholder="size xxl"><label for="scales">Size XXL</label>',
+				type: "question",
+				dangerMode: true,
+				showCancelButton: !0,
+				confirmButtonClass: "btn btn-danger m-1",
+				cancelButtonClass: "btn btn-secondary m-1",
+				confirmButtonText: "Print",
+				cancelButtonText: "Cancel",
+				backdrop: true,
+				allowOutsideClick : false,
+				}).then((result) => {
+				if (result.value) {
+                 format = result.value;
+                	  //alert(format);
+					  var data_send={
+                             '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+                             ,header_id:row.r1
+                             ,format:format
+							 ,print:1
+                     }; 
+				   if (format=="pdf"){
+				   //  var win = window.open(baseurl + '<?php echo $class_uri ?>/purchase_order/print_purchase_orderx/' + row.r1 + '/' +format,'_blank');
+				    // win.focus();
+					  alert("Oop..sory! Untuk PDF masih dalam proses pengembangan !");
+				   }else{
+					  // alert("Oop..sory! Untuk excel masih dalam proses pengembangan !");
+					  // alert (row.r1);
+					
+                      $.ajax({
+                             type: "POST",
+                             url:baseurl + '<?php echo $class_uri ?>/loaddata',
+                             data: data_send,
+                             dataType : 'json',
+                             success: function(msg){
+                                if (!msg.valid){  
+                                   show_error('show','error',msg.des);
+                                   return false;
+                                }else{
+                                 download_file('<?php echo $methodid ?>',msg.xfile,msg.namafile,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>'); 
+                                   return false; 
+                                } 
+                             }
+                          }) ;
+					  
+					  	
+				   }
+				} else if (result.dismiss === swal.DismissReason.cancel) {
+					swal.closeModal();	
+		        }
+			});
+			//download_excel<?php echo $methodid?>(row.r1);
+			
+		} else {
+			show_error("show",'Error','Please select row');
+		}
+		
+		setTimeout(function(){ 
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 100);
+	}
+</script>

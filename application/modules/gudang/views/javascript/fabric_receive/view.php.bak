@@ -1,0 +1,45 @@
+<?php $this->load->view($path_template.'/library/javascript/dashboard_table2'); ?>
+<script type="text/javascript">
+
+$(window).on('resize', function() {
+    const windowWidth = $(window).width();
+    const $table = $("#table_<?php echo $methodid ?>");
+    const $container = $('#panel_content_<?php echo $methodid ?>');
+    
+    // Tentukan Breakpoint: Tablet ke bawah (< 992px)
+    const isMobileTablet = windowWidth < 992;
+    
+    // PENTING: Jika mobile/tablet, mode shrink harus FALSE agar scroll muncul
+    const modeShrink = isMobileTablet ? false : true;
+
+    if ($container.length > 0 && $table.length > 0) {
+        // Ambil lebar dari card-body atau container terdekat
+        const targetWidth = $container.closest('.card-body').width();
+        
+        if (targetWidth > 0) {
+            // Gunakan -35 untuk memberi ruang agar tidak mentok ke kanan card
+            $table.setGridWidth(targetWidth - 35, modeShrink);
+        }
+    }
+}).trigger('resize');
+
+    //  $(window).on('resize', function() {
+	//	   const windowWidth = $(window).width();
+	//	   const $container = $('#panel_content_<?php echo $methodid ?>');
+	//	   const $table = $("#table_<?php echo $methodid ?>");
+	//	    // Pastikan container ada dan memiliki lebar
+	//	   const containerWidth = $container.width();
+    //     // Daftar selector [container, table]
+    // 
+    //     if (windowWidth < 992) {
+	//		  
+	//	    $table.setGridWidth(containerWidth - 20, false);
+	//	    
+	//	   }else {
+	//			// --- MODE DESKTOP ---
+	//		  $table.setGridWidth(containerWidth - 20, true);
+	//			
+	//		}
+    //  
+    //   }).trigger('resize');
+</script>

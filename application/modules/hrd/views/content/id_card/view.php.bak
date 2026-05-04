@@ -1,0 +1,112 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xl-12">
+			<div class="card card-statistics"> 
+				<div class="card-body">
+					<div class="row">
+						<div class="col-xl-12">
+							<div id="accordion">
+							   <div class="card">
+									<div class="card-header" id="headingOne">
+										<h5 class="mb-0">
+											<?php echo $page_title ?>
+										</h5>
+									</div>
+									
+									<div class="card-body">
+									 									
+									    <div id="panel_content_<?php echo $methodid ?>" >
+									  
+												 <div class="col-xl-10">
+													<div class="form-group form-inline row">
+																											
+														<button type="button" class="btn btn-success" id="add" onclick="javascript:add_idcard_<?php echo $methodid ?>();">
+															<i class="fa fa-plus"></i> Add
+														</button>
+														
+														&nbsp &nbsp
+														<button type="button" class="btn btn-info" id="edit" onclick="javascript:edit_idcard_<?php echo $methodid ?>();">
+															<i class="fa fa-pencil"></i> Edit
+														</button>
+														
+														&nbsp &nbsp
+														<button type="button" class="btn btn-danger" id="delete" onclick="javascript:cetak_new_<?php echo $methodid ?>();">
+															<i class="fa fa-trash"></i> Delete
+														</button>
+														
+														  &nbsp &nbsp
+														 <button type="button" class="btn btn-warning" id="cetak_idcardx" onclick="javascript:cetak_new_<?php echo $methodid ?>();">
+														<i class="fa fa-print"></i> Cetak New
+														</button>
+														
+														 &nbsp &nbsp
+														 <button type="button" class="btn btn-primary" id="template_idcard" onclick="javascript:template_idcard_<?php echo $methodid ?>();">
+														<i class="fa fa-gear"></i> Template ID Card
+														</button>
+
+														
+													</div>	
+                                                 </div>													
+												
+												
+												 <div class="row">
+							                        <div class="col-xl-12">
+								                      <table id="table_<?php echo $methodid ?>_id_card"></table>
+								                      <div id="ptable_<?php echo $methodid ?>_id_card"></div>                                                     
+							                        </div>
+						                         </div>
+												  <!--
+												 <div id="panel_content_<?php// echo $methodid ?>">
+										            <?php //$this->load->view($path_template.'/library/content/dashboard_table2'); ?>
+									             </div>
+												 -->
+										 </div>	 
+												 
+												 
+								                 <br />
+												   <div id="panel_content_form_<?php echo $methodid ?>" style='display:none;' >
+												   <?php
+									               //var_dump($view_load_form_template);
+											        if(isset($view_load_form)){
+												        $this->load->view('content/'.$view_load_form);
+											         }
+										            ?>
+									               </div>
+												   
+												   
+												 </div>
+												 
+												 <br />
+												   <div id="panel_content_form_template_<?php echo $methodid ?>" style='display:none;' >
+												   <?php
+									               //  var_dump($view_load_form_template);
+												     if(isset($view_load_form_template)){
+												        $this->load->view('content/'.$view_load_form_template);
+											         }
+										            ?>
+									               </div>
+												 
+											</div>
+								   </div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+   </div>
+</div>
+
+<script type="text/javascript">
+function printClickxx() {
+  var w = window.open();
+  var html = $("#panel_content_form_<?php echo $methodid ?>").html();
+
+  // how do I write the html to the new window with JQuery?
+    $(w.document.body).html(html);
+}
+
+$(function() {
+   // $("a#print").click(printClick);
+});
+</script>

@@ -1,0 +1,1668 @@
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+
+class Master_task_assignment_detail extends CI_Controller
+{
+
+    function __construct()
+    {
+        parent::__construct();
+
+        $this->data_request = $_REQUEST;
+
+        $module = $this->router->module;
+        $directory = $this->router->directory;
+        $class = $this->router->class;
+        $method = $this->router->method;
+        $directory = trim(str_replace('../modules/' . $module, '', str_replace('/controllers/', '', $directory)), '/');
+
+        $this->module = $module;
+        if (trim($directory) != '') {
+            $this->directory = $directory;
+        } else {
+            $this->directory = '0';
+            $this->directory2 = '';
+        }
+        $this->class = $class;
+        $this->method = $method;
+    }
+
+    function view_table()
+    {
+        $view = 'view_master_task_assignment';
+        $get_field = $this->ecc_library->get_field_pop($view);
+        $get_field['r1']['hidden'] = true;
+        $get_field['r2']['hidden'] = true;
+        $get_field['r4']['hidden'] = true;
+        $get_field['r5']['hidden'] = true;
+        $get_field['r6']['hidden'] = true;
+        $get_field['r9']['hidden'] = true;
+
+
+        $get_field['act']['sc'] = 'act';
+        $get_field['act']['title'] = 'action';
+        $get_field['act']['bypassvalue'] = '';
+        $get_field['act']['ctype'] = 'text';
+        $get_field['act']['align'] = 'center';
+        $get_field['act']['search'] = false;
+        $get_field['act']['sortable'] = false;
+        $get_field['act']['formatter'] = 'formatOperationsTaskAssignment';
+        $get_field['act']['width'] = 150;
+        return $get_field;
+    }
+
+    function loaddata()
+    {
+        $this->authentication->plainlayout();
+
+        $methodid = isset($_REQUEST['methodid']) ?
+            (is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid'] : -1) : -1;
+
+        $view = 'view_master_task_assignment';
+        $field = $this->view_table();
+
+        $return = array();
+        $return['valid'] = false;
+        $return['message'] = "Internal Server Error";
+
+        $extra_param = array();
+        $extra_param['methodid'] = $methodid;
+
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        echo $loaddata;
+    }
+
+
+    function view_table_operator()
+    {
+        $view = 'view_master_task_assignment';
+        $get_field = $this->ecc_library->get_field_pop($view);
+        $get_field['r1']['hidden'] = true;
+        $get_field['r1']['title'] = 'ID';
+        $get_field['r1']['width'] = '100';
+
+        $get_field['r2']['hidden'] = true;
+        $get_field['r2']['title'] = 'style No';
+        $get_field['r2']['width'] = '100';
+
+        $get_field['r3']['hidden'] = false;
+        $get_field['r3']['title'] = 'work order plan no';
+        $get_field['r3']['width'] = '100';
+
+        $get_field['r4']['hidden'] = false;
+        $get_field['r4']['title'] = 'line id';
+        $get_field['r4']['width'] = '100';
+
+        $get_field['r5']['hidden'] = false;
+        $get_field['r5']['title'] = 'user id';
+        $get_field['r5']['width'] = '100';
+
+        $get_field['r6']['hidden'] = false;
+        $get_field['r6']['title'] = 'status assign';
+        $get_field['r6']['width'] = '100';
+
+        $get_field['r7']['hidden'] = false;
+        $get_field['r7']['title'] = 'username';
+        $get_field['r7']['width'] = '100';
+
+
+        $get_field['r8']['hidden'] = false;
+        $get_field['r8']['title'] = 'status Excecution';
+        $get_field['r8']['width'] = '100';
+
+        $get_field['r9']['hidden'] = false;
+        $get_field['r9']['title'] = 'target output';
+        $get_field['r9']['width'] = '100';
+
+        $get_field['r10']['hidden'] = false;
+        $get_field['r10']['title'] = 'order qty';
+        $get_field['r10']['width'] = '100';
+
+        $get_field['r11']['hidden'] = false;
+        $get_field['r11']['title'] = 'created date';
+        $get_field['r11']['width'] = '100';
+
+        $get_field['r12']['hidden'] = false;
+        $get_field['r12']['title'] = 'total record output';
+        $get_field['r12']['width'] = '100';
+
+        $get_field['act']['sc'] = 'act';
+        $get_field['act']['title'] = 'action';
+        $get_field['act']['bypassvalue'] = '';
+        $get_field['act']['ctype'] = 'text';
+        $get_field['act']['align'] = 'center';
+        $get_field['act']['search'] = false;
+        $get_field['act']['sortable'] = false;
+        $get_field['act']['formatter'] = 'formatOperationsTaskAssignment';
+        $get_field['act']['width'] = 150;
+        return $get_field;
+    }
+
+    function loaddata_operator()
+    {
+        $this->authentication->plainlayout();
+
+        $methodid = isset($_REQUEST['methodid']) ?
+            (is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid'] : -1) : -1;
+
+        $user_id = $this->session->userdata('user_id');
+
+        $view = 'view_master_task_assignment';
+        $field = $this->view_table_operator();
+
+        $return = array();
+        $return['valid'] = false;
+        $return['message'] = "Internal Server Error";
+
+        $extra_param = array();
+        $extra_param['user_id'] = $user_id;
+        $extra_param['methodid'] = $methodid;
+        $extra_param['where'][0]['field'] = 'r5';
+        $extra_param['where'][0]['data'] = $user_id;
+
+
+
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        echo $loaddata;
+    }
+
+    function view_table_rft()
+    {
+        $view = 'view_task_assignment_detail_rft';
+        $get_field = $this->ecc_library->get_field_pop($view);
+
+        $get_field['r1']['hidden'] = true;
+        $get_field['r1']['title'] = 'id';
+        $get_field['r1']['width'] = '120';
+
+        $get_field['r2']['hidden'] = true;
+        $get_field['r2']['title'] = 'task assignmemnt id';
+        $get_field['r2']['width'] = '120';
+
+        $get_field['r3']['hidden'] = true;
+        $get_field['r3']['title'] = 'size id';
+        $get_field['r3']['width'] = '120';
+
+        $get_field['r4']['hidden'] = true;
+        $get_field['r4']['title'] = 'color id';
+        $get_field['r4']['width'] = '120';
+
+        $get_field['r5']['hidden'] = true;
+        $get_field['r5']['title'] = 'created at';
+        $get_field['r5']['width'] = '120';
+
+        $get_field['r6']['hidden'] = true;
+        $get_field['r6']['title'] = 'status';
+        $get_field['r6']['width'] = '120';
+
+        $get_field['r7']['hidden'] = false;
+        $get_field['r7']['title'] = 'uraian';
+        $get_field['r7']['width'] = '120';
+
+        $get_field['r8']['hidden'] = false;
+        $get_field['r8']['title'] = 'colour name';
+        $get_field['r8']['width'] = '120';
+
+        $get_field['act']['sc'] = 'act';
+        $get_field['act']['title'] = 'Action';
+        $get_field['act']['bypassvalue'] = '';
+        $get_field['act']['ctype'] = 'text';
+        $get_field['act']['align'] = 'center';
+        $get_field['act']['search'] = false;
+        $get_field['act']['sortable'] = false;
+        $get_field['act']['formatter'] = 'formatOperationsDeleteRFT';
+
+        return $get_field;
+    }
+    function view_table_rft_2()
+    {
+        $view = 'view_task_assignment_detail_rft_2';
+        $get_field = $this->ecc_library->get_field_pop($view);
+        $get_field['r1']['hidden'] = true;
+        $get_field['r1']['title'] = 'id';
+        $get_field['r1']['width'] = '120';
+
+        $get_field['r2']['hidden'] = true;
+        $get_field['r2']['title'] = 'task assignmemnt id';
+        $get_field['r2']['width'] = '120';
+
+        $get_field['r3']['hidden'] = true;
+        $get_field['r3']['title'] = 'size id';
+        $get_field['r3']['width'] = '120';
+
+        $get_field['r4']['hidden'] = true;
+        $get_field['r4']['title'] = 'color id';
+        $get_field['r4']['width'] = '120';
+
+        $get_field['r5']['hidden'] = true;
+        $get_field['r5']['title'] = 'created at';
+        $get_field['r5']['width'] = '120';
+
+        $get_field['r6']['hidden'] = true;
+        $get_field['r6']['title'] = 'status';
+        $get_field['r6']['width'] = '120';
+
+        $get_field['r7']['hidden'] = false;
+        $get_field['r7']['title'] = 'uraian';
+        $get_field['r7']['width'] = '120';
+
+        $get_field['r8']['hidden'] = false;
+        $get_field['r8']['title'] = 'colour name';
+        $get_field['r8']['width'] = '120';
+
+        $get_field['act']['sc'] = 'act';
+        $get_field['act']['title'] = 'Action';
+        $get_field['act']['bypassvalue'] = '';
+        $get_field['act']['ctype'] = 'text';
+        $get_field['act']['align'] = 'center';
+        $get_field['act']['search'] = false;
+        $get_field['act']['sortable'] = false;
+        $get_field['act']['formatter'] = 'formatOperationsDeleteRFT';
+
+        return $get_field;
+    }
+    function view_table_defect()
+    {
+        $view = 'view_task_assignment_detail_defect';
+        $get_field = $this->ecc_library->get_field_pop($view);
+
+        $get_field['r1']['hidden'] = true;
+        $get_field['r1']['title'] = 'id';
+        $get_field['r1']['width'] = '100';
+
+        $get_field['r2']['hidden'] = true;
+        $get_field['r2']['title'] = 'Defect causes';
+        $get_field['r2']['width'] = '80';
+
+
+
+        $get_field['r3']['hidden'] = false;
+        $get_field['r3']['title'] = 'defect parts';
+        $get_field['r3']['width'] = '80';
+
+        $get_field['r4']['hidden'] = false;
+        $get_field['r4']['title'] = 'rfid no';
+        $get_field['r4']['width'] = '100';
+
+        $get_field['r5']['hidden'] = true;
+        $get_field['r5']['title'] = 'created at';
+        $get_field['r5']['width'] = '100';
+
+        $get_field['r6']['hidden'] = true;
+        $get_field['r6']['title'] = 'task assignment id';
+        $get_field['r6']['width'] = '100';
+
+        $get_field['r7']['hidden'] = true;
+        $get_field['r7']['title'] = 'defect status';
+        $get_field['r7']['width'] = '100';
+
+
+        $get_field['r8']['hidden'] = false;
+        $get_field['r8']['title'] = 'image';
+        $get_field['r8']['width'] = '140';
+        $get_field['r8']['formatter'] = 'formatImagedefect1';
+        $get_field['r8']['align'] = 'center';
+
+        $get_field['r9']['hidden'] = false;
+        $get_field['r9']['title'] = 'defect cause';
+        $get_field['r9']['width'] = '80';
+
+        $get_field['r10']['hidden'] = false;
+        $get_field['r10']['title'] = 'defect parts';
+        $get_field['r10']['width'] = '80';
+
+
+        $get_field['act']['sc'] = 'act';
+        $get_field['act']['title'] = 'Action';
+        $get_field['act']['bypassvalue'] = '';
+        $get_field['act']['ctype'] = 'text';
+        $get_field['act']['align'] = 'center';
+        $get_field['act']['search'] = false;
+        $get_field['act']['sortable'] = false;
+        $get_field['act']['formatter'] = 'formatOperationsDeleteDefect';
+
+
+        return $get_field;
+    }
+    function view_table_defect_2()
+    {
+        $view = 'view_task_assignment_detail_defect_2';
+        $get_field = $this->ecc_library->get_field_pop($view);
+
+        $get_field['r1']['hidden'] = true;
+        $get_field['r1']['title'] = 'id';
+        $get_field['r1']['width'] = '100';
+
+        $get_field['r2']['hidden'] = true;
+        $get_field['r2']['title'] = 'Defect causes';
+        $get_field['r2']['width'] = '80';
+
+
+
+        $get_field['r3']['hidden'] = false;
+        $get_field['r3']['title'] = 'defect parts';
+        $get_field['r3']['width'] = '80';
+
+        $get_field['r4']['hidden'] = false;
+        $get_field['r4']['title'] = 'rfid no';
+        $get_field['r4']['width'] = '100';
+
+        $get_field['r5']['hidden'] = true;
+        $get_field['r5']['title'] = 'created at';
+        $get_field['r5']['width'] = '100';
+
+        $get_field['r6']['hidden'] = true;
+        $get_field['r6']['title'] = 'task assignment id';
+        $get_field['r6']['width'] = '100';
+
+        $get_field['r7']['hidden'] = true;
+        $get_field['r7']['title'] = 'defect status';
+        $get_field['r7']['width'] = '100';
+
+
+        $get_field['r8']['hidden'] = false;
+        $get_field['r8']['title'] = 'image';
+        $get_field['r8']['width'] = '140';
+        $get_field['r8']['formatter'] = 'formatImagedefect1';
+        $get_field['r8']['align'] = 'center';
+
+        $get_field['r9']['hidden'] = false;
+        $get_field['r9']['title'] = 'defect cause';
+        $get_field['r9']['width'] = '80';
+
+        $get_field['r10']['hidden'] = false;
+        $get_field['r10']['title'] = 'defect parts';
+        $get_field['r10']['width'] = '80';
+
+
+        $get_field['act']['sc'] = 'act';
+        $get_field['act']['title'] = 'Action';
+        $get_field['act']['bypassvalue'] = '';
+        $get_field['act']['ctype'] = 'text';
+        $get_field['act']['align'] = 'center';
+        $get_field['act']['search'] = false;
+        $get_field['act']['sortable'] = false;
+        $get_field['act']['formatter'] = 'formatOperationsDeleteDefect';
+        return $get_field;
+    }
+    function view_table_reject()
+    {
+        $view = 'view_task_assignment_detail_reject';
+        $get_field = $this->ecc_library->get_field_pop($view);
+
+        $get_field['r1']['hidden'] = true;
+        $get_field['r1']['title'] = 'id';
+        $get_field['r1']['width'] = '120';
+
+        $get_field['r2']['hidden'] = true;
+        $get_field['r2']['title'] = 'task assignmemnt id';
+        $get_field['r2']['width'] = '120';
+
+        $get_field['r3']['hidden'] = true;
+        $get_field['r3']['title'] = 'size id';
+        $get_field['r3']['width'] = '120';
+
+        $get_field['r4']['hidden'] = true;
+        $get_field['r4']['title'] = 'color id';
+        $get_field['r4']['width'] = '120';
+
+        $get_field['r5']['hidden'] = true;
+        $get_field['r5']['title'] = 'created at';
+        $get_field['r5']['width'] = '120';
+
+        $get_field['r6']['hidden'] = true;
+        $get_field['r6']['title'] = 'status';
+        $get_field['r6']['width'] = '120';
+
+        $get_field['r7']['hidden'] = false;
+        $get_field['r7']['title'] = 'uraian';
+        $get_field['r7']['width'] = '120';
+
+        $get_field['r8']['hidden'] = false;
+        $get_field['r8']['title'] = 'colour name';
+        $get_field['r8']['width'] = '120';
+
+        $get_field['act']['sc'] = 'act';
+        $get_field['act']['title'] = 'Action';
+        $get_field['act']['bypassvalue'] = '';
+        $get_field['act']['ctype'] = 'text';
+        $get_field['act']['align'] = 'center';
+        $get_field['act']['search'] = false;
+        $get_field['act']['sortable'] = false;
+        $get_field['act']['formatter'] = 'formatOperationsDeleteReject';
+
+        return $get_field;
+    }
+    function view_table_reject_2()
+    {
+        $view = 'view_task_assignment_detail_reject_2';
+        $get_field = $this->ecc_library->get_field_pop($view);
+
+        $get_field['r1']['hidden'] = true;
+        $get_field['r1']['title'] = 'id';
+        $get_field['r1']['width'] = '120';
+
+        $get_field['r2']['hidden'] = true;
+        $get_field['r2']['title'] = 'task assignmemnt id';
+        $get_field['r2']['width'] = '120';
+
+        $get_field['r3']['hidden'] = true;
+        $get_field['r3']['title'] = 'size id';
+        $get_field['r3']['width'] = '120';
+
+        $get_field['r4']['hidden'] = true;
+        $get_field['r4']['title'] = 'color id';
+        $get_field['r4']['width'] = '120';
+
+        $get_field['r5']['hidden'] = true;
+        $get_field['r5']['title'] = 'created at';
+        $get_field['r5']['width'] = '120';
+
+        $get_field['r6']['hidden'] = true;
+        $get_field['r6']['title'] = 'status';
+        $get_field['r6']['width'] = '120';
+
+        $get_field['r7']['hidden'] = false;
+        $get_field['r7']['title'] = 'uraian';
+        $get_field['r7']['width'] = '120';
+
+        $get_field['r8']['hidden'] = false;
+        $get_field['r8']['title'] = 'colour name';
+        $get_field['r8']['width'] = '120';
+
+        $get_field['act']['sc'] = 'act';
+        $get_field['act']['title'] = 'Action';
+        $get_field['act']['bypassvalue'] = '';
+        $get_field['act']['ctype'] = 'text';
+        $get_field['act']['align'] = 'center';
+        $get_field['act']['search'] = false;
+        $get_field['act']['sortable'] = false;
+        $get_field['act']['formatter'] = 'formatOperationsDeleteReject';
+
+        return $get_field;
+    }
+
+
+    function loaddata_rft()
+    {
+        $this->authentication->plainlayout();
+
+        $id = isset($_REQUEST['id']) ?
+            (is_numeric($_REQUEST['id']) ? $_REQUEST['id'] : -1) : -1;
+
+        $task_assignment_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : $id;
+
+        if (!empty($id)) {
+            $id = $id;
+        }
+
+        $methodid = isset($_REQUEST['methodid']) ?
+            (is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid'] : -1) : -1;
+
+        $view = 'view_task_assignment_detail_rft';
+        $field = $this->view_table_rft();
+
+        $extra_param = array();
+        $extra_param['where']['0']['field'] = 'r2';
+        $extra_param['where']['0']['data'] = $task_assignment_id;
+        $extra_param['methodid'] = $methodid;
+
+        // Ambil data
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        $extra_param['methodid'] = $methodid;
+
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        echo $loaddata;
+    }
+    function loaddata_defect()
+    {
+        $this->authentication->plainlayout();
+
+        $id = isset($_REQUEST['id']) ?
+            (is_numeric($_REQUEST['id']) ? $_REQUEST['id'] : -1) : -1;
+
+        $task_assignment_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : $id;
+
+        if (!empty($id)) {
+            $id = $id;
+        }
+
+        $methodid = isset($_REQUEST['methodid']) ?
+            (is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid'] : -1) : -1;
+
+        $view = 'view_task_assignment_detail_defect';
+        $field = $this->view_table_defect();
+
+        $extra_param = array();
+        $extra_param['where']['0']['field'] = 'r6';
+        $extra_param['where']['0']['data'] = $task_assignment_id;
+        $extra_param['methodid'] = $methodid;
+
+        // Ambil data
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        $extra_param['methodid'] = $methodid;
+
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        echo $loaddata;
+    }
+    function loaddata_reject()
+    {
+        $this->authentication->plainlayout();
+
+        $id = isset($_REQUEST['id']) ?
+            (is_numeric($_REQUEST['id']) ? $_REQUEST['id'] : -1) : -1;
+
+        $task_assignment_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : $id;
+
+        if (!empty($id)) {
+            $id = $id;
+        }
+
+        $methodid = isset($_REQUEST['methodid']) ?
+            (is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid'] : -1) : -1;
+
+        $view = 'view_task_assignment_detail_reject';
+        $field = $this->view_table_reject();
+
+        $extra_param = array();
+        $extra_param['where']['0']['field'] = 'r2';
+        $extra_param['where']['0']['data'] = $task_assignment_id;
+        $extra_param['methodid'] = $methodid;
+
+        // Ambil data
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        $extra_param['methodid'] = $methodid;
+
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        echo $loaddata;
+    }
+    function loaddata_rft_2()
+    {
+        $this->authentication->plainlayout();
+
+        $id = isset($_REQUEST['id']) ?
+            (is_numeric($_REQUEST['id']) ? $_REQUEST['id'] : -1) : -1;
+
+        $task_assignment_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : $id;
+
+        if (!empty($id)) {
+            $id = $id;
+        }
+
+        $methodid = isset($_REQUEST['methodid']) ?
+            (is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid'] : -1) : -1;
+
+        $view = 'view_task_assignment_detail_rft_2';
+        $field = $this->view_table_rft_2();
+
+        $extra_param = array();
+        $extra_param['where']['0']['field'] = 'r2';
+        $extra_param['where']['0']['data'] = $task_assignment_id;
+        $extra_param['methodid'] = $methodid;
+
+        // Ambil data
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        $extra_param['methodid'] = $methodid;
+
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        echo $loaddata;
+    }
+    function loaddata_defect_2()
+    {
+        $this->authentication->plainlayout();
+
+        $id = isset($_REQUEST['id']) ?
+            (is_numeric($_REQUEST['id']) ? $_REQUEST['id'] : -1) : -1;
+
+        $task_assignment_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : $id;
+
+        if (!empty($id)) {
+            $id = $id;
+        }
+
+        $methodid = isset($_REQUEST['methodid']) ?
+            (is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid'] : -1) : -1;
+
+        $view = 'view_task_assignment_detail_defect_2';
+        $field = $this->view_table_defect();
+
+        $extra_param = array();
+        $extra_param['where']['0']['field'] = 'r6';
+        $extra_param['where']['0']['data'] = $task_assignment_id;
+        $extra_param['methodid'] = $methodid;
+
+        // Ambil data
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        $extra_param['methodid'] = $methodid;
+
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        echo $loaddata;
+    }
+    function loaddata_reject_2()
+    {
+        $this->authentication->plainlayout();
+
+        $id = isset($_REQUEST['id']) ?
+            (is_numeric($_REQUEST['id']) ? $_REQUEST['id'] : -1) : -1;
+
+        $task_assignment_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : $id;
+
+        if (!empty($id)) {
+            $id = $id;
+        }
+
+        $methodid = isset($_REQUEST['methodid']) ?
+            (is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid'] : -1) : -1;
+
+        $view = 'view_task_assignment_detail_reject_2';
+        $field = $this->view_table_reject_2();
+
+        $extra_param = array();
+        $extra_param['where']['0']['field'] = 'r2';
+        $extra_param['where']['0']['data'] = $task_assignment_id;
+        $extra_param['methodid'] = $methodid;
+
+        // Ambil data
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        $extra_param['methodid'] = $methodid;
+
+        $loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+        echo $loaddata;
+    }
+    function index()
+    {
+        $this->load->model('main');
+        $component['loadlayout'] = true;
+        $component['view_load'] = 'master_task_assignment_detail/view';
+        $component['view_load_form'] = 'master_task_assignment_detail/form';
+        $component['load_js'][] = 'master_task_assignment_detail/view';
+        $component['load_js'][] = 'master_task_assignment_detail/form';
+        $component['page_title'] = "Master Task Assignment Detail";
+
+        $dashboard_table = array();
+
+        $nav_button = array();
+
+
+        $field = $this->view_table();
+        $field_operator = $this->view_table_operator();
+        $field_rft = $this->view_table_rft();
+        $field_defect = $this->view_table_defect();
+        $field_reject = $this->view_table_reject();
+        $field_rft_2 = $this->view_table_rft_2();
+        $field_defect_2 = $this->view_table_defect_2();
+        $field_reject_2 = $this->view_table_reject_2();
+
+
+
+        $dashboard_table['nav_button'] = $nav_button;
+
+        $dashboard_table['field'] = $field;
+        $dashboard_table['field_loaddata'] = 'loaddata';
+
+        $dashboard_table['field_operator'] = $field_operator;
+        $dashboard_table['field_loaddata_operator'] = 'loaddata_operator';
+
+        $dashboard_table['field_rft'] = $field_rft;
+        $dashboard_table['field_loaddata_rft'] = 'loaddata_rft';
+
+        $dashboard_table['field_defect'] = $field_defect;
+        $dashboard_table['field_loaddata_defect'] = 'loaddata_defect';
+
+        $dashboard_table['field_reject'] = $field_reject;
+        $dashboard_table['field_loaddata_reject'] = 'loaddata_reject';
+
+        $dashboard_table['field_rft_2'] = $field_rft_2;
+        $dashboard_table['field_loaddata_rft_2'] = 'loaddata_rft_2';
+
+        $dashboard_table['field_defect_2'] = $field_defect_2;
+        $dashboard_table['field_loaddata_defect_2'] = 'loaddata_defect_2';
+
+        $dashboard_table['field_reject_2'] = $field_reject_2;
+        $dashboard_table['field_loaddata_reject_2'] = 'loaddata_reject_2';
+
+        $component['dashboard_table'] = $dashboard_table;
+        $id = $this->input->get('id', true);
+        $text = $this->main->task_id($id);
+        $component['text'] = $text;
+        $this->authentication->ajaxlayout($component);
+    }
+
+    function post_add_edit()
+    {
+        $this->authentication->plainlayout();
+        $return = array('valid' => false, 'status_code' => 501, 'message' => "Internal Server Error");
+
+        $id = $this->input->post('id', true);
+        $defect_parts = $this->input->post('defect_parts', true);
+        $status = $this->input->post('status', true);
+
+        if (empty($defect_parts)) {
+            $return['valid'] = false;
+            $return['message'] = "defect_parts is required";
+            echo json_encode($return);
+            return;
+        }
+
+        if ($id == true) {
+            $this->rpc_service->setSP("dbo.sp_defect_parts_edit");
+            $this->rpc_service->addField('id', $id);
+        } else {
+            $this->rpc_service->setSP("dbo.sp_defect_parts_add");
+        }
+
+        $this->rpc_service->addField('defect_parts', $defect_parts);
+        $this->rpc_service->addField('status', $status);
+
+        $result = $this->rpc_service->resultJSON_pop();
+
+        if (isset($result) && is_array($result) && isset($result['valid']) && $result['valid']) {
+            $data_result = json_decode($result['data'], true);
+            $return['id'] = $data_result['id'];
+            $return['valid'] = $result['valid'];
+            $return['status_code'] = $result['no'];
+            $return['message'] = $result['des'];
+        } else {
+
+            $return['valid'] = false;
+            $return['status_code'] = isset($result['no']) ? $result['no'] : 500;
+            $return['message'] = isset($result['des']) ? $result['des'] : "Gagal menyimpan data";
+        }
+
+        echo json_encode($return);
+    }
+
+    function post_add_edit_rft()
+    {
+        $this->authentication->plainlayout();
+        $return = array('valid' => false, 'status_code' => 501, 'message' => "Internal Server Error");
+
+        $id = $this->input->post('id', true);
+        $task_assignment_id = $this->input->post('task_assignment_id', true);
+        $rft_size_id = $this->input->post('rft_size_id', true);
+        $rft_colour_id = $this->input->post('rft_colour_id', true);
+        $created_at = date('Y-m-d H:i:s');
+        $bundle_qty = (int)$this->input->post('bundle_qty', true);
+        $rft_status = $this->input->post('rft_status', true);
+
+        if (empty($task_assignment_id)) {
+            $return['valid'] = false;
+            $return['message'] = "task_assignment_id is required";
+            echo json_encode($return);
+            return;
+        }
+
+        if (!empty($id)) {
+            $this->rpc_service->setSP("dbo.sp_defect_parts_edit");
+            $this->rpc_service->addField('id', $id);
+            $this->rpc_service->addField('task_assignment_id', $task_assignment_id);
+            $this->rpc_service->addField('rft_size_id', $rft_size_id);
+            $this->rpc_service->addField('rft_colour_id', $rft_colour_id);
+            $this->rpc_service->addField('created_at', $created_at);
+            $this->rpc_service->addField('rft_status', $rft_status);
+            $result = $this->rpc_service->resultJSON_pop();
+        } else {
+
+            $insertedIds = [];
+            for ($i = 1; $i <= $bundle_qty; $i++) {
+                $this->rpc_service->setSP("dbo.sp_task_assignment_detail_rft_add");
+                $this->rpc_service->addField('task_assignment_id', $task_assignment_id);
+                $this->rpc_service->addField('rft_size_id', $rft_size_id);
+                $this->rpc_service->addField('rft_colour_id', $rft_colour_id);
+                $this->rpc_service->addField('created_at', $created_at);
+                $this->rpc_service->addField('rft_status', $rft_status);
+
+                $result = $this->rpc_service->resultJSON_pop();
+
+                if (isset($result) && is_array($result) && isset($result['valid']) && $result['valid']) {
+                    $data_result = json_decode($result['data'], true);
+                    $insertedIds[] = $data_result['id'];
+                } else {
+                    $return['valid'] = false;
+                    $return['status_code'] = isset($result['no']) ? $result['no'] : 500;
+                    $return['message'] = isset($result['des']) ? $result['des'] : "Gagal menyimpan data ke-" . $i;
+                    echo json_encode($return);
+                    return;
+                }
+            }
+
+            $return['valid'] = true;
+            $return['status_code'] = 200;
+            $return['message'] = "Berhasil menyimpan $bundle_qty data";
+            $return['ids'] = $insertedIds;
+        }
+
+        echo json_encode($return);
+    }
+
+
+    function post_add_edit_reject()
+    {
+        $this->authentication->plainlayout();
+        $return = array('valid' => false, 'task_assignment_id' => 501, 'message' => "Internal Server Error");
+        $id = $this->input->post('id', true);
+        $task_assignment_id = $this->input->post('task_assignment_id', true);
+        $reject_size_id = $this->input->post('reject_size_id', true);
+        $reject_colour_id = $this->input->post('reject_colour_id', true);
+        $reject_status = $this->input->post('reject_status', true);
+        $created_at = date('Y-m-d H:i:s');
+
+        if (empty($task_assignment_id)) {
+            $return['valid'] = false;
+            $return['message'] = "task_assignment_id is required";
+            echo json_encode($return);
+            return;
+        }
+
+        if ($id == true) {
+            $this->rpc_service->setSP("dbo.sp_master_task_assignment_edit");
+            $this->rpc_service->addField('id', $id);
+        } else {
+            $this->rpc_service->setSP("dbo.sp_task_assignment_detail_reject_add");
+        }
+
+        $this->rpc_service->addField('task_assignment_id', $task_assignment_id);
+        $this->rpc_service->addField('reject_size_id', $reject_size_id);
+        $this->rpc_service->addField('reject_colour_id', $reject_colour_id);
+        $this->rpc_service->addField('reject_status', $reject_status);
+        $this->rpc_service->addField('created_at', $created_at);
+        $result = $this->rpc_service->resultJSON_pop();
+
+        if (isset($result) && is_array($result) && isset($result['valid']) && $result['valid']) {
+            $data_result = json_decode($result['data'], true);
+            $return['id'] = $data_result['id'];
+            $return['valid'] = $result['valid'];
+            $return['status_code'] = $result['no'];
+            $return['message'] = $result['des'];
+        } else {
+            $return['valid'] = false;
+            $return['status_code'] = isset($result['no']) ? $result['no'] : 500;
+            $return['message'] = isset($result['des']) ? $result['des'] : "Gagal menyimpan data";
+        }
+
+        echo json_encode($return);
+    }
+
+    function post_add_edit_defective()
+    {
+        $this->authentication->plainlayout();
+        $return = array('valid' => false, 'task_assignment_id' => 501, 'message' => "Internal Server Error");
+        $id = $this->input->post('id', true);
+        $task_assignment_id = $this->input->post('task_assignment_id', true);
+        $defect_cause_id = $this->input->post('defect_cause_id', true);
+        $defect_parts_id = $this->input->post('defect_parts_id', true);
+        $rfid_no = $this->input->post('rfid_no', true);
+        $created_at = date('Y-m-d H:i:s');
+        $defect_status = $this->input->post('defect_status', true);
+        $image = '';
+
+        if (isset($_FILES['image']) && !empty($_FILES['image']['name'])) {
+
+            $file_ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+
+            if (strtolower($file_ext) !== 'jpg' && strtolower($file_ext) !== 'jpeg' && strtolower($file_ext) !== 'png') {
+                $return['valid'] = false;
+                $return['message'] = "Hanya file jpg, jpeg dan png yang diizinkan untuk image";
+                echo json_encode($return);
+                return;
+            }
+
+            $upload_dir = './assets/img/task_assignment_detail_defect/';
+
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+
+            $new_filename = uniqid('defect_') . '.jpg';
+            $destination = $upload_dir . $new_filename;
+
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                $image = $new_filename;
+            } else {
+                $return['valid'] = false;
+                $return['message'] = "Gagal mengunggah file. Silakan coba lagi.";
+                echo json_encode($return);
+                return;
+            }
+        } else {
+            $return['valid'] = false;
+            $return['message'] = "File image dibutuhkan";
+            echo json_encode($return);
+            return;
+        }
+
+        if (empty($task_assignment_id)) {
+            $return['valid'] = false;
+            $return['message'] = "task_assignment_id is required";
+            echo json_encode($return);
+            return;
+        }
+
+        if ($id == true) {
+            $this->rpc_service->setSP("dbo.sp_master_task_assignment_edit");
+            $this->rpc_service->addField('id', $id);
+        } else {
+            $this->rpc_service->setSP("dbo.sp_task_assignment_detail_defect_add");
+        }
+
+        $this->rpc_service->addField('task_assignment_id', $task_assignment_id);
+        $this->rpc_service->addField('defect_cause_id', $defect_cause_id);
+        $this->rpc_service->addField('defect_parts_id', $defect_parts_id);
+        $this->rpc_service->addField('rfid_no', $rfid_no);
+        $this->rpc_service->addField('created_at', $created_at);
+        $this->rpc_service->addField('defect_status', $defect_status);
+        $this->rpc_service->addField('image', $image);
+        $result = $this->rpc_service->resultJSON_pop();
+
+        if (isset($result) && is_array($result) && isset($result['valid']) && $result['valid']) {
+            $data_result = json_decode($result['data'], true);
+            $return['id'] = $data_result['id'];
+            $return['valid'] = $result['valid'];
+            $return['status_code'] = $result['no'];
+            $return['message'] = $result['des'];
+        } else {
+            $return['valid'] = false;
+            $return['status_code'] = isset($result['no']) ? $result['no'] : 500;
+            $return['message'] = isset($result['des']) ? $result['des'] : "Gagal menyimpan data";
+        }
+
+        echo json_encode($return);
+    }
+    function count_rft_1()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_by_task_id($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+
+    function count_rft_xs()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_by_task_id_xs($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_rft_s()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_by_task_id_s($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_rft_m()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_by_task_id_m($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_rft_l()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_by_task_id_l($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_rft_xl()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_by_task_id_xl($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_rft_xxl()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_by_task_id_xxl($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+
+    function count_rft_2()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_2_by_task_id($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_rft_2_xs()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_2_by_task_id_xs($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_rft_2_s()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_2_by_task_id_s($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_rft_2_m()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_2_by_task_id_m($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_rft_2_l()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_2_by_task_id_l($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_rft_2_xl()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_2_by_task_id_xl($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_rft_2_xxl()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_2_by_task_id_xxl($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+
+
+
+
+
+
+
+
+
+    function count_reject_xs()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_by_task_id_xs($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_reject_s()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_by_task_id_s($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_reject_m()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_by_task_id_m($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_reject_l()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_by_task_id_l($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_reject_xl()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_by_task_id_xl($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_reject_xxl()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_by_task_id_xxl($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+
+
+
+
+
+
+
+    function count_reject_2_xs()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_2_by_task_id_xs($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_reject_2_s()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_2_by_task_id_s($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_reject_2_m()
+    {
+        $this->authentication->plainlayout();
+        $this->load->model('main');
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+        $count = $this->main->count_reject_2_by_task_id_m($task_assignment_id);
+        echo json_encode(['count' => $count]);
+    }
+    function count_reject_2_l()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_2_by_task_id_l($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_reject_2_xl()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_2_by_task_id_xl($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_reject_2_xxl()
+    {
+        $this->authentication->plainlayout();
+        $this->load->model('main');
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+        $count = $this->main->count_reject_2_by_task_id_xxl($task_assignment_id);
+        echo json_encode(['count' => $count]);
+    }
+
+
+
+
+
+
+
+
+    function count_rft_all()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_rft_all_by_task_id($task_assignment_id);
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_defect_1()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_defect_by_task_id($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_defect_2()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_defect_2_by_task_id($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_defect_all()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_defect_all_by_task_id($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_reject_1()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_by_task_id($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+    function count_reject_2()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_2_by_task_id($task_assignment_id);
+
+
+        echo json_encode(['count' => $count]);
+    }
+    function count_reject_all()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $count = $this->main->count_reject_all_by_task_id($task_assignment_id);
+
+        echo json_encode(['count' => $count]);
+    }
+
+
+    function get_latest_counts()
+    {
+        $this->authentication->plainlayout();
+
+        $this->load->model('main');
+
+        $task_assignment_id = isset($_REQUEST['task_assignment_id']) ?
+            (is_numeric($_REQUEST['task_assignment_id']) ? $_REQUEST['task_assignment_id'] : -1) : -1;
+
+        $counts = [
+            'rft_total' => $this->main->count_rft_all_by_task_id($task_assignment_id),
+            'defect_total' => $this->main->count_defect_all_by_task_id($task_assignment_id),
+            'reject_total' => $this->main->count_reject_all_by_task_id($task_assignment_id),
+
+
+            'rft_card_1' => $this->main->count_rft_by_task_id($task_assignment_id),
+            'rft_card_xs' => $this->main->count_rft_by_task_id_xs($task_assignment_id),
+            'rft_card_s' => $this->main->count_rft_by_task_id_s($task_assignment_id),
+            'rft_card_m' => $this->main->count_rft_by_task_id_m($task_assignment_id),
+            'rft_card_l' => $this->main->count_rft_by_task_id_l($task_assignment_id),
+            'rft_card_xl' => $this->main->count_rft_by_task_id_xl($task_assignment_id),
+            'rft_card_xxl' => $this->main->count_rft_by_task_id_xxl($task_assignment_id),
+
+
+            'defect_card_1' => $this->main->count_defect_by_task_id($task_assignment_id),
+
+
+
+            'rft_card_2' => $this->main->count_rft_2_by_task_id_task($task_assignment_id),
+            'rft_card_2_xs' => $this->main->count_rft_2_by_task_id_xs($task_assignment_id),
+            'rft_card_2_s' => $this->main->count_rft_2_by_task_id_s($task_assignment_id),
+            'rft_card_2_m' => $this->main->count_rft_2_by_task_id_m($task_assignment_id),
+            'rft_card_2_l' => $this->main->count_rft_2_by_task_id_l($task_assignment_id),
+            'rft_card_2_xl' => $this->main->count_rft_2_by_task_id_xl($task_assignment_id),
+            'rft_card_2_xxl' => $this->main->count_rft_2_by_task_id_xxl($task_assignment_id),
+
+
+            'reject_card_1' => $this->main->count_reject_by_task_id($task_assignment_id),
+            'reject_card_xs' => $this->main->count_reject_by_task_id_xs($task_assignment_id),
+            'reject_card_s' => $this->main->count_reject_by_task_id_s($task_assignment_id),
+            'reject_card_m' => $this->main->count_reject_by_task_id_m($task_assignment_id),
+            'reject_card_l' => $this->main->count_reject_by_task_id_l($task_assignment_id),
+            'reject_card_xl' => $this->main->count_reject_by_task_id_xl($task_assignment_id),
+            'reject_card_xxl' => $this->main->count_reject_by_task_id_xxl($task_assignment_id),
+
+
+            'reject_card_2' => $this->main->count_reject_2_by_task_id($task_assignment_id),
+            'reject_card_2_xs' => $this->main->count_reject_2_by_task_id_xs($task_assignment_id),
+            'reject_card_2_s' => $this->main->count_reject_2_by_task_id_s($task_assignment_id),
+            'reject_card_2_m' => $this->main->count_reject_2_by_task_id_m($task_assignment_id),
+            'reject_card_2_l' => $this->main->count_reject_2_by_task_id_l($task_assignment_id),
+            'reject_card_2_xl' => $this->main->count_reject_2_by_task_id_xl($task_assignment_id),
+            'reject_card_2_xxl' => $this->main->count_reject_2_by_task_id_xxl($task_assignment_id),
+
+
+
+
+
+
+
+
+
+
+
+
+            'defect_card_2' => $this->main->count_defect_2_by_task_id($task_assignment_id),
+
+
+        ];
+
+        echo json_encode([
+            'success' => true,
+            'data' => $counts
+        ]);
+    }
+
+
+
+    function delete_rft()
+    {
+        $this->authentication->plainlayout();
+        $parameter = array();
+        $return = array();
+
+        $id = isset($_POST['id']) ? $_POST['id'] : false;
+
+        $user_id = $this->session->userdata('user_id');
+
+        $result = array();
+        $return['valid'] = false;
+        $return['status_code'] = 501;
+        $return['message'] = "Internal Server Error";
+
+        if (count($_POST) > 0) {
+
+            if ($id) {
+                $this->rpc_service->setSP("dbo.sp_delete_rft");
+                $this->rpc_service->addField('id', $id);
+            }
+
+            $result = $this->rpc_service->resultJSON_pop();
+            // print_r($result);
+
+            $data = array();
+            if (isset($result)) {
+                if (isset($result['valid'])) {
+                    if ($result['valid']) {
+                        if (isset($result['data'])) {
+                            $return['valid'] = $result['valid'];
+                            $return['status_code'] = $result['no'];
+                            $return['message'] = $result['des'];
+                        }
+                    } else {
+                        $return['status_code'] = $result['no'];
+                        $return['message'] = $result['des'];
+                    }
+                }
+            }
+        } else {
+            $return['valid'] = false;
+            $return['message'] = "Session expired";
+        }
+
+        echo json_encode($return);
+    }
+    function delete_defect()
+    {
+        $this->authentication->plainlayout();
+        $parameter = array();
+        $return = array();
+
+        $id = isset($_POST['id']) ? $_POST['id'] : false;
+
+        $user_id = $this->session->userdata('user_id');
+
+        $result = array();
+        $return['valid'] = false;
+        $return['status_code'] = 501;
+        $return['message'] = "Internal Server Error";
+
+        if (count($_POST) > 0) {
+
+            if ($id) {
+                $this->rpc_service->setSP("dbo.sp_delete_defect");
+                $this->rpc_service->addField('id', $id);
+            }
+
+            $result = $this->rpc_service->resultJSON_pop();
+            // print_r($result);
+
+            $data = array();
+            if (isset($result)) {
+                if (isset($result['valid'])) {
+                    if ($result['valid']) {
+                        if (isset($result['data'])) {
+                            $return['valid'] = $result['valid'];
+                            $return['status_code'] = $result['no'];
+                            $return['message'] = $result['des'];
+                        }
+                    } else {
+                        $return['status_code'] = $result['no'];
+                        $return['message'] = $result['des'];
+                    }
+                }
+            }
+        } else {
+            $return['valid'] = false;
+            $return['message'] = "Session expired";
+        }
+
+        echo json_encode($return);
+    }
+    function delete_reject()
+    {
+        $this->authentication->plainlayout();
+        $parameter = array();
+        $return = array();
+
+        $id = isset($_POST['id']) ? $_POST['id'] : false;
+
+        $user_id = $this->session->userdata('user_id');
+
+        $result = array();
+        $return['valid'] = false;
+        $return['status_code'] = 501;
+        $return['message'] = "Internal Server Error";
+
+        if (count($_POST) > 0) {
+
+            if ($id) {
+                $this->rpc_service->setSP("dbo.sp_delete_reject");
+                $this->rpc_service->addField('id', $id);
+            }
+
+            $result = $this->rpc_service->resultJSON_pop();
+            // print_r($result);
+
+            $data = array();
+            if (isset($result)) {
+                if (isset($result['valid'])) {
+                    if ($result['valid']) {
+                        if (isset($result['data'])) {
+                            $return['valid'] = $result['valid'];
+                            $return['status_code'] = $result['no'];
+                            $return['message'] = $result['des'];
+                        }
+                    } else {
+                        $return['status_code'] = $result['no'];
+                        $return['message'] = $result['des'];
+                    }
+                }
+            }
+        } else {
+            $return['valid'] = false;
+            $return['message'] = "Session expired";
+        }
+
+        echo json_encode($return);
+    }
+}

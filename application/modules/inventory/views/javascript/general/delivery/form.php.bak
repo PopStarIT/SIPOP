@@ -1,0 +1,491 @@
+<script type="text/javascript">
+	var new_delivery = 1;
+	var delivery_id = 0;
+	var delivery_lock_data = 0;
+	var delivery_type_id = 1;
+	var delivery_partner_id = 0;
+	var delivery_bc_out_header_id = null;
+	var delivery_sales_order_transfer_id = null;
+	var delivery_subcon_out_id = null;
+	
+	$(".form_tab_<?php echo $methodid ?>").on("click", "a", function (e) {
+        e.preventDefault();
+		setTimeout(function(){ 
+			$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20,true).trigger('resize');
+			
+			$("#table_<?php echo $methodid ?>_sales").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_sales").setGridWidth($('.grid_container_<?php echo $methodid; ?>_sales').width() - 20,true).trigger('resize');
+						
+			$("#table_<?php echo $methodid ?>_custom").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_custom").setGridWidth($('.grid_container_<?php echo $methodid; ?>_custom').width() - 20,true).trigger('resize');
+						
+			$("#table_<?php echo $methodid ?>_contract").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_contract").setGridWidth($('.grid_container_<?php echo $methodid; ?>_contract').width() - 20,true).trigger('resize');
+						
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 1000);
+    });
+	
+	$('#form_<?php echo $methodid ?>_partner_id').on('change', function (event, clickedIndex, newValue, oldValue) {
+		$('#form_<?php echo $methodid ?>_bc_out_header_id').html('');
+		$('#form_<?php echo $methodid ?>_bc_out_header_id').selectpicker('refresh');
+		
+		$('#form_<?php echo $methodid ?>_sales_order_transfer_id').html('');
+		$('#form_<?php echo $methodid ?>_sales_order_transfer_id').selectpicker('refresh');
+		
+		$('#form_<?php echo $methodid ?>_subcon_out_id').html('');
+		$('#form_<?php echo $methodid ?>_subcon_out_id').selectpicker('refresh');
+	});
+		
+	$('#form_<?php echo $methodid ?>_bc_out_header_id').on('change', function (event, clickedIndex, newValue, oldValue) {
+		 let selectedValue = this.value;
+	     //alert (selectedValue);
+		 
+	     $.ajax({
+		 	   url: baseurl+'loader',
+		 	   data: {
+		 			'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+		 			,param: 'get_app_trans_no_delivery_bc_out'
+		 			,bc_out_header_id : selectedValue
+		 		},
+		 		dataType: 'json',
+		 		method: 'post',
+		 		success: function(data){
+		 			 console.log(data.no);
+		 			$('#form_<?php echo $methodid ?>_delivery_no').val(data.no);
+					$('#form_<?php echo $methodid ?>delivery_no_asli').val(data.no_ori);
+		 			//$('#form_<?php echo $methodid ?>_detail_item_base_id').val(data.item_base_id);
+		 			
+		 			setTimeout(function(){ 
+		 				$('.tab_scrollbar').getNiceScroll().resize(); 
+		 			}, 100);
+		 		}
+		   });
+	});	
+		
+	function cancel_<?php echo $methodid ?>(){
+		$('#panel_content_<?php echo $methodid ?>').show();
+		$('#panel_content_form_<?php echo $methodid ?>').hide();
+		$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+	}
+	
+	function save_<?php echo $methodid ?>(){
+		$('#form_<?php echo $methodid ?>').submit();
+	}
+	
+	var jvalidate = $("#form_<?php echo $methodid ?>").validate({
+		ignore: [],
+		rules: {                                            
+			gl_account_group: {
+				required: true
+			}
+		} 
+	});
+	
+	function edit_<?php echo $methodid ?>(id){
+		$.ajax({
+			url: baseurl+'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				,param: 'data_delivery'
+				,id : id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data){
+				$("#tab_<?php echo $methodid; ?>_detail").attr("data-toggle","tab");
+				$("#tab_<?php echo $methodid; ?>_detail").removeClass( "tab_disabled");
+				
+				new_delivery = 0;
+				delivery_id = id;
+				delivery_lock_data = data[0].lock_data;
+				delivery_bc_out_header_id = data[0].bc_out_header_id;
+				delivery_sales_order_transfer_id = data[0].sales_order_transfer_id;
+				delivery_subcon_out_id = data[0].subcon_out_id ;
+				delivery_partner_id = data[0].partner_id;
+				delivery_type_id = data[0].delivery_type_id;
+				
+				$('#form_<?php echo $methodid ?>_delivery_id').val(data[0].delivery_id);
+				$('#form_<?php echo $methodid ?>_delivery_type_id').val(data[0].delivery_type_id);
+				$('#form_<?php echo $methodid ?>_delivery_no').val(data[0].delivery_no);
+				$('#form_<?php echo $methodid ?>_delivery_date').val(data[0].delivery_date);
+				$('#form_<?php echo $methodid ?>_no_surat_jalan').val(data[0].delivery_no);
+				$('#form_<?php echo $methodid ?>_tgl_surat_jalan').val(data[0].delivery_date);
+				
+				$('#form_<?php echo $methodid ?>_detail_delivery_id').val(data[0].delivery_id);
+				$('#form_<?php echo $methodid ?>_detail_delivery_detail_id').val('');
+				$('#form_<?php echo $methodid ?>_detail_partner_id').val(delivery_partner_id);
+				$('#form_<?php echo $methodid ?>_detail_sales_order_transfer_id').val(delivery_sales_order_transfer_id);
+				$('#form_<?php echo $methodid ?>_detail_bc_out_header_id').val(delivery_bc_out_header_id);
+				$('#form_<?php echo $methodid ?>_detail_subcon_out_id').val(delivery_subcon_out_id);
+				
+				change_form_<?php echo $methodid ?>_partner_id(data[0].partner_id);
+				
+				if(delivery_type_id == 1){
+					$('.panel_<?php echo $methodid ?>_panel_custom_order').hide();
+					$('.panel_<?php echo $methodid ?>_panel_sales_order').show();
+					
+					$('.panel_<?php echo $methodid ?>_panel_contract_order').hide();
+					$('.select_<?php echo $methodid ?>_from_sales').show();
+					$('.select_<?php echo $methodid ?>_from_custom').hide();
+					$('.select_<?php echo $methodid ?>_from_contract').hide();
+					
+					setTimeout(function(){ 
+						change_form_<?php echo $methodid ?>_sales_order_transfer_id(data[0].sales_order_transfer_id);
+						
+						$('.tab_scrollbar').getNiceScroll().resize(); 
+					}, 500);
+				} else if(delivery_type_id == 2){
+					$('.panel_<?php echo $methodid ?>_panel_custom_order').show();
+					$('.panel_<?php echo $methodid ?>_panel_sales_order').hide();
+					
+					$('.panel_<?php echo $methodid ?>_panel_contract_order').hide();
+					$('.select_<?php echo $methodid ?>_from_sales').hide();
+					$('.select_<?php echo $methodid ?>_from_custom').show();
+					$('.select_<?php echo $methodid ?>_from_contract').hide();
+					
+					setTimeout(function(){ 
+						change_form_<?php echo $methodid ?>_bc_out_header_id(data[0].bc_out_header_id);
+						
+						$('.tab_scrollbar').getNiceScroll().resize(); 
+					}, 500);
+					
+				} else {
+					$('.panel_<?php echo $methodid ?>_panel_custom_order').hide();
+					$('.panel_<?php echo $methodid ?>_panel_sales_order').hide();
+					$('.panel_<?php echo $methodid ?>_panel_contract_order').show();
+					$('.select_<?php echo $methodid ?>_from_sales').hide();
+					$('.select_<?php echo $methodid ?>_from_custom').hide();
+					$('.select_<?php echo $methodid ?>_from_contract').show();
+					
+					setTimeout(function(){ 
+						change_form_<?php echo $methodid ?>_subcon_out_id(data[0].subcon_out_id);
+						
+						$('.tab_scrollbar').getNiceScroll().resize(); 
+					}, 500);
+				}				
+			}
+		});
+	}
+	
+	var check_submit = 0;
+	function post_<?php echo $methodid ?>(){
+		if(check_submit == 0) {
+			check_submit = 1;
+			page_loading("show",'Save <?php echo $page_title ?>','Please Wait...');
+			var data = $("#form_<?php echo $methodid ?>").serialize();
+			$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					page_loading("hide");
+					check_submit = 0;
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?>',data.message);	
+						
+						new_delivery = data.new_delivery;
+						delivery_id = data.delivery_id;
+						delivery_lock_data = data.lock_data;
+						delivery_bc_out_header_id = data.bc_out_header_id;
+						delivery_subcon_out_id = data.subcon_out_id;
+						delivery_sales_order_transfer_id = data.sales_order_transfer_id;
+						delivery_partner_id = data.partner_id;
+						delivery_type_id = data.delivery_type_id;
+						
+						if(new_delivery == 1){
+							new_delivery = 0;
+							$("#tab_<?php echo $methodid; ?>_detail").attr("data-toggle","tab");
+							$("#tab_<?php echo $methodid; ?>_detail").removeClass( "tab_disabled");
+							$("#tab_<?php echo $methodid; ?>_detail").click();
+							
+							
+							$('#form_<?php echo $methodid ?>_delivery_id').val(delivery_id);
+							$('#form_<?php echo $methodid ?>_detail_delivery_id').val(delivery_id);
+							$('#form_<?php echo $methodid ?>_detail_partner_id').val(data.partner_id);
+							$('#form_<?php echo $methodid ?>_detail_sales_order_transfer_id').val(data.sales_order_transfer_id);
+							$('#form_<?php echo $methodid ?>_detail_bc_out_header_id').val(data.bc_out_header_id);
+							$('#form_<?php echo $methodid ?>_detail_subcon_out_id').val(data.subcon_out_id);
+							$('#form_<?php echo $methodid ?>_detail_delivery_detail_id').val('');
+								
+							if(delivery_type_id == 1){
+								$('.panel_<?php echo $methodid ?>_panel_custom_order').hide();
+								$('.panel_<?php echo $methodid ?>_panel_sales_order').show();
+								$('.panel_<?php echo $methodid ?>_panel_contract_order').hide();
+								
+								setTimeout(function(){ 
+									$("#table_<?php echo $methodid ?>_sales").trigger('reloadGrid');
+									$("#table_<?php echo $methodid ?>_sales").setGridWidth($('.grid_container_<?php echo $methodid; ?>_sales').width() - 20,true).trigger('resize');
+									$('.tab_scrollbar').getNiceScroll().resize(); 
+								}, 500);
+							} else if(delivery_type_id == 2) {
+								$('.panel_<?php echo $methodid ?>_panel_custom_order').show();
+								$('.panel_<?php echo $methodid ?>_panel_sales_order').hide();
+								$('.panel_<?php echo $methodid ?>_panel_contract_order').hide();
+								
+								setTimeout(function(){ 
+									$("#table_<?php echo $methodid ?>_custom").trigger('reloadGrid');
+									$("#table_<?php echo $methodid ?>_custom").setGridWidth($('.grid_container_<?php echo $methodid; ?>_custom').width() - 20,true).trigger('resize');
+									$('.tab_scrollbar').getNiceScroll().resize(); 
+								}, 500);
+							}else {
+								$('.panel_<?php echo $methodid ?>_panel_custom_order').hide();
+								$('.panel_<?php echo $methodid ?>_panel_sales_order').hide();
+								$('.panel_<?php echo $methodid ?>_panel_contract_order').show();
+								setTimeout(function(){ 
+									$("#table_<?php echo $methodid ?>_contract").trigger('reloadGrid');
+									$("#table_<?php echo $methodid ?>_contract").setGridWidth($('.grid_container_<?php echo $methodid; ?>_contract').width() - 20,true).trigger('resize');
+									$('.tab_scrollbar').getNiceScroll().resize(); 
+								}, 500);
+							}
+						} else {
+							new_delivery = 1;
+							$('#panel_content_<?php echo $methodid ?>').show();
+							$('#panel_content_form_<?php echo $methodid ?>').hide();
+							$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+						}
+					} else {
+						show_error("show",'Error',data.message);
+					}
+				},
+				error: function(xhr,error){
+					show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+					check_submit = 0;
+				}
+			});
+		}
+	}
+
+	function edit_detail_<?php echo $methodid ?>(delivery_detail_id){
+		page_loading("show",'<?php echo $page_title ?>','Please Wait...');
+		$.ajax({
+			url: baseurl+'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				,param: 'data_delivery_detail'
+				,id : delivery_detail_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data){
+				page_loading("hide");
+				$('#form_<?php echo $methodid ?>_detail_delivery_detail_id').val(data[0].delivery_detail_id);
+					
+				$("#table_<?php echo $methodid ?>_sales").trigger('reloadGrid');
+				$("#table_<?php echo $methodid ?>_custom").trigger('reloadGrid');
+				$("#table_<?php echo $methodid ?>_contract").trigger('reloadGrid');
+			}
+		});
+	}
+	
+	function delete_detail_<?php echo $methodid ?>(delivery_detail_id){
+		if(check_submit == 0) {
+			swal({
+				title: "Confirm Delete <?php echo $page_title ?> Detail ?",
+				type: "question",
+				dangerMode: true,
+				showCancelButton: !0,
+				confirmButtonClass: "btn btn-danger m-1",
+				cancelButtonClass: "btn btn-secondary m-1",
+				confirmButtonText: "Confirm",
+				cancelButtonText: "Cancel",
+				backdrop: true,
+				allowOutsideClick : false,
+			}).then((result) => {
+				if (result.value) {
+					page_loading("show",'Delete <?php echo $page_title ?> Detail','Please Wait...');
+					$.ajax({
+						url: baseurl+'<?php echo $class_uri ?>/delete_detail',								
+						data: {'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>',delivery_detail_id:delivery_detail_id},
+						dataType: 'json',
+						method: 'post',
+						success: function(data){
+							page_loading("hide");
+							check_submit = 0;
+							if(data.valid){
+								show_success("show",'Delete <?php echo $page_title ?> Detail',data.message);			
+								$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+								cancel_detail_<?php echo $methodid ?>();
+								
+								setTimeout(function(){ 
+									$('.tab_scrollbar').getNiceScroll().resize(); 
+								}, 100);
+							} else {
+								show_error("show",'Error',data.message);
+							}
+						},
+						error: function(xhr,error){
+							show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+							check_submit = 0;
+						}
+					});
+				} else if (result.dismiss === swal.DismissReason.cancel) {
+					swal.closeModal();	
+					check_submit = 0;
+				}
+			});
+		}
+	}
+	
+	function cancel_detail_<?php echo $methodid ?>(){
+		$('#form_<?php echo $methodid ?>_detail_delivery_detail_id').val('');
+						
+		$("#table_<?php echo $methodid ?>_sales").trigger('reloadGrid');
+		$("#table_<?php echo $methodid ?>_custom").trigger('reloadGrid');
+		$("#table_<?php echo $methodid ?>_contract").trigger('reloadGrid');
+	}	
+	/* End Detail Function */
+	
+	var beforeclick_<?php echo $methodid ?>_custom = function (rowid, e) {
+		$("#table_<?php echo $methodid ?>_custom").jqGrid('resetSelection');
+		return(true);
+	}
+	
+	var beforeclick_<?php echo $methodid ?>_sales = function (rowid, e) {
+		$("#table_<?php echo $methodid ?>_sales").jqGrid('resetSelection');
+		return(true);
+	}
+	
+	var beforeclick_<?php echo $methodid ?>_contract = function (rowid, e) {
+		$("#table_<?php echo $methodid ?>_contract").jqGrid('resetSelection');
+		return(true);
+	}
+	
+	
+	var check_submit = 0;
+	function add_list_<?php echo $methodid ?>(rh_id){
+		page_loading("show",'<?php echo $page_title ?> Detail','Please Wait...');
+		setTimeout(function(){ 
+			if(delivery_type_id == 1){
+				var id = jQuery("#table_<?php echo $methodid ?>_sales").jqGrid('getGridParam','selrow');
+				if (id) {
+					var row = jQuery("#table_<?php echo $methodid ?>_sales").jqGrid('getRowData',id);   
+					
+					delivery_id = $('#form_<?php echo $methodid ?>_delivery_id').val();
+					delivery_detail_id = rh_id;
+					sales_order_transfer_detail_id = parseInt(unwrap_cell_value(row.r1).replace(/,/g, ''));
+					quantity_delivered = parseFloat(unwrap_cell_value(row.r9).replace(/,/g, ''));
+					
+					$.ajax({
+						url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detail',
+						data: {
+							'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+							,delivery_id:delivery_id
+							,delivery_detail_id:delivery_detail_id
+							,sales_order_transfer_detail_id :sales_order_transfer_detail_id
+							,quantity_delivered :quantity_delivered
+						},
+						dataType: 'json',
+						method: 'post',
+						success: function(data){
+							
+							page_loading("hide");
+							check_submit = 0;
+							if(data.valid){
+								show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+								cancel_detail_<?php echo $methodid ?>();
+								$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+								page_loading("hide");			
+							} else {
+								show_error("show",'Error',data.message);
+							}
+						},
+						error: function(xhr,error){
+							show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+							check_submit = 0;
+						}
+					});
+				} else {
+					show_error("show",'Error','Please select row');
+				}
+			} else if(delivery_type_id == 2){
+				var id = jQuery("#table_<?php echo $methodid ?>_custom").jqGrid('getGridParam','selrow');
+				if (id) {
+					var row = jQuery("#table_<?php echo $methodid ?>_custom").jqGrid('getRowData',id);   
+					
+					delivery_id = $('#form_<?php echo $methodid ?>_delivery_id').val();
+					delivery_detail_id = rh_id;
+					bc_out_barang_id = parseInt(unwrap_cell_value(row.r1).replace(/,/g, ''));
+					quantity_delivered = parseFloat(unwrap_cell_value(row.r9).replace(/,/g, ''));
+					
+					$.ajax({
+						url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detail',
+						data: {
+							'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+							,delivery_id:delivery_id
+							,delivery_detail_id:delivery_detail_id
+							,bc_out_barang_id :bc_out_barang_id
+							,quantity_delivered :quantity_delivered
+						},
+						dataType: 'json',
+						method: 'post',
+						success: function(data){
+							
+							page_loading("hide");
+							check_submit = 0;
+							if(data.valid){
+								show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+								cancel_detail_<?php echo $methodid ?>();
+								$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+								page_loading("hide");			
+							} else {
+								show_error("show",'Error',data.message);
+							}
+						},
+						error: function(xhr,error){
+							show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+							check_submit = 0;
+						}
+					});
+				} else {
+					show_error("show",'Error','Please select row');
+				}
+			} else {
+				var id = jQuery("#table_<?php echo $methodid ?>_contract").jqGrid('getGridParam','selrow');
+				if (id) {
+					var row = jQuery("#table_<?php echo $methodid ?>_contract").jqGrid('getRowData',id);   
+					
+					delivery_id = $('#form_<?php echo $methodid ?>_delivery_id').val();
+					delivery_detail_id = rh_id;
+					subcon_in_detail_id = parseInt(unwrap_cell_value(row.r1).replace(/,/g, ''));
+					quantity_delivered = parseFloat(unwrap_cell_value(row.r9).replace(/,/g, ''));
+					
+					$.ajax({
+						url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detail',
+						data: {
+							'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+							,delivery_id:delivery_id
+							,delivery_detail_id:delivery_detail_id
+							,subcon_in_detail_id :subcon_in_detail_id
+							,quantity_delivered :quantity_delivered
+						},
+						dataType: 'json',
+						method: 'post',
+						success: function(data){
+							
+							page_loading("hide");
+							check_submit = 0;
+							if(data.valid){
+								show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+								cancel_detail_<?php echo $methodid ?>();
+								$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+								page_loading("hide");			
+							} else {
+								show_error("show",'Error',data.message);
+							}
+						},
+						error: function(xhr,error){
+							show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+							check_submit = 0;
+						}
+					});
+				} else {
+					show_error("show",'Error','Please select row');
+				}
+			}
+		}, 500);	
+		
+	}
+</script>

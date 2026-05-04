@@ -1,0 +1,385 @@
+ <style>
+    
+	.card-text {
+      color: white;
+	  font-size: 16px;
+      font-weight: 500;
+    }
+	
+	 .card-text small {
+	  display: inline-block;
+      width: 250px;
+	  color: white;
+	  font-size: 16px;
+	  font-weight: 500; 
+     
+    }
+	
+
+ </style>
+   <script type="text/javascript">
+   //     $(document).ready(function(){
+	//		//http://192.168.99.133:8083/SIPOP/dashboard/index
+	//		//alert(baseurl+'<?php echo $class_uri ?>')
+	//		 setInterval(function(){
+	//			 $('#view_jml_tanggal_prod_transfer_lebih').modal('hide');
+	//			 $('#view_modal_beda_barang_supply_transfer').modal('hide');
+	//			 $('#view_modal_minus_barang_jadi').modal('hide');
+	//		   	 $('#dashboard_sipop').load(baseurl+'<?php echo $class_uri ?>/index'); 
+	//			 },120000);
+	//			// $('#r_error').load();
+	//			  //  $('#tab-content').load(window.location.href + "#tab-content");
+	//		   //  $('#tab-content').load( <?php echo $jml_beda_kode_barang_supply_transfer ?>).fadeIn("slow");
+   //            // window.location.reload(add_tab(781044,'Dashboard','dashboard','fa fa-bars'));
+   //        // }, 1000);
+   //     });
+	//	
+	//	if ($('#view_modal_beda_barang_supply_transfer').hasClass('show')) {
+   //             console.log("Modal sedang aktif");
+   //         } else {
+   //             console.log("Modal tidak aktif");
+   //       }
+    </script>
+<?php if(isset($dashboard_tab)) { ?>
+<div class="row">
+	<div class="col-xl-12" id="dashboard_sipop">
+	   <div class="tab tab-border">
+            <ul class="nav nav-tabs" role="tablist">
+					<?php 
+						$first = true;
+							//var_dump ("#content_". $methodid ."_". $dashboard_tab['alias']); 
+						//	var_dump ('#content_'.$methodid.'_'.$dashboard_tab[0]['alias']); 
+						foreach($dashboard_tab as $tab) { 
+							$class = "";
+							if($first){
+								$class = "active show";
+							}
+					
+							echo "<li class=\"nav-item\">";
+							echo "<a class=\"nav-link ". $class ." \" id=\"tab_". $methodid ."_". $tab['alias'] ."\" data-toggle=\"tab\" href=\"#content_". $methodid ."_". $tab['alias'] ."\" role=\"tab\" aria-controls=\"content_". $methodid ."_". $tab['alias'] ."\" aria-selected=\"true\">";	
+							echo "<i class=\"". $tab['icon'] ."\"></i> ". $tab['title'];	
+							echo "</a>";	
+							echo "</li>";	
+								
+								
+							$first = false;
+						}
+	
+					?>
+			</ul>
+			<!--<div class="tab-content">-->
+		  <div class="tab-content">
+		    <?php 
+				$first = true;
+				$class = "";
+				if($first){
+				   $class = "active show";
+				}
+			?>	
+						
+			
+			
+			<?php		
+				 echo "<div class=\"tab_custom_ecc tab-pane fade ".$class." \" id=\"content_". $methodid ."_error\" role=\"tabpanel\" aria-labelledby=\"tab_". $methodid ."_error\">";
+				 echo "<div class=\"row\">";
+				?>
+				
+				<!-- <div class="col-xl-12 mb-10">	
+              	 <div class="ui grid form">
+					<div class="row field">
+					<div class="twelve wide column">
+						<button type="button" class="btn btn-default" onclick="javascript:preview_<?php //echo $methodid ?>();">
+							<i class="fa fa-search"></i> Preview
+						</button> 
+						
+					</div>
+				  </div>
+				 </div>
+			   </div> -->
+
+              	<div class="col-xl-3 col-lg-6 col-md-6 ">
+				 <div class="card title3 bg-success " >
+				   <div class="card-body r_error">
+				     <a href="#" data-toggle="modal" data-target="#view_modal_prod_request">
+				      <div class="card-body-icon" style="font-color:black;">
+					  <?php //echo $total_request ?>
+					  </div>
+					   </a>
+				    <h5 class="card-title2">Production Transfer </h5>
+					 
+					  <p class="card-text">
+					     <a href="#" data-toggle="modal" data-target="#view_jml_tanggal_prod_transfer_lebih" id="tombol-modal-transfer_lebih">
+						 <small> Tanggal Dokumen </small>: <?php echo $jml_tanggal_prod_transfer_lebih ?> <br> 
+						 </a>
+						 <a href="#" data-toggle="modal" data-target="#view_modal_beda_barang_supply_transfer">
+                         <small> Beda Kode Brg Supply </small>: <?php echo $jml_beda_kode_barang_supply_transfer ?>
+						 </a>
+						 <a href="#" data-toggle="modal" data-target="#view_modal_minus_barang_jadi">
+                         <small> Supply kosong </small>: 0
+						 </a>
+						 
+                      </p>
+				   </div>
+				 </div>
+				</div>				
+				
+			   <div class="col-xl-3 col-lg-6 col-md-6 ">
+				 <div class="card title3 bg-success " >
+				   <div class="card-body">
+				     <a href="#" data-toggle="modal" data-target="#view_modal_prod_request">
+				      <div class="card-body-icon" style="font-color:black;">
+					  <?php //echo $total_request ?>
+					  </div>
+					   </a>
+				    <h5 class="card-title2">Report Mutasi (Minus)</h5>
+					 
+					  <p class="card-text">
+					     <a href="#" data-toggle="modal" data-target="#view_modal_minus_bahan_baku">
+						 <small> Mutasi Bahan Baku </small>: <?php echo $error_report_bahan_baku ?> <br> 
+						 </a>
+						 <a href="#" data-toggle="modal" data-target="#view_modal_minus_barang_jadi">
+                         <small> Mutasi Barang jadi </small>: 0
+						 </a>
+                      </p>
+				   </div>
+				   				   
+				 </div>
+				</div>
+				
+				<div class="col-xl-3 col-lg-6 col-md-6 ">
+				 <div class="card title3 bg-success " >
+				   <div class="card-body">
+				     <a href="#" data-toggle="modal" data-target="#view_modal_prod_request">
+				      <div class="card-body-icon" style="font-color:black;">
+					  <?php //echo $total_request ?>
+					  </div>
+					   </a>
+				    <h5 class="card-title2">Dokumen BC Keluar </h5>
+					 
+					  <p class="card-text">
+					     <a href="#" data-toggle="modal" data-target="#view_modal_minus_bahan_baku">
+						 <small> Tanggal Supply lebih </small>: <?php echo $error_report_bahan_baku ?> <br> 
+						 </a>
+						 <a href="#" data-toggle="modal" data-target="#view_modal_minus_barang_jadi">
+                         <small> Kode supply kosong </small>: <?php echo $jml_dok_bc_supply_kosong ?> 
+						 </a>
+                      </p>
+				   </div>
+				 </div>
+				</div>
+				
+			   <?php
+			      echo "</div>";
+			      echo "</div>";
+			
+		
+				
+				 echo "<div class=\"tab_custom_ecc tab-pane fade \" id=\"content_". $methodid ."_monitor\" role=\"tabpanel\" aria-labelledby=\"tab_". $methodid ."_monitor\">";
+				 echo "<div class=\"row\">";
+				// var_dump($dashboard_tab);
+				?>
+				
+               <div class="col-xl-12 mb-10">	
+              	 <div class="ui grid form">
+					<div class="row field">
+					<div class="twelve wide column">
+						<button type="button" class="btn btn-default" onclick="javascript:preview_dashboard_<?php echo $methodid ?>();">
+							<i class="fa fa-search"></i> Preview2....
+						</button>
+					</div>
+				  </div>
+				 </div>
+			   </div>
+				
+				<div class="col-xl-3 col-lg-6 col-md-6 ">
+				 <div class="card title3 bg-success " >
+				   <div class="card-body">
+				     <a href="#" data-toggle="modal" data-target="#view_modal_prod_request">
+				      <div class="card-body-icon" style="font-color:black;">
+					  <?php echo $total_request ?>
+					  </div>
+					   </a>
+				    <h5 class="card-title2">Production Request</h5>
+					 
+					  <p class="card-text">
+					     <a href="#" data-toggle="modal" data-target="#view_modal_prod_request_fb">
+						 <small> Fabric </small>: <?php echo $total_request_fb ?> <br> 
+						 </a>
+						 <a href="#" data-toggle="modal" data-target="#view_modal_prod_request_other">
+                         <small> Other </small>: <?php echo $total_request_other ?>
+						 </a>
+                      </p>
+				 
+					 
+					 
+				   </div>
+				  <!--  <div class="card-title2 ">
+					    Fabric :  <?php //echo $total_request_fb ?>
+					  </div>
+					   <div class="card-title2 ">
+					    ACC :  <?php //echo $total_request_fb ?>
+					  </div> -->
+					 
+				 </div>
+				</div>
+				
+				 <div class="col-xl-3 col-lg-6 col-md-6 ">
+				 <div class="card title3 bg-danger " >
+				  <a href="#" >
+				   <div class="card-body">
+				      <div class="card-body-icon" style="font-color:black;">
+					    <?php echo $total_request_fb ?>
+					  </div>
+				    <h5 class="card-title2">Production Transfer</h5>
+				   </div>
+				  </a>
+				 </div>
+				</div>
+			
+			<?php
+			 echo "</div>";
+			    echo "</div>";
+			
+			?>
+			
+			  
+		  </div>
+	  </div>
+	</div>
+</div>
+<?php } ?>
+
+
+<!-- <div class="tab_custom_ecc modal fade" id="view_jml_tanggal_prod_transfer_lebih" role="dialog" aria-labelledby="exampleModalLabel" > -->
+<div class="modal fade" id="view_jml_tanggal_prod_transfer_lebih" role="dialog" aria-labelledby="exampleModalLabel" >
+      <div class="modal-dialog modal-xl" role="document" >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Tanggal supply lebih besar dari dokumen</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+		   	  <div class="row">
+                <div class="col-xl-12">
+                 <table id="table_<?php echo $methodid ?>_prod_transfer_lebih"></table>
+                 <div id="ptable_<?php echo $methodid ?>_prod_transfer_lebih"></div>                                                     
+                </div>
+              </div>
+		    </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+</div>
+
+<div class="modal fade" id="view_modal_beda_barang_supply_transfer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Beda kode barang transfer dan supply</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+		  <form class="ui grid ecc_form" id="form_<?php echo $methodid ?>_modal_coba" action="javascript:addx_<?php echo $methodid ?>_absen()">
+           	</form>
+			  <div class="row">
+                <div class="col-xl-12">
+                 <table id="table_<?php echo $methodid ?>_beda_barang_supply_transfer"></table>
+                 <div id="ptable_<?php echo $methodid ?>_beda_barang_supply_transfer"></div>                                                     
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+</div>
+
+<div class="modal fade" id="view_modal_minus_barang_jadi" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Mutasi Barang Jadi Minus</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+		  <form class="ui grid ecc_form" id="form_<?php echo $methodid ?>_modal_coba" action="javascript:addx_<?php echo $methodid ?>_absen()">
+           	</form>
+			  <div class="row">
+                <div class="col-xl-12">
+                 <table id="table_<?php echo $methodid ?>_keterangan_M"></table>
+                 <div id="ptable_<?php echo $methodid ?>_keterangan_M"></div>                                                     
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+</div>
+
+<div class="modal fade" id="view_modal_prod_request_fb" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Daftar Production Request Fabric</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+		  <form class="ui grid ecc_form" id="form_<?php echo $methodid ?>_modal_request_fabric" action="javascript:addx_<?php echo $methodid ?>_absen()">
+           	</form>
+			  <div class="row">
+                <div class="col-xl-12">
+                 <table id="table_<?php echo $methodid ?>_keterangan_M"></table>
+                 <div id="ptable_<?php echo $methodid ?>_keterangan_M"></div>                                                     
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+</div>
+
+<div class="modal fade" id="view_modal_prod_request_other" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Daftar Production Request Other</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+		  <form class="ui grid ecc_form" id="form_<?php echo $methodid ?>_modal_request_fabric" action="javascript:addx_<?php echo $methodid ?>_absen()">
+           	</form>
+			  <div class="row">
+                <div class="col-xl-12">
+                 <table id="table_<?php echo $methodid ?>_keterangan_M"></table>
+                 <div id="ptable_<?php echo $methodid ?>_keterangan_M"></div>                                                     
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+</div>
+
+
+
+
+

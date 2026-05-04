@@ -1,0 +1,241 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+Class Fabric_location extends CI_Controller { 
+
+	function __construct(){ 
+		parent::__construct(); 
+		
+		$this->data_request = $_REQUEST;
+		
+		$module = $this->router->module;
+		$directory = $this->router->directory;
+		$class = $this->router->class;
+		$method = $this->router->method;
+		$directory = trim(str_replace('../modules/'.$module ,'',str_replace('/controllers/','',$directory)),'/');
+		
+		$this->module = $module;
+		if(trim($directory) != ''){
+			$this->directory = $directory;
+		} else {
+			$this->directory = '0';
+			$this->directory2 = '';
+		}
+		$this->class = $class;
+		$this->method = $method;
+	}
+	
+	function location_table(){
+
+		$field = array();
+		$field['r1'] = array('sc' => 'r1','ctype' => 'int', 'bypassvalue' => '', 'title' => 'ITEM ID');
+		$field['r2'] = array('sc' => 'r2','ctype' => 'text', 'bypassvalue' => '', 'title' => 'ITEM BASE');
+		$field['r3'] = array('sc' => 'r3','ctype' => 'text', 'bypassvalue' => '', 'title' => 'ITEM DETAIL');
+		$field['r4'] = array('sc' => 'r4','ctype' => 'date', 'bypassvalue' => '', 'title' => 'ITEM NAME');
+		$field['r5'] = array('sc' => 'r5','ctype' => 'text', 'bypassvalue' => '', 'title' => 'QTY');
+		$field['r6'] = array('sc' => 'r6','ctype' => 'text', 'bypassvalue' => '', 'title' => 'QTY USED');
+		$field['r7'] = array('sc' => 'r7','ctype' => 'text', 'bypassvalue' => '', 'title' => 'UNIT');
+		$field['r8'] = array('sc' => 'r8','ctype' => 'text', 'bypassvalue' => '', 'title' => 'LOC CODE');
+		$field['r9'] = array('sc' => 'r9','ctype' => 'text', 'bypassvalue' => '', 'title' => 'BLOCK');
+		$field['r10'] = array('sc' => 'r10','ctype' => 'text', 'bypassvalue' => '', 'title' => 'LOC TYPE');
+		$field['r11'] = array('sc' => 'r11','ctype' => 'text', 'bypassvalue' => '', 'title' => 'RACK');
+		$field['r12'] = array('sc' => 'r12','ctype' => 'text', 'bypassvalue' => '', 'title' => 'WAREHOUSE');
+		$field['r13'] = array('sc' => 'r13','ctype' => 'text', 'bypassvalue' => '', 'title' => 'BARCODE');
+		$field['r14'] = array('sc' => 'r14','ctype' => 'int', 'bypassvalue' => '', 'title' => 'item_category_id');
+		$field['r15'] = array('sc' => 'r15','ctype' => 'int', 'bypassvalue' => '', 'title' => 'location_id');
+		$field['r16'] = array('sc' => 'r16','ctype' => 'int', 'bypassvalue' => '', 'title' => 'location_base_id');
+		
+		return $field;
+	}
+	
+	function index(){
+		$this->load->model('main');
+		$component['loadlayout'] = true;
+		$component['view_load'] = 'fabric_location/view';
+		$component['load_js'][] = 'fabric_location/view';
+		
+		$component['page_title'] = "Fabric Location";
+		$dashboard_table = array();
+	     
+	  // $field = $this->rpt_barang_jadi_table();
+		$field = $this->location_table();
+		
+		$dashboard_table['field'] = $field;
+		//var_dump($dashboard_table);
+		$component['dashboard_table'] = $dashboard_table;
+		
+		$this->authentication->ajaxlayout($component);
+	}
+	
+	function loaddata(){
+		$field = $this->location_table();
+				
+		$type_id = isset($_REQUEST['type_id']) ?  $_REQUEST['type_id'] : '';
+		$location_base_id = isset($_REQUEST['location_base_id']) ? $_REQUEST['location_base_id'] : 0;
+		$location_id = isset($_REQUEST['location_id']) ? $_REQUEST['location_id'] : 0;
+		$print = isset($_REQUEST['print']) ? $_REQUEST['print'] : 0;
+		$format = isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xlsx';
+		$page = isset($_POST['page'])?$_POST['page']:1; // get the requested page 
+        $rows = isset($_POST['rows'])?$_POST['rows']:10; // get how many rows we want to have into the grid 
+        $sidx = isset($_POST['sidx'])?$_POST['sidx']:'r1'; // get index row - i.e. user click to sort 
+        $sord = isset($_POST['sord'])?$_POST['sord']:'0'; // get the direction 
+		$search = isset($_REQUEST['_search'])?$_REQUEST['_search']:false; 
+		$filterRules =  isset($_POST['filters'])?$_POST['filters']:false;
+		
+		$limit =  $rows;
+		$offset =  $rows * ($page - 1);
+		
+		//var_dump($location_base_id);die();
+		$order = isset($_REQUEST['order']) ? $_REQUEST['order'] : array();
+		
+		if($sord == 'asc'){
+			$sord = 1;
+		} else {
+			$sord = 2;
+		}
+		
+		$sort =	$sidx. '='.$sord;	
+		
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";	
+		//var_dump($sort);		
+				
+		//$sp = "dbo.sp_rpt_bc_out_old";	
+   	
+        // $sp = "dbo.sp_rpt_bahan_baku_accounting";
+		// $sp = "dbo.sp_rpt_wip_accounting";
+		  $sp = "dbo.sp_fabric_location";
+ 		if($print == 1){
+			$this->rpc_service->setSP(array("sp"=> $sp,"mode"=> $print == 1 ? "2" : "1","debug"=>"1"));
+		} else {
+			$this->rpc_service->setSP($sp);
+		}
+				
+		$this->rpc_service->addField('type_id',$type_id);
+		$this->rpc_service->addField('location_base_id',$location_base_id);
+		$this->rpc_service->addField('location_id',$location_id);
+		$this->rpc_service->addField('format',$format);
+		$this->rpc_service->addField('temp_folder',sys_get_temp_dir());
+		$this->rpc_service->addField('sort',$sort);
+		$this->rpc_service->addField('limit',$limit);
+		$this->rpc_service->addField('offset',$offset);
+				
+		$this->rpc_service->setWhere($search,$filterRules,$field);
+		
+		if($print == 1){
+			$result = $this->rpc_service->resultPrint_laporan('','','','',$format,$date_start,$date_end);
+		    echo json_encode($result);
+		} else {
+			$this->authentication->plainlayout();
+			//var_dump($sp);die();			
+			$result = $this->rpc_service->resultJSON_pop();	
+		//	var_dump($result);	
+			$data_result = json_decode($result['data'],true);
+			
+			if(isset($data_result['detail']['result_count'])){
+				$records = $data_result['detail']['result_count'];
+				$total = ceil($data_result['detail']['result_count'] / $limit);
+			} else {
+				$records = 0;
+				$total = 0;
+			}
+			
+			$responce = new stdclass();
+			$responce->page = $page;
+			$responce->records = $records;
+			$responce->total = $total;
+			$i=0; 
+			//var_dump($data_result['xrow']);	
+			if($data_result){
+				if(isset($data_result['xrow'])){
+					foreach($data_result['xrow'] as $key=>$value){
+						foreach ($value as $k => $v) {
+							//	if($k=='r11'){
+							//	 $v=$this->mainconfig->get_decimal_format($v,4,true);	
+							//	}
+															
+							$responce->rows[$i][$k] = $v;
+						} 
+						$i++;
+					}
+				}
+			}
+		    //var_dump($responce);
+			echo json_encode($responce);
+		}
+	}
+	
+	
+	function post_add_edit_scan(){
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+	
+		$code_barcode = isset($_POST['code_barcode']) ? $_POST['code_barcode'] : '';
+		$keterangan = isset($_POST['keterangan']) ? $_POST['keterangan'] : 0;
+		$stock_move_sipop_id = isset($_POST['stock_move_sipop_id']) ? $_POST['stock_move_sipop_id'] :'';
+        //var_dump($code_barcode);die();
+   if ($code_barcode) {
+	    $hasil=$this->main->getData_pop("dbo.dt_stock_move_sipop",null,array("fabric_shipment_list_code"=>$code_barcode));
+		if (!$hasil){
+			$return['valid'] = false;
+			$return['status_code'] ='0001';
+			$return['message1'] = 'kosong';
+			$return['message'] = 'item barang tidak ditemukan, Insert Data';
+		}else{
+			
+			if ( $hasil[0]["location_id"] == null ){
+				$return['valid'] = false;
+			    $return['status_code'] ='0001';
+			    $return['message1'] = 'kosong';
+			    $return['message'] = 'alamat lokasi masih kosong, Insert Data';
+			}else{
+			//var_dump($hasil);die();
+			
+				//var_dump('ada');die();
+				 
+			if ($keterangan == 1) {
+				$this->rpc_service->setSP("dbo.sp_fabric_location_barcode_edit");
+				$this->rpc_service->addField('stock_move_sipop_id', $stock_move_sipop_id);
+			} else {
+				$this->rpc_service->setSP("dbo.sp_fabric_location_barcode");
+			}
+			
+			$this->rpc_service->addField('code_barcode', $code_barcode);
+			//$this->rpc_service->addField('keterangan', $keterangan);
+			$result = $this->rpc_service->resultJSON_pop();
+			//var_dump($result);die();
+			$data = array();
+			if (isset($result)) {
+				//var_dump($result);
+				if (isset($result['valid'])) {
+					
+					$data_result = json_decode($result['data'], true);
+					//var_dump($result['valid']);die();
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+						}else{
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+						}
+					}else{
+						$return['valid'] = $result['valid'];
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		  }	
+		}
+	        // $return['fabric_id'] = $hasil[0]['item_header_id'];
+	        // $return['fabric_code'] = $hasil[0]['item_header_code'];
+			
+        }
+      echo json_encode($return);		
+	}
+}

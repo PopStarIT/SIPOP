@@ -1,0 +1,2876 @@
+<?php if (! defined('BASEPATH')) exit('No direct script access allowed');
+
+class fabric_receive extends CI_Controller
+{
+
+	function __construct()
+	{
+		parent::__construct();
+
+		$this->data_request = $_REQUEST;
+
+		$module = $this->router->module;
+		$directory = $this->router->directory;
+		$class = $this->router->class;
+		$method = $this->router->method;
+		$directory = trim(str_replace('../modules/' . $module, '', str_replace('/controllers/', '', $directory)), '/');
+
+		$this->module = $module;
+		if (trim($directory) != '') {
+			$this->directory = $directory;
+		} else {
+			$this->directory = '0';
+			$this->directory2 = '';
+		}
+		$this->class = $class;
+		$this->method = $method;
+	}
+
+	function receive_table()
+	{
+		$view = 'view_fabric_warehouse_receive';
+		$get_field = $this->ecc_library->get_field_pop($view);
+
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		$get_field['r5']['hidden'] = true;
+		$get_field['r16']['hidden'] = true;
+		$get_field['r17']['hidden'] = true;
+		$get_field['r18']['hidden'] = true;
+		$get_field['r19']['hidden'] = true;
+		$get_field['r20']['hidden'] = true;
+		$get_field['r21']['hidden'] = true;
+       
+		//$get_field['r2']['title'] = 'Receive Type';
+		$get_field['r3']['title'] = 'Receive No';
+		$get_field['r4']['title'] = 'Receive Date';
+		$get_field['r6']['title'] = 'Shipment No';
+		$get_field['r7']['title'] = 'Shipment date';
+		$get_field['r8']['title'] = 'Dok BC';
+		$get_field['r9']['title'] = 'No BC';
+		$get_field['r10']['title'] = 'Tgl BC';
+		$get_field['r11']['title'] = 'Receive Status';
+
+		$get_field['r7']['align'] = 'center';
+
+		//$get_field['r2']['width'] = 160;
+		$get_field['r3']['width'] = 150;
+		$get_field['r4']['width'] = 100;
+		//$get_field['r6']['width'] = 150;
+		//$get_field['r7']['width'] = 100;
+		//$get_field['r8']['width'] = 80;
+		//$get_field['r9']['width'] = 90;
+		//$get_field['r10']['width'] = 100;
+		//$get_field['r11']['width'] = 120;
+		// $get_field['r4']['width'] = 170;
+		// $get_field['r5']['width'] = 170;
+		// $get_field['r6']['width'] = 210;
+		// $get_field['r9']['width'] = 170;
+
+		//$get_field['act']['sortable'] = true;
+		return $get_field;
+	}
+
+	function receive_scan_table()
+	{
+		$view = 'view_fabric_warehouse_receive_detail';
+		$get_field = $this->ecc_library->get_field_pop($view);
+
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		$get_field['r3']['hidden'] = true;
+		$get_field['r4']['hidden'] = true;
+
+		$get_field['r13']['hidden'] = true;
+		$get_field['r15']['hidden'] = true;
+		$get_field['r16']['hidden'] = true;
+
+		$get_field['r5']['title'] = 'CODE';
+		$get_field['r6']['title'] = 'COLOUR';
+		$get_field['r7']['title'] = 'LOT';
+		$get_field['r8']['title'] = 'BALE';
+		$get_field['r9']['title'] = 'ROLL';
+		$get_field['r10']['title'] = 'QTY';
+		$get_field['r11']['title'] = 'QTY RECEIVE';
+		$get_field['r12']['title'] = 'UNIT';
+		$get_field['r14']['title'] = 'STATUS';
+
+		$get_field['r11']['editable'] = true;
+
+
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = 'ACTION';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations_list_receive_gudang';
+		$get_field['act']['width'] = 300;
+		return $get_field;
+	}
+	function other_receive_scan_table()
+	{
+		$view = 'view_fabric_warehouse_receive_detail_other';
+		$get_field = $this->ecc_library->get_field_pop($view);
+
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		$get_field['r3']['hidden'] = true;
+		$get_field['r4']['hidden'] = true;
+		//$get_field['r5']['hidden'] = 'quantity ordered';
+		$get_field['r5']['hidden'] = 'true';
+
+		$get_field['r6']['title'] = 'quantity received';
+		$get_field['r6']['editable'] = true;
+		$get_field['r7']['title'] = 'quantity custom';
+		//$get_field['r8']['title'] = 'quantity invoiced';
+		$get_field['r8']['hidden'] = true;
+		$get_field['r9']['title'] = 'conversion';
+		$get_field['r10']['title'] = 'ex rate';
+
+		$get_field['r11']['hidden'] = true;
+		$get_field['r12']['hidden'] = true;
+		$get_field['r13']['hidden'] = true;
+		$get_field['r14']['hidden'] = true;
+		$get_field['r15']['hidden'] = true;
+
+		$get_field['r16']['hidden'] = true;
+		$get_field['r17']['hidden'] = true;
+		$get_field['r18']['hidden'] = true;
+		$get_field['r19']['hidden'] = true;
+		$get_field['r20']['hidden'] = true;
+
+		$get_field['r21']['hidden'] = true;
+		$get_field['r22']['hidden'] = true;
+		$get_field['r23']['hidden'] = true;
+		$get_field['r24']['hidden'] = true;
+		$get_field['r25']['hidden'] = true;
+
+		$get_field['r26']['hidden'] = 'bc no';
+		$get_field['r27']['hidden'] = true;
+		$get_field['r28']['hidden'] = true;
+		$get_field['r30']['hidden'] = true;
+
+
+
+
+
+
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = 'Action';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations_list_receive_gudang_other';
+		$get_field['act']['width'] = 300;
+		return $get_field;
+	}
+
+	function receive_scan_tablexx()
+	{
+		$view = 'view_temp_fabric_receive';
+		$get_field = $this->ecc_library->get_field_pop($view);
+
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		$get_field['r3']['hidden'] = true;
+		$get_field['r4']['hidden'] = true;
+		$get_field['r5']['hidden'] = true;
+		$get_field['r6']['hidden'] = true;
+		$get_field['r16']['hidden'] = true;
+		$get_field['r17']['hidden'] = true;
+		$get_field['r18']['hidden'] = true;
+		$get_field['r20']['hidden'] = true;
+
+		$get_field['r7']['title'] = 'Shipment No';
+		$get_field['r8']['title'] = 'Purchase Order';
+		$get_field['r9']['title'] = 'Fabric Code';
+		$get_field['r10']['title'] = 'colour';
+		$get_field['r11']['title'] = 'lot';
+		$get_field['r12']['title'] = 'bale';
+		$get_field['r13']['title'] = 'roll';
+		$get_field['r14']['title'] = 'kgs';
+		$get_field['r15']['title'] = 'yds';
+
+		$get_field['r11']['editable'] = true;
+		$get_field['r12']['editable'] = true;
+		$get_field['r13']['editable'] = true;
+		$get_field['r14']['editable'] = true;
+		$get_field['r15']['editable'] = true;
+		$get_field['r19']['editable'] = true;
+
+
+		//$get_field['r14']['title'] = 'receive';
+		//$get_field['r15']['title'] = 'Unit';
+		//$get_field['r16']['title'] = 'note';
+
+		//$get_field['r1']['sc'] = 'r1';
+		//$get_field['r1']['sc'] = 'r1';
+		$get_field['r3']['width'] = 200;
+
+		$get_field['r9']['align'] = 'center';
+		$get_field['r10']['align'] = 'center';
+		$get_field['r11']['align'] = 'center';
+		$get_field['r12']['align'] = 'center';
+		$get_field['r13']['align'] = 'center';
+
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = 'hoho';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations_temp_fabric_receive';
+		$get_field['act']['width'] = 300;
+
+
+		return $get_field;
+	}
+
+	function detail_receive_table()
+	{
+		$view = 'view_fabric_warehouse_receive_detail';
+		$get_field = $this->ecc_library->get_field_pop($view);
+
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		$get_field['r3']['hidden'] = true;
+		$get_field['r4']['hidden'] = true;
+		$get_field['r5']['hidden'] = true;
+		$get_field['r6']['hidden'] = true;
+		$get_field['r7']['hidden'] = true;
+
+		$get_field['r8']['title'] = 'Receive No';
+		$get_field['r9']['title'] = 'Purchase Order';
+		$get_field['r10']['title'] = 'Fabric Code';
+		$get_field['r12']['title'] = 'Item Fabric';
+		$get_field['r13']['title'] = 'Lot';
+		$get_field['r14']['title'] = 'Bale';
+		$get_field['r15']['title'] = 'Roll';
+		//$get_field['r16']['title'] = 'Quantity';
+		//$get_field['r17']['title'] = 'Unit';
+		//$get_field['r18']['title'] = 'Status';
+
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = 'Action';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations_temp_fabric_receive';
+		$get_field['act']['width'] = 300;
+
+		return $get_field;
+	}
+
+
+	function fabric_list_table()
+	{
+		//$view = 'view_fabric_shipment_list_receive_new';
+		$view = 'view_fabric_shipment_list_receive';
+		$get_field = $this->ecc_library->get_field_pop($view);
+
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		$get_field['r3']['hidden'] = true;
+
+		$get_field['r12']['hidden'] = true;
+		$get_field['r15']['hidden'] = true;
+		$get_field['r16']['hidden'] = true;
+		$get_field['r17']['hidden'] = true;
+		$get_field['r18']['hidden'] = true;
+		$get_field['r19']['hidden'] = true;
+		$get_field['r20']['hidden'] = true;
+		$get_field['r21']['hidden'] = true;
+
+
+		$get_field['r4']['title'] = 'Colour';
+		$get_field['r5']['title'] = 'Lot';
+		$get_field['r6']['title'] = 'Bale';
+		$get_field['r7']['title'] = 'Roll';
+		$get_field['r8']['title'] = 'Weight';
+		$get_field['r9']['title'] = 'QTY';
+		$get_field['r10']['title'] = 'Weight Unit';
+		$get_field['r11']['title'] = 'QTY Unit';
+		$get_field['r13']['title'] = 'item code';
+		$get_field['r14']['title'] = 'Barcode Number';
+
+		$get_field['r10']['align'] = 'center';
+		$get_field['r11']['align'] = 'center';
+
+
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = 'ACTION ';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations_list_receive';
+		$get_field['act']['width'] = 300;
+
+		return $get_field;
+	}
+	function fabric_list_other_table()
+	{
+		$view = 'view_fabric_shipment_list_receive_other_terbaru';
+		$get_field = $this->ecc_library->get_field_pop($view);
+
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		$get_field['r11']['hidden'] = true;
+		$get_field['r12']['hidden'] = true;
+		$get_field['r13']['hidden'] = true;
+
+
+		$get_field['r3']['title'] = 'ITEM CODE';
+		$get_field['r4']['title'] = 'ITEM NAME';
+		$get_field['r5']['title'] = 'QUANTITY';
+		$get_field['r6']['title'] = 'CONVERSION';
+		$get_field['r7']['title'] = 'UNIT PRICE';
+		$get_field['r8']['title'] = 'EX RATE';
+		$get_field['r9']['title'] = 'UNIT';
+		$get_field['r10']['title'] = 'UNIT RECEIVE';
+
+
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = 'ACTION';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations_list_receive_other';
+		$get_field['act']['width'] = 300;
+
+		return $get_field;
+	}
+
+	function good_receive_custom_table()
+	{
+		$view = 'view_custom_import_item_warehouse';
+		$get_field = $this->ecc_library->get_field_pop($view);
+
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+
+		$get_field['r12']['hidden'] = true;
+		$get_field['r13']['hidden'] = true;
+		$get_field['r14']['hidden'] = true;
+		$get_field['r15']['hidden'] = true;
+		$get_field['r16']['hidden'] = true;
+		$get_field['r17']['hidden'] = true;
+		$get_field['r19']['hidden'] = true;
+		$get_field['r20']['hidden'] = true;
+		$get_field['r21']['hidden'] = true;
+
+		$get_field['r9']['editable'] = true;
+
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = 'Action';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations2';
+		//$get_field['act']['formatter'] = 'select';
+		$get_field['act']['width'] = 300;
+
+		return $get_field;
+	}
+
+	function index()
+	{
+		$this->load->model('main');
+		$component['loadlayout'] = true;
+		$component['view_load'] = 'fabric_receive/view';
+		$component['view_load_form'] = 'fabric_receive/form';
+		$component['load_js'][] = 'fabric_receive/view';
+		$component['load_js'][] = 'fabric_receive/form';
+
+		$component['page_title'] = "Fabric Warehouse Receive";
+
+		$dashboard_table = array();
+
+		$nav_button = array();
+		//$nav_button[] = array('method_id' => 221,'title' => 'Add', 'icon' => 'fa fa-plus', 'load' => 'general/good_receive/function_add');
+		//$nav_button[] = array('method_id' => 221,'title' => 'Add','btn'=>'btn-success', 'icon' => 'fa fa-plus', 'load' => 'fabric_receive/function_add');
+		// $nav_button[] = array('method_id' => 781148, 'title' => 'Add', 'btn' => 'btn-success', 'icon' => 'fa fa-plus', 'load' => 'fabric_receive/function_add');
+		$nav_button[] = array('method_id' => 7811189, 'title' => 'Add From Shipment', 'btn' => 'btn-success', 'icon' => 'fa fa-plus', 'load' => 'fabric_receive/function_add_from_shipment');
+		$nav_button[] = array('method_id' => 781149, 'title' => 'Edit', 'btn' => 'btn-warning', 'icon' => 'fa fa-pencil', 'load' => 'fabric_receive/function_edit');
+		$nav_button[] = array('method_id' => 781150, 'title' => 'Delete', 'btn' => 'btn-danger', 'icon' => 'fa fa-trash-o', 'load' => 'fabric_receive/function_delete');
+		$nav_button[] = array('method_id' => 781154, 'title' => 'Approve', 'btn' => 'btn-info', 'icon' => 'fa fa-thumbs-up', 'load' => 'fabric_receive/function_approve');
+		$nav_button[] = array('method_id' => 781155, 'title' => 'Cancel Approve', 'btn' => 'btn-danger', 'icon' => 'fa fa-thumbs-down', 'load' => 'fabric_receive/function_cancel_approve');
+
+
+		$field = $this->receive_table();
+		$field_receive_scan = $this->receive_scan_table();
+		$field_detail_receive = $this->detail_receive_table();
+		$field_fabric_list_table = $this->fabric_list_table();
+		$field_custom_item = $this->good_receive_custom_table();
+
+
+		$field_other_receive_scan = $this->other_receive_scan_table();
+		$field_fabric_list_other_table = $this->fabric_list_other_table();
+		//$field_proforma = $this->proforma_detail_table();
+		//$field_detail_list = $this->fabric_shipment_detail_list_table();
+
+		$dashboard_table['nav_button'] = $nav_button;
+		$dashboard_table['field'] = $field;
+		$dashboard_table['field_fabric_list_recive'] = $field_fabric_list_table;
+		$dashboard_table['field_loaddata_list_recive'] = 'loaddata_list_recive';
+		$dashboard_table['field_receive_scan'] = $field_receive_scan;
+		$dashboard_table['field_loaddata_scan'] = 'loaddata_detil_scan';
+		//$dashboard_table['field_custom_item'] = $field_custom_item;
+		//$dashboard_table['field_custom_item_loaddata'] = 'loaddata_custom_item';
+
+
+
+		$dashboard_table['field_fabric_list_other_recive'] = $field_fabric_list_other_table;
+		$dashboard_table['field_loaddata_list_other_recive'] = 'loaddata_other';
+		$dashboard_table['field_other_receive_scan'] = $field_other_receive_scan;
+		$dashboard_table['field_loaddata_other_scan'] = 'loaddata_detil_other_scan';
+		//$dashboard_table['field_detail_receive'] = $field_detail_receive;
+		//$dashboard_table['field_loaddata_detail_receive'] = 'loaddata_fabric_detail_receive';
+		$dashboard_table['caption'] = '.:: Fabric Receive ::.';
+
+		$component['dashboard_table'] = $dashboard_table;
+
+		$this->authentication->ajaxlayout($component);
+	}
+
+	function loaddata_list_recive()
+	{
+		$this->authentication->plainlayout();
+
+		$fabric_shipment_id = isset($_REQUEST['fabric_shipment_id']) ? is_numeric($_REQUEST['fabric_shipment_id']) ? $_REQUEST['fabric_shipment_id']  : -1 : -1;
+		$fabric_shipment_list_lot = isset($_POST['fabric_shipment_list_lot']) ? $_POST['fabric_shipment_list_lot'] : '';
+		$bc_in_header_id = isset($_REQUEST['bc_in_header_id']) ? is_numeric($_REQUEST['bc_in_header_id']) ? $_REQUEST['bc_in_header_id']  : -1 : -1;
+		//$bc_in_header_id = isset($_REQUEST['bc_in_header_id']) ? $_REQUEST['bc_in_header_id'] : '';
+		//$item_id = isset($_REQUEST['item_id']) ? is_numeric($_REQUEST['item_id']) ? $_REQUEST['item_id']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+		//  var_dump($bc_in_header_id);die();
+		$view = 'view_fabric_shipment_list_receive';
+		$field = $this->fabric_list_table();
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+
+		$extra_param = array();
+
+		//r21
+		$extra_param['where']['0']['field'] = 'r16';
+		$extra_param['where']['0']['data'] = $bc_in_header_id;
+
+		$extra_param['where']['0']['field'] = 'r2';
+		$extra_param['where']['0']['data'] = $fabric_shipment_id;
+
+		//$extra_param['where']['1']['field'] = 'r10';
+		//$extra_param['where']['1']['data'] = $fabric_shipment_list_lot;
+
+		$extra_param['methodid'] = $methodid;
+
+		$loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+		echo $loaddata;
+	}
+	function loaddata_other()
+	{
+		$this->authentication->plainlayout();
+
+		$fabric_shipment_id = isset($_REQUEST['fabric_shipment_id']) ? is_numeric($_REQUEST['fabric_shipment_id']) ? $_REQUEST['fabric_shipment_id']  : -1 : -1;
+		$fabric_shipment_list_lot = isset($_POST['fabric_shipment_list_lot']) ? $_POST['fabric_shipment_list_lot'] : '';
+		$bc_in_header_id = isset($_REQUEST['bc_in_header_id']) ? is_numeric($_REQUEST['bc_in_header_id']) ? $_REQUEST['bc_in_header_id']  : -1 : -1;
+		//$item_id = isset($_REQUEST['item_id']) ? is_numeric($_REQUEST['item_id']) ? $_REQUEST['item_id']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+
+		//$view = 'view_fabric_shipment_list_receive_other_new';
+		$view = 'view_fabric_shipment_list_receive_other_terbaru';
+		$field = $this->fabric_list_other_table();
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+
+		$extra_param = array();
+		//$extra_param['where']['0']['field'] = 'r14';
+		$extra_param['where']['0']['field'] = 'r2';
+		$extra_param['where']['0']['data'] = $bc_in_header_id;
+
+
+		// $extra_param['where']['1']['field'] = 'r12';
+		// $extra_param['where']['1']['data'] = null;
+
+		//$extra_param['where']['0']['field'] = 'r2';
+		//$extra_param['where']['0']['data'] = $fabric_shipment_id;
+
+		//$extra_param['where']['1']['field'] = 'r10';
+		//$extra_param['where']['1']['data'] = $fabric_shipment_list_lot;
+
+		$extra_param['methodid'] = $methodid;
+
+		$loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+		echo $loaddata;
+	}
+
+	function loaddata()
+	{
+		$this->authentication->plainlayout();
+
+		$view = 'view_fabric_warehouse_receive';
+		$field = $this->receive_table();
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+
+		$loaddata = $this->ecc_library->get_field_data_pop($view, $field);
+
+		echo $loaddata;
+	}
+
+	function loaddata_detil_scan()
+	{
+		$this->authentication->plainlayout();
+
+		//$fabric_shipment_id = isset($_REQUEST['fabric_shipment_id']) ? is_numeric($_REQUEST['fabric_shipment_id']) ? $_REQUEST['fabric_shipment_id']  : -1 : -1;
+		$fabric_warehouse_receive_id = isset($_REQUEST['fabric_warehouse_receive_id']) ? is_numeric($_REQUEST['fabric_warehouse_receive_id']) ? $_REQUEST['fabric_warehouse_receive_id']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+
+		$view = 'view_fabric_warehouse_receive_detail';
+		$field = $this->receive_scan_table();
+
+		//$view = 'view_temp_fabric_receive';
+		//$field = $this->detail_receive_table();
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+
+		$extra_param = array();
+		$extra_param['where']['0']['field'] = 'r2';
+		$extra_param['where']['0']['data'] = $fabric_warehouse_receive_id;
+		//$extra_param['where']['0']['data'] = $fabric_shipment_id;
+		$extra_param['methodid'] = $methodid;
+
+		$loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+		echo $loaddata;
+	}
+	function loaddata_detil_other_scan()
+	{
+		$this->authentication->plainlayout();
+
+		//$fabric_shipment_id = isset($_REQUEST['fabric_shipment_id']) ? is_numeric($_REQUEST['fabric_shipment_id']) ? $_REQUEST['fabric_shipment_id']  : -1 : -1;
+		$fabric_shipment_id = isset($_REQUEST['fabric_shipment_id']) ? is_numeric($_REQUEST['fabric_shipment_id']) ? $_REQUEST['fabric_shipment_id']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+
+		$view = 'view_fabric_warehouse_receive_detail_other';
+		$field = $this->other_receive_scan_table();
+
+		//$view = 'view_temp_fabric_receive';
+		//$field = $this->detail_receive_table();
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+
+		$extra_param = array();
+		$extra_param['where']['0']['field'] = 'r28';
+		$extra_param['where']['0']['data'] = $fabric_shipment_id;
+		$extra_param['methodid'] = $methodid;
+
+		$loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+		echo $loaddata;
+	}
+
+	function loaddata_fabric_detail_receive()
+	{
+		$this->authentication->plainlayout();
+
+		$fabric_warehouse_receive_id = isset($_REQUEST['fabric_warehouse_receive_id']) ? is_numeric($_REQUEST['fabric_warehouse_receive_id']) ? $_REQUEST['fabric_warehouse_receive_id']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+
+		$view = 'view_fabric_warehouse_receive_detail';
+		$field = $this->receive_scan_table();
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+
+		$extra_param = array();
+		$extra_param['where']['0']['field'] = 'r2';
+		$extra_param['where']['0']['data'] = $fabric_warehouse_receive_id;
+		$extra_param['methodid'] = $methodid;
+
+		$loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+		echo $loaddata;
+	}
+
+	function loaddata_custom_item()
+	{
+		$this->authentication->plainlayout();
+
+		//$grn_detail_id = isset($_REQUEST['grn_detail_id']) ? $_REQUEST['grn_detail_id'] : '';
+
+		$fabric_warehouse_receive_detail_id = isset($_REQUEST['fabric_warehouse_receive_detail_id']) ? $_REQUEST['fabric_warehouse_receive_detail_id'] : '';
+		$partner_id = isset($_REQUEST['partner_id']) ? is_numeric($_REQUEST['partner_id']) ? $_REQUEST['partner_id']  : -1 : -1;
+		$bc_in_header_id = isset($_REQUEST['bc_in_header_id']) ? is_numeric($_REQUEST['bc_in_header_id']) ? $_REQUEST['bc_in_header_id']  : -1 : -1;
+		//$purchase_order_id = isset($_REQUEST['purchase_order_id']) ? is_numeric($_REQUEST['purchase_order_id']) ? $_REQUEST['purchase_order_id']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+
+		$field = $this->good_receive_custom_table();
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+
+		$extra_param = array();
+		//$extra_param['methodidx'] = $methodid;
+		//var_dump($grn_detail_id);die();
+		if ($grn_detail_id) {
+			//$view = 'view_grn_detail_custom';
+			$view = 'view_grn_detail_custom_warehouse';
+			$extra_param['where']['0']['field'] = 'r17';
+			$extra_param['where']['0']['data'] = $grn_detail_id;
+		} else {
+			//$view = 'view_custom_import_item';
+			$view = 'view_custom_import_item_warehouse';
+			$extra_param['where']['0']['field'] = 'r14';
+			$extra_param['where']['0']['data'] = $partner_id;
+			$extra_param['where']['1']['field'] = 'r15';
+			$extra_param['where']['1']['data'] = $bc_in_header_id;
+		}
+
+		$extra_param['field']['rh_id'] = $grn_detail_id;
+
+
+		$extra_param['methodid'] = $methodid;
+
+		$loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+
+		echo $loaddata;
+	}
+
+	function approve()
+	{
+		$this->load->model('main_sipop');
+		$this->load->model('main');
+			
+		
+		//$component['NO_ACC']=$data_txt['NO_ACC'];
+		
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+
+		$fabric_warehouse_receive_id = isset($_POST['fabric_warehouse_receive_id']) ? $_POST['fabric_warehouse_receive_id'] : false;
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if (count($_POST) > 0) {
+
+			if ($fabric_warehouse_receive_id) {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_approve");
+				$this->rpc_service->addField('fabric_warehouse_receive_id', $fabric_warehouse_receive_id);
+			}
+           
+		    $tanggal=date("Y-m-d H:i:s.u");
+			$data=$this->main_sipop->cari_fabric_receive_header($fabric_warehouse_receive_id);
+			$hasil=$this->main->getData_pop("dbo.remote_bc_in_header()",null,array("bc_in_header_id"=>$data[0]['bc_in_header_id']));
+			//var_dump($hasil[0][);die();
+			$data_gr_header =array('grn_no'=>$data[0]['fabric_warehouse_receive_no'] 
+	                               ,'grn_date'=>$data[0]['fabric_warehouse_receive_date']
+	                               , 'warehouse_id'=>$data[0]['warehouse_id']
+	                               ,'grn_type_id'=>2
+	                               ,'grn_status_id'=>0
+	                               ,'create_user_id'=>$user_id
+	                               ,'create_date'=>$tanggal
+	                               ,'partner_id' =>$data[0]['partner_id']
+	                               ,'bc_in_header_id'  =>$data[0]['bc_in_header_id']
+	                               ,'purchase_order_id' =>$data[0]['purchase_order_id']
+	                               ,'no_surat_jalan' =>$data[0]['no_surat_jalan']
+	                               ,'tgl_surat_jalan' =>$data[0]['tgl_surat_jalan']
+	                               ,'currencies_id' =>$hasil[0]['currencies_id']
+	                               ,'vendor_partner_id' =>$data[0]['vendor_partner_id']);
+					    
+			// $hasil= $this->main->insert3("dbo.dt_grn",$data_gr_header);
+			// $id=$hasil['id_data'];
+			// if ($hasil["pesan"]){
+				$result = $this->rpc_service->resultJSON_pop();
+			// }
+			// var_dump($hasil['id_data'];);die();
+			
+			// print_r($result);
+            
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$data_result = json_decode($result['data'], true);
+						   // var_dump($data_result);die();
+							$return['grn_id'] =$data_result['grn_id'];
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+							//var_dump($data_result);
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+
+		echo json_encode($return);
+	}
+
+	function cancel_approve()
+	{
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+
+		$fabric_warehouse_receive_id = isset($_POST['fabric_warehouse_receive_id']) ? $_POST['fabric_warehouse_receive_id'] : false;
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if (count($_POST) > 0) {
+
+			if ($fabric_warehouse_receive_id) {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_cancel_approve");
+				$this->rpc_service->addField('fabric_warehouse_receive_id', $fabric_warehouse_receive_id);
+			}
+
+			$result = $this->rpc_service->resultJSON_pop();
+			// print_r($result);
+
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+
+		echo json_encode($return);
+	}
+
+	function delete()
+	{
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+
+		$fabric_receive_id = isset($_POST['fabric_receive_id']) ? $_POST['fabric_receive_id'] : false;
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if (count($_POST) > 0) {
+
+			if ($fabric_receive_id) {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_delete");
+				$this->rpc_service->addField('fabric_warehouse_receive_id', $fabric_receive_id);
+			}
+
+			$result = $this->rpc_service->resultJSON_pop();
+			// print_r($result);
+
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+
+		echo json_encode($return);
+	}
+
+	function post_add_edit_scan()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+
+		$q = isset($_POST['q']) ? $_POST['q'] : 0;
+		$code_barcode = isset($_POST['code_barcode']) ? $_POST['code_barcode'] : '';
+		$fabric_shipment_id = isset($_POST['fabric_shipment_id']) ? $_POST['fabric_shipment_id'] : '';
+		$fabric_warehouse_receive_id = isset($_POST['fabric_warehouse_receive_id']) ? $_POST['fabric_warehouse_receive_id'] : '';
+		$fabric_receive_detail_id = isset($_POST['fabric_receive_detail_id']) ? $_POST['fabric_receive_detail_id'] : '';
+		$fabric_shipment_list_id = isset($_POST['fabric_shipment_list_id']) ? $_POST['fabric_shipment_list_id'] : '';
+		$bc_in_barang_id = isset($_POST['bc_in_barang_id']) ? $_POST['bc_in_barang_id'] : '';
+		//$code=0;
+		//if (strlen($code_barcode) > 12){
+		//	$code=1;
+		//}
+
+		//var_dump($q.' # '.$code_barcode.' - '.strlen($code_barcode)); die();
+		//var_dump($code.' - '.strlen($code_barcode));
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		//if($code==1){
+		//var_dump($q);die();
+		//die();
+		if (count($_POST) > 0) {
+			// if($code_barcode ==''){
+			if ($q == 0) {
+				//  var_dump($fabric_shipment_list_id);die();
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_scan_add_manual");
+				$this->rpc_service->addField('fabric_shipment_list_id', $fabric_shipment_list_id);
+			} elseif ($q == 2) {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_scan_insert_barcode");
+				$this->rpc_service->addField('fabric_shipment_list_id', $fabric_shipment_list_id);
+				$this->rpc_service->addField('code_barcode', $code_barcode);
+			} else {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_scan_add");
+				$this->rpc_service->addField('code_barcode', $code_barcode);
+			}
+
+			$this->rpc_service->addField('fabric_shipment_id', $fabric_shipment_id);
+			$this->rpc_service->addField('fabric_warehouse_receive_id', $fabric_warehouse_receive_id);
+			$this->rpc_service->addField('bc_in_barang_id', $bc_in_barang_id);
+
+			$result = $this->rpc_service->resultJSON_pop();
+
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$data_result = json_decode($result['data'], true);
+
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+							$return['fabric_shipment_list_id'] = $data_result['fabric_shipment_list_id'];
+							$return['fabric_warehouse_receive_detail_id'] = $data_result['fabric_warehouse_receive_detail_id'];
+							$return['fabric_shipment_id'] = $data_result['fabric_shipment_id'];
+							$return['fabric_shipment_list_lot'] = $data_result['fabric_shipment_list_lot'];
+							$return['fabric_shipment_list_colour'] = $data_result['fabric_shipment_list_colour'];
+							$return['total_lot'] = $data_result['total_lot'];
+							$return['total_roll'] = $data_result['total_roll'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+						$return['total_lot'] = 0;
+						$return['total_roll'] = 0;
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		echo json_encode($return);
+
+		//}
+		//$this->session->set_flashdata('success', 'Percobaan......'); 
+
+
+	}
+
+	function post_add_edit()
+	{
+
+		$fabric_warehouse_receive_id = isset($_POST['fabric_warehouse_receive_id']) ? $_POST['fabric_warehouse_receive_id'] : '';
+		$fabric_warehouse_receive_no = isset($_POST['fabric_warehouse_receive_no']) ? $_POST['fabric_warehouse_receive_no'] : '';
+		$fabric_warehouse_receive_date = isset($_POST['fabric_warehouse_receive_date']) ? $_POST['fabric_warehouse_receive_date'] : '';
+		$fabric_shipment_id = isset($_POST['fabric_shipment_id']) ? $_POST['fabric_shipment_id'] : '';
+
+		$fabric_warehouse_receive_delivery_no = isset($_POST['fabric_warehouse_receive_delivery_no']) ? $_POST['fabric_warehouse_receive_delivery_no'] : '';
+		$fabric_warehouse_receive_delivery_date = isset($_POST['fabric_warehouse_receive_delivery_date']) ? $_POST['fabric_warehouse_receive_delivery_date'] : '';
+
+		$fabric_warehouse_receive_type_id = isset($_POST['fabric_warehouse_receive_type_id']) ? $_POST['fabric_warehouse_receive_type_id'] : '';
+		$bc_in_header_id = isset($_POST['bc_in_header_id']) ? $_POST['bc_in_header_id'] : '';
+		$warehouse_id = isset($_POST['warehouse_id']) ? $_POST['warehouse_id'] : '';
+		$partner_id = isset($_POST['partner_id']) ? $_POST['partner_id'] : '';
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+		//var_dump($fabric_warehouse_receive_id." partner_id=".$partner_id);
+		//die();
+		if (count($_POST) > 0) {
+			if ($fabric_warehouse_receive_id) {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_edit");
+				$this->rpc_service->addField('fabric_warehouse_receive_id', $fabric_warehouse_receive_id);
+			} else {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_add");
+			}
+
+			$this->rpc_service->addField('fabric_warehouse_receive_no', $fabric_warehouse_receive_no);
+			$this->rpc_service->addField('fabric_warehouse_receive_date', $fabric_warehouse_receive_date);
+			$this->rpc_service->addField('fabric_shipment_id', $fabric_shipment_id);
+			$this->rpc_service->addField('fabric_warehouse_receive_type_id', $fabric_warehouse_receive_type_id);
+			$this->rpc_service->addField('bc_in_header_id', $bc_in_header_id);
+			$this->rpc_service->addField('warehouse_id', $warehouse_id);
+			$this->rpc_service->addField('partner_id', $partner_id);
+			$this->rpc_service->addField('fabric_warehouse_receive_delivery_no', $fabric_warehouse_receive_delivery_no);
+			$this->rpc_service->addField('fabric_warehouse_receive_delivery_date', $fabric_warehouse_receive_delivery_date);
+
+
+			$result = $this->rpc_service->resultJSON_pop();
+
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$data_result = json_decode($result['data'], true);
+
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+							$return['fabric_shipment_id'] = $data_result['fabric_shipment_id'];
+							$return['fabric_warehouse_receive_id'] = $data_result['fabric_warehouse_receive_id'];
+							$return['bc_in_header_id'] = $data_result['bc_in_header_id'];
+							$return['warehouse_id'] = $data_result['warehouse_id'];
+							$return['purchase_performa_id'] = $data_result['purchase_performa_id'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+
+		echo json_encode($return);
+	}
+
+	function add_edit_temp_receive()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		//$parameter = array();
+		//$return = array();
+
+		//var_dump($_POST);die();
+		$q = isset($_POST['q']) ? $_POST['q'] : 0;
+		$quantity_received = isset($_POST['quantity_received']) ? $_POST['quantity_received'] : '';
+		$note = isset($_POST['note']) ? $_POST['note'] : '';
+		$fabric_warehouse_receive_detail_id = isset($_POST['fabric_warehouse_receive_detail_id']) ? $_POST['fabric_warehouse_receive_detail_id'] : '';
+		// var_dump($fabric_shipment_list_code);die();
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if ($fabric_warehouse_receive_detail_id != '') {
+			if ($q == 1) {
+
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_edit2");
+				$this->rpc_service->addField('note', $note);
+				$this->rpc_service->addField('quantity_received', str_replace(',', '.', $quantity_received));
+				$this->rpc_service->addField('fabric_warehouse_receive_detail_id', $fabric_warehouse_receive_detail_id);
+			}
+
+			if ($q == 2) {
+
+				$fabric_shipment_list_id = isset($_POST['fabric_shipment_list_id']) ? $_POST['fabric_shipment_list_id'] : '';
+				$fabric_warehouse_receive_id = isset($_POST['fabric_warehouse_receive_id']) ? $_POST['fabric_warehouse_receive_id'] : '';
+				$fabric_shipment_id = isset($_POST['fabric_shipment_id']) ? $_POST['fabric_shipment_id'] : '';
+				$fabric_shipment_detail_id = isset($_POST['fabric_shipment_detail_id']) ? $_POST['fabric_shipment_detail_id'] : '';
+				$item_fabric_id = isset($_POST['item_fabric_id']) ? $_POST['item_fabric_id'] : '';
+				$purchase_order_id = isset($_POST['purchase_order_id']) ? $_POST['purchase_order_id'] : '';
+				$item_id = isset($_POST['item_id']) ? $_POST['item_id'] : '';
+				$purchase_order_detail_id = isset($_POST['purchase_order_detail_id']) ? $_POST['purchase_order_detail_id'] : '';
+				$purchase_order_warehouse_detail = isset($_POST['purchase_order_warehouse_detail']) ? $_POST['purchase_order_warehouse_detail'] : '';
+				$temp_fabric_receive_id = isset($_POST['temp_fabric_receive_id']) ? $_POST['temp_fabric_receive_id'] : '';
+
+
+				$this->rpc_service->setSP("dbo.sp_fabric_temp_to_receive_add");
+				$this->rpc_service->addField('fabric_shipment_list_id', $fabric_shipment_list_id);
+				$this->rpc_service->addField('fabric_warehouse_receive_id', $fabric_warehouse_receive_id);
+				$this->rpc_service->addField('fabric_shipment_id', $fabric_shipment_id);
+				$this->rpc_service->addField('fabric_shipment_detail_id', $fabric_shipment_detail_id);
+				$this->rpc_service->addField('item_fabric_id', $item_fabric_id);
+				$this->rpc_service->addField('purchase_order_id', $purchase_order_id);
+				$this->rpc_service->addField('item_id', $item_id);
+				$this->rpc_service->addField('purchase_order_detail_id', $purchase_order_detail_id);
+				$this->rpc_service->addField('purchase_order_warehouse_detail', $purchase_order_warehouse_detail);
+				$this->rpc_service->addField('temp_fabric_receive_id', $temp_fabric_receive_id);
+			}
+
+
+
+			$result = $this->rpc_service->resultJSON_pop();
+
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$data_result = json_decode($result['data'], true);
+
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+							$return['fabric_warehouse_receive_detail_id'] = $data_result['fabric_warehouse_receive_detail_id'];
+							$return['quantity_received'] = $data_result['quantity_received'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		echo json_encode($return);
+	}
+
+	function add_edit_temp_receive_other()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		//$parameter = array();
+		//$return = array();
+
+		//var_dump($_POST);die();
+		$q = isset($_POST['q']) ? $_POST['q'] : 0;
+		$quantity_received = isset($_POST['quantity_received']) ? $_POST['quantity_received'] : '';
+		$note = isset($_POST['note']) ? $_POST['note'] : '';
+		$fabric_warehouse_receive_detail_id = isset($_POST['fabric_warehouse_receive_detail_id']) ? $_POST['fabric_warehouse_receive_detail_id'] : '';
+		// var_dump($fabric_shipment_list_code);die();
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if ($fabric_warehouse_receive_detail_id != '') {
+			if ($q == 1) {
+
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_edit2_other");
+				$this->rpc_service->addField('note', $note);
+				$this->rpc_service->addField('quantity_received', str_replace(',', '.', $quantity_received));
+				$this->rpc_service->addField('fabric_warehouse_receive_detail_id', $fabric_warehouse_receive_detail_id);
+			}
+
+			if ($q == 2) {
+
+				$fabric_shipment_list_id = isset($_POST['fabric_shipment_list_id']) ? $_POST['fabric_shipment_list_id'] : '';
+				$fabric_warehouse_receive_id = isset($_POST['fabric_warehouse_receive_id']) ? $_POST['fabric_warehouse_receive_id'] : '';
+				$fabric_shipment_id = isset($_POST['fabric_shipment_id']) ? $_POST['fabric_shipment_id'] : '';
+				$fabric_shipment_detail_id = isset($_POST['fabric_shipment_detail_id']) ? $_POST['fabric_shipment_detail_id'] : '';
+				$item_fabric_id = isset($_POST['item_fabric_id']) ? $_POST['item_fabric_id'] : '';
+				$purchase_order_id = isset($_POST['purchase_order_id']) ? $_POST['purchase_order_id'] : '';
+				$item_id = isset($_POST['item_id']) ? $_POST['item_id'] : '';
+				$purchase_order_detail_id = isset($_POST['purchase_order_detail_id']) ? $_POST['purchase_order_detail_id'] : '';
+				$purchase_order_warehouse_detail = isset($_POST['purchase_order_warehouse_detail']) ? $_POST['purchase_order_warehouse_detail'] : '';
+				$temp_fabric_receive_id = isset($_POST['temp_fabric_receive_id']) ? $_POST['temp_fabric_receive_id'] : '';
+
+
+				$this->rpc_service->setSP("dbo.sp_fabric_temp_to_receive_add");
+				$this->rpc_service->addField('fabric_shipment_list_id', $fabric_shipment_list_id);
+				$this->rpc_service->addField('fabric_warehouse_receive_id', $fabric_warehouse_receive_id);
+				$this->rpc_service->addField('fabric_shipment_id', $fabric_shipment_id);
+				$this->rpc_service->addField('fabric_shipment_detail_id', $fabric_shipment_detail_id);
+				$this->rpc_service->addField('item_fabric_id', $item_fabric_id);
+				$this->rpc_service->addField('purchase_order_id', $purchase_order_id);
+				$this->rpc_service->addField('item_id', $item_id);
+				$this->rpc_service->addField('purchase_order_detail_id', $purchase_order_detail_id);
+				$this->rpc_service->addField('purchase_order_warehouse_detail', $purchase_order_warehouse_detail);
+				$this->rpc_service->addField('temp_fabric_receive_id', $temp_fabric_receive_id);
+			}
+
+
+
+			$result = $this->rpc_service->resultJSON_pop();
+
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$data_result = json_decode($result['data'], true);
+
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+							$return['fabric_warehouse_receive_detail_id'] = $data_result['fabric_warehouse_receive_detail_id'];
+							$return['quantity_received'] = $data_result['quantity_received'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		echo json_encode($return);
+	}
+	function cancel_receive_scan()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+
+		$fabric_warehouse_receive_detail_id = isset($_POST['fabric_warehouse_receive_detail_id']) ? $_POST['fabric_warehouse_receive_detail_id'] : '';
+		// var_dump($fabric_shipment_list_code);die();
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if ($fabric_warehouse_receive_detail_id != '') {
+
+			$this->rpc_service->setSP("dbo.sp_fabric_cancel_receive_scan");
+			$this->rpc_service->addField('fabric_warehouse_receive_detail_id', $fabric_warehouse_receive_detail_id);
+
+			$result = $this->rpc_service->resultJSON_pop();
+
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$data_result = json_decode($result['data'], true);
+
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+							$return['fabric_warehouse_receive_detail_id'] = $data_result['fabric_warehouse_receive_detail_id'];
+							$return['fabric_shipment_list_id'] = $data_result['fabric_shipment_list_id'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		echo json_encode($return);
+	}
+	function cancel_receive_scan_other()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+
+		$fabric_warehouse_receive_detail_id = isset($_POST['fabric_warehouse_receive_detail_id']) ? $_POST['fabric_warehouse_receive_detail_id'] : '';
+		// var_dump($fabric_shipment_list_code);die();
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if ($fabric_warehouse_receive_detail_id != '') {
+
+			$this->rpc_service->setSP("dbo.sp_fabric_cancel_receive_scan_other");
+			$this->rpc_service->addField('fabric_warehouse_receive_detail_id', $fabric_warehouse_receive_detail_id);
+
+			$result = $this->rpc_service->resultJSON_pop();
+
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$data_result = json_decode($result['data'], true);
+
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+							$return['fabric_warehouse_receive_detail_id'] = $data_result['fabric_warehouse_receive_detail_id'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		echo json_encode($return);
+	}
+
+	function post_add_edit_old()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+
+		//var_dump($_POST);die();
+		$purchase_order_id = isset($_POST['purchase_order_id']) ? $_POST['purchase_order_id'] : '';
+		$purchase_order_no = isset($_POST['purchase_order_no']) ? $_POST['purchase_order_no'] : '';
+		$purchase_order_date = isset($_POST['purchase_order_date']) ? $_POST['purchase_order_date'] : '';
+		$partner_id = isset($_POST['partner_id']) ? $_POST['partner_id'] : '';
+		$currencies_id = isset($_POST['currencies_id']) ? $_POST['currencies_id'] : '';
+		$purchase_type_id = isset($_POST['purchase_type_id']) ? $_POST['purchase_type_id'] : '';
+		$this_memo = isset($_POST['this_memo']) ? $_POST['this_memo'] : '';
+		$purchase_order_type_id = isset($_POST['purchase_order_type_id']) ? $_POST['purchase_order_type_id'] : '';
+		$purchase_order_memo = isset($_POST['purchase_order_memo']) ? $_POST['purchase_order_memo'] : '';
+		$payment_term = isset($_POST['payment_term']) ? $_POST['payment_term'] : '';
+		$ppn = isset($_POST['ppn']) ? $_POST['ppn'] : '';
+
+		//---- Untuk Warehouse -----------
+		$item_info = isset($_POST['item_info']) ? $_POST['item_info'] : '';
+		$fabric_code = isset($_POST['fabric_code']) ? $_POST['fabric_code'] : '';
+		$fabric_code_input = isset($_POST['fabric_code_input']) ? $_POST['fabric_code_input'] : '';
+		$fabric_description = isset($_POST['fabric_description']) ? $_POST['fabric_description'] : '';
+		$fabric_content = isset($_POST['fabric_content']) ? $_POST['fabric_content'] : '';
+		$fabric_weight = isset($_POST['fabric_weight']) ? $_POST['fabric_weight'] : 0;
+		$unit_weight = isset($_POST['unit_weight']) ? $_POST['unit_weight'] : '';
+
+		$packing_instructions = isset($_POST['packing_instructions']) ? $_POST['packing_instructions'] : '';
+		$other_instructions = isset($_POST['other_instructions']) ? $_POST['other_instructions'] : '';
+		$fabric_width = isset($_POST['fabric_width']) ? $_POST['fabric_width'] : 0;
+		$unit_width = isset($_POST['unit_width']) ? $_POST['unit_width'] : '';
+
+		$shipping_sample = isset($_POST['shipping_sample']) ? $_POST['shipping_sample'] : '';
+		$requested_ETD = isset($_POST['requested_ETD']) ? $_POST['requested_ETD'] : '';
+		$width = isset($_POST['width']) ? $_POST['width'] : '';
+		$long = isset($_POST['long']) ? $_POST['long'] : '';
+		$tall = isset($_POST['tall']) ? $_POST['tall'] : '';
+
+		$user_id = $this->session->userdata('user_id');
+
+		$data_item_header = array(
+			'item_header_code' => $fabric_code_input,
+			'item_header_name' => $fabric_description,
+			'item_header_content' => $fabric_content,
+			'item_other' => null,
+			'create_user_id' => $user_id,
+			'create_date' => date("Y-m-d"),
+		);
+
+
+
+		$sales_performa_id = isset($_POST['sales_performa_id']) ? $_POST['sales_performa_id'] : '';
+
+		if ($sales_performa_id) {
+			$return['sales_performa_id'] = $sales_performa_id;
+			//var_dump('adaan');die();
+		} else {
+			$return['sales_performa_id'] = '';
+			// var_dump('kosong');die();
+		}
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if (count($_POST) > 0) {
+			if ($purchase_order_id) {
+				$this->rpc_service->setSP("dbo.sp_purchase_order_edit");
+				$this->rpc_service->addField('purchase_order_id', $purchase_order_id);
+			} else {
+				$this->rpc_service->setSP("dbo.sp_purchase_order_add");
+			}
+
+			$this->rpc_service->addField('purchase_order_no', $purchase_order_no);
+			$this->rpc_service->addField('purchase_order_date', $purchase_order_date);
+			$this->rpc_service->addField('partner_id', $partner_id);
+			$this->rpc_service->addField('currencies_id', $currencies_id);
+			$this->rpc_service->addField('purchase_type_id', $purchase_type_id);
+			$this->rpc_service->addField('this_memo', $this_memo);
+			$this->rpc_service->addField('purchase_order_type_id', $purchase_order_type_id);
+			$this->rpc_service->addField('purchase_order_memo', $purchase_order_memo);
+			$this->rpc_service->addField('payment_term', $payment_term);
+			$this->rpc_service->addField('ppn', $ppn);
+
+			// --- input data untuk data sipop ---------
+			$cek = true;
+			$ket = '';
+			if ($item_info == 'new') {
+				if ($fabric_code_input == '') {
+					if ($fabric_code == '-99') {
+						// $cek=false;
+						//  $return['valid'] = false;
+						//$return['status_code'] = '000';
+						//$return['message'] ='Empty is Fabric code !';
+						$fabric_code = '';
+						//$ket='masuk ke code -99';
+						$return['fabric_id'] = '';
+						$return['fabric_code'] = '';
+						$return['purchase_order_id'] = $purchase_order_id;
+					} else {
+						$cek = false;
+						$return['valid'] = false;
+						$return['status_code'] = '000';
+						$return['message'] = 'Empty is Fabric code !';
+						// $ket='masuk ke input kosong';
+					}
+				} else if ($fabric_code == '') {
+					// $ket='masuk ke code null';
+					$fabric_code = '';
+					$return['fabric_id'] = '';
+					$return['fabric_code'] = '';
+					$return['purchase_order_id'] = $purchase_order_id;
+				} else {
+					//$ket='masuk ke code insert';
+					$hasil = $this->main->insert_pop2("dbo.dt_mst_item_header", $data_item_header);
+
+					if ($hasil['pesan']) {
+						$return['fabric_id'] = $hasil['id_data'];
+						$return['fabric_code'] = $fabric_code_input;
+						$fabric_code = $hasil['id_data'];
+					}
+				}
+				// var_dump($ket);die();
+			} else {
+				if ($fabric_code == '') {
+					// $ket='masuk ke code get lagi';
+					$fabric_code = '';
+					$return['fabric_id'] = '';
+					$return['fabric_code'] = '';
+				} else {
+					$hasil = $this->main->getData_pop("dbo.dt_mst_item_header", null, array("item_header_id" => $fabric_code));
+
+					$return['fabric_id'] = $hasil[0]['item_header_id'];
+					$return['fabric_code'] = $hasil[0]['item_header_code'];
+				}
+			}
+			// var_dump($ket);die();
+			if ($cek) {
+				$result = $this->rpc_service->resultJSON();
+				$data = array();
+				if (isset($result)) {
+					if (isset($result['valid'])) {
+
+						if ($result['valid']) {
+							if (isset($result['data'])) {
+								$data_result = json_decode($result['data'], true);
+
+
+								//====== Simpan data purchase warehouse ==========
+								$tanggal = date("Y-m-d H:i:s.u");
+
+								$data_po_warehouse = array(
+									'purchase_order_id' => $data_result['purchase_order_id'],
+									'purchase_type_id' => $purchase_type_id,
+									'item_fabric_id' => $fabric_code,
+									'fabric_weight' => $fabric_weight,
+									'unit_weight' => $unit_weight,
+									'fabric_width' => $fabric_width,
+									'unit_width' => $unit_width,
+									'shrinkage_w' => $width,
+									'shrinkage_l' => $long,
+									'shrinkage_t' => $tall,
+									'packing_instructions' => $packing_instructions,
+									'shipping_sample' => $shipping_sample,
+									'requested_etd' => $requested_ETD,
+									'other_instructions' => $other_instructions,
+									'create_user_id' => $user_id,
+									'create_date' => $tanggal
+								);
+
+								if ($purchase_order_id) {
+									$data_po_warehouse_edit = array(
+										'purchase_order_id' => $data_result['purchase_order_id'],
+										'purchase_type_id' => $purchase_type_id,
+										'item_fabric_id' => $fabric_code,
+										'fabric_weight' => $fabric_weight,
+										'unit_weight' => $unit_weight,
+										'fabric_width' => $fabric_width,
+										'unit_width' => $unit_width,
+										'shrinkage_w' => $width,
+										'shrinkage_l' => $long,
+										'shrinkage_t' => $tall,
+										'packing_instructions' => $packing_instructions,
+										'shipping_sample' => $shipping_sample,
+										'requested_etd' => $requested_ETD,
+										'other_instructions' => $other_instructions,
+										'edit_user_id' => $user_id,
+										'edit_date' => $tanggal
+									);
+									$where = array('purchase_order_id' => $purchase_order_id);
+									$this->main->update_pop('dbo.dt_purchase_order_warehouse', $data_po_warehouse_edit, $where);
+									$return['purchase_order_warehouse_id'] = $purchase_order_id;
+								} else {
+									$insert = $this->main->insert_pop2("dbo.dt_purchase_order_warehouse", $data_po_warehouse);
+									if ($insert['pesan']) {
+										$return['purchase_order_warehouse_id'] = $insert['id_data'];
+									}
+								}
+
+								$return['valid'] = $result['valid'];
+								$return['status_code'] = $result['no'];
+								$return['message'] = $result['des'];
+								$return['purchase_order_id'] = $data_result['purchase_order_id'];
+							}
+						} else {
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+						}
+					}
+				}
+			} else {
+				$return['valid'] = false;
+				$return['status_code'] = '000';
+				$return['message'] = 'Empty is Fabric code !';
+				//$return['purchase_order_id'] =$purchase_order_id;
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+
+		echo json_encode($return);
+	}
+
+
+
+
+	function loaddata_proforma()
+	{
+		$this->authentication->plainlayout();
+
+		$sales_proforma_id = isset($_REQUEST['sales_performa_id']) ? is_numeric($_REQUEST['sales_performa_id']) ? $_REQUEST['sales_performa_id']  : -1 : -1;
+		//$sales_proforma_id = isset($_REQUEST['performa_id']) ? is_numeric($_REQUEST['performa_id']) ? $_REQUEST['performa_id']  : -1 : -1;
+		$purchase_order_id = isset($_REQUEST['purchase_order_id2']) ? is_numeric($_REQUEST['purchase_order_id2']) ? $_REQUEST['purchase_order_id2']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+
+		//$view = 'view_purchase_sales_performa_detail';
+		$field = $this->proforma_detail_table();
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+
+		$extra_param = array();
+		//var_dump($purchase_order_id);
+		if ($purchase_order_id) {
+			$view = 'view_purchase_sales_performa_detail';
+			$extra_param['where']['0']['field'] = 'r2';
+			$extra_param['where']['0']['data'] = $sales_proforma_id;
+			//var_dump("Ada");
+		} else {
+			//var_dump("Nol");
+
+
+			$view = 'view_purchase_sales_performa_detail_item';
+			$extra_param['where']['0']['field'] = 'r11';
+			$extra_param['where']['0']['data'] = $purchase_order_id;
+		}
+		$extra_param['methodid'] = $methodid;
+		//$extra_param['where']['0']['field'] = 'r2';
+		//$extra_param['where']['0']['data'] = $sales_proforma_id;
+		//$extra_param['methodid'] = $methodid;
+
+		$extra_param['field']['rh_id'] = $purchase_order_id;
+
+
+		$loaddata = $this->ecc_library->get_field_data_pop($view, $field, $extra_param);
+		//var_dump($loaddata);	
+		echo $loaddata;
+	}
+
+	function post_add_edit_detail()
+	{
+		$this->load->model('main');
+		$this->load->library('Excel');
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+
+		$fabric_shipment_detail_id = isset($_POST['fabric_shipment_detail_id']) ? $_POST['fabric_shipment_detail_id'] : 0;
+		$fabric_shipment_id = isset($_POST['fabric_shipment_id']) ? $_POST['fabric_shipment_id'] : 0;
+
+		$purchase_order_warehouse_id = isset($_POST['purchase_order_warehouse_id']) ? $_POST['purchase_order_warehouse_id'] : 0;
+		$item_fabric_id = isset($_POST['item_fabric_id']) ? $_POST['item_fabric_id'] : 0;
+		$item_id = isset($_POST['item_id']) ? $_POST['item_id'] : null;
+		$fabric_shipment_detail_unit_weight = isset($_POST['fabric_shipment_detail_unit_weight']) ? $_POST['fabric_shipment_detail_unit_weight'] : 0;
+		$fabric_shipment_detail_unit_qty = isset($_POST['fabric_shipment_detail_unit_qty']) ? $_POST['fabric_shipment_detail_unit_qty'] : 0;
+
+		$fabric_shipment_detail_invoice_number = isset($_POST['fabric_shipment_detail_invoice_number']) ? $_POST['fabric_shipment_detail_invoice_number'] : '';
+		$fabric_shipment_detail_colour = isset($_POST['fabric_shipment_detail_colour']) ? $_POST['fabric_shipment_detail_colour'] : '';
+		$fabric_shipment_detail_made_in = isset($_POST['fabric_shipment_detail_made_in']) ? $_POST['fabric_shipment_detail_made_in'] : '';
+		$fabric_shipment_detail_note = isset($_POST['fabric_shipment_detail_note']) ? $_POST['fabric_shipment_detail_note'] : '';
+		$fabric_shipment_detail_bale = isset($_POST['fabric_shipment_detail_bale']) ? $_POST['fabric_shipment_detail_bale'] : 0;
+		//$fabric_file_excel = isset($_POST['fabric_file_excel']) ? $_POST['fabric_file_excel'] : '';
+		$file = isset($_FILES['file']) ? $_FILES['file'] : false;
+
+		if ($fabric_shipment_id == 0) {
+			$file = false;
+		}
+
+		if ($fabric_shipment_detail_id != 0) {
+			$file = true;
+		}
+		//var_dump($fabric_shipment_detail_bale);die();
+		// ==== Proses Import excel ==============
+		if ($file) {
+			if ($fabric_shipment_detail_id != 0) {
+				//==update ===
+				$data_detail = array(
+					'fabric_shipment_id' => $fabric_shipment_id,
+					'purchase_order_id' => $purchase_order_warehouse_id,
+					'item_fabric_id' => $item_fabric_id,
+					'item_id' => $item_id,
+					'fabric_shipment_detail_invoice_number' => $fabric_shipment_detail_invoice_number,
+					'fabric_shipment_detail_unit_weight' => $fabric_shipment_detail_unit_weight,
+					'fabric_shipment_detail_unit_qty' => $fabric_shipment_detail_unit_qty,
+					'fabric_shipment_detail_made_in' => $fabric_shipment_detail_made_in,
+					'fabric_shipment_detail_note' => $fabric_shipment_detail_note,
+					'fabric_shipment_detail_colour' => $fabric_shipment_detail_colour,
+					'fabric_shipment_detail_bale' => $fabric_shipment_detail_bale
+				);
+				$insert = $this->main->update_pop("dbo.dt_fabric_shipment_detail", $data_detail, array('fabric_shipment_detail_id' => $fabric_shipment_detail_id));
+				$return['valid'] = true;
+				$return['message'] = "Update successfully";
+			} else {
+
+				$ekstensi_diperbolehkan	= array('xls', 'xlsx');
+				$nama = $_FILES['file']['name'];
+				$x = explode('.', $nama);
+				$ekstensi = strtolower(end($x));
+				$ukuran	= $_FILES['file']['size'];
+				$file_tmp = $_FILES['file']['tmp_name'];
+				//===cek urannya =========
+				if ($ukuran < 1044070) {
+					//if($ukuran < 10502){
+					$file_name = $file['name'];
+					$file_temp = $file['tmp_name'];
+					$lok = './assets/upload/shipment_detail/';
+					$namaFile = date('His') . '_' . $file_name;
+					$location = $lok . $namaFile;
+					//----- untuk copy file excel di disable kan dahulu---------
+					//move_uploaded_file($file_tmp, $location);
+					//------------------------------------------
+					if (in_array($ekstensi, $ekstensi_diperbolehkan) === true) {
+
+						$data_detail = array(
+							'fabric_shipment_id' => $fabric_shipment_id,
+							'purchase_order_id' => $purchase_order_warehouse_id,
+							'item_fabric_id' => $item_fabric_id,
+							'item_id' => $item_id,
+							'fabric_shipment_detail_invoice_number' => $fabric_shipment_detail_invoice_number,
+							'fabric_shipment_detail_unit_weight' => $fabric_shipment_detail_unit_weight,
+							'fabric_shipment_detail_unit_qty' => $fabric_shipment_detail_unit_qty,
+							'fabric_shipment_detail_made_in' => $fabric_shipment_detail_made_in,
+							'fabric_shipment_detail_note' => $fabric_shipment_detail_note,
+							'fabric_shipment_detail_colour' => $fabric_shipment_detail_colour,
+							'fabric_shipment_detail_bale' => $fabric_shipment_detail_bale
+						);
+
+						$insert = $this->main->insert_pop2("dbo.dt_fabric_shipment_detail", $data_detail);
+						//$this->rpc_service->setSP("dbo.sp_purchase_order_detail_edit");
+						//$this->rpc_service->addField('purchase_order_detail_id',$purchase_order_detail_id);
+						if ($insert['pesan']) {
+							$fabric_shipment_detail_id = $insert['id_data'];
+							$return['fabric_shipment_detail_id'] = $insert['id_data'];
+						}
+
+						$object = PHPExcel_IOFactory::load($file_temp);
+						$message_name = '';
+						foreach ($object->getWorksheetIterator() as $worksheet) {
+							$highestRow = $worksheet->getHighestRow();
+							$highestColumn = $worksheet->getHighestColumn();
+							for ($row = 3; $row <= $highestRow; $row++) {
+								$colour = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
+								$lot = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+								$bale = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+								$roll = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+								$weight = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+								$qty = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+								$list_code = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
+								$note = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
+
+
+								$data_arr[] = array(
+									'fabric_shipment_id' => $fabric_shipment_id,
+									'fabric_shipment_detail_id' => $fabric_shipment_detail_id,
+									'fabric_shipment_list_colour' => $colour,
+									'fabric_shipment_list_lot' => $lot,
+									'fabric_shipment_list_bale' => $bale,
+									'fabric_shipment_list_roll' => $roll,
+									'fabric_shipment_list_weight' => $weight,
+									'fabric_shipment_list_quantity' => $qty,
+									'fabric_shipment_list_note' => $note,
+									'uom_weight' => $fabric_shipment_detail_unit_weight,
+									'uom_qty' => $fabric_shipment_detail_unit_qty,
+									'item_id' => $item_id,
+									'fabric_shipment_list_code' => $list_code
+								);
+							}
+						}
+						//====== proses untuk insert data menggunakan insert_batch
+						$hasil = $this->main->insert_batch_pop("dbo.dt_fabric_shipment_list", $data_arr);
+						$return['valid'] = true;
+						$return['message'] = "Data saved successfully";
+
+						// var_dump($insert['pesan']);
+						// var_dump($hasil);
+
+						// $return['message'] = "Error !.. Not saved successfully";
+
+					} else {
+						$return['valid'] = false;
+						$return['message'] = "File extension does not match (*.xlsx/*.xls)";
+					}
+				} else {
+					$return['valid'] = false;
+					$return['message'] = "Size is too big, max 2 mb!";
+				}
+			}
+
+			// $in_item_central= $this->main->insert_pop2("dbo.dt_mst_item_central",$data_mst_item);
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "The excel import file does not exist Or Not yet input header";
+		}
+		// ==== Akhir proses Import excel ==============
+
+		//$return['valid'] = false;
+		//$return['message'] = "Session expired";
+
+		echo json_encode($return);
+	}
+
+	function post_add_edit_detil_shipment()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		// $parameter = array();
+		$return = array();
+		//fabric_shipment_detail_id=5&detil_shipment=LUNA%20CAPPUCCINO&item_id_shipment=18133
+		$fabric_shipment_detail_id = isset($_POST['fabric_shipment_detail_id']) ? $_POST['fabric_shipment_detail_id'] : '';
+		$detil_shipment = isset($_POST['detil_shipment']) ? $_POST['detil_shipment'] : '';
+		$item_id_shipment = isset($_POST['item_id_shipment']) ? $_POST['item_id_shipment'] : '';
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		$where = array('fabric_shipment_detail_id' => $fabric_shipment_detail_id, 'fabric_shipment_list_colour' => $detil_shipment);
+		$data_detail_shipment = array(
+			'item_id' => $item_id_shipment
+		);
+
+		$this->main->update_pop('dbo.dt_fabric_shipment_list', $data_detail_shipment, $where);
+
+		$return['valid'] = true;
+		$return['message'] = "Update successfully";
+
+		echo json_encode($return);
+	}
+
+	function post_add_edit_detil_shipment_excel()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		// $parameter = array();
+		$return = array();
+		//fabric_shipment_detail_id=5&detil_shipment=LUNA%20CAPPUCCINO&item_id_shipment=18133
+		$fabric_shipment_detail_id = isset($_POST['fabric_shipment_detail_id']) ? $_POST['fabric_shipment_detail_id'] : '';
+		$shipment_list_id = isset($_POST['shipment_list_id']) ? $_POST['shipment_list_id'] : '';
+		$list_colour = isset($_POST['list_colour']) ? $_POST['list_colour'] : '';
+		$list_lot = isset($_POST['list_lot']) ? $_POST['list_lot'] : '';
+
+		$list_bale = isset($_POST['list_bale']) ? $_POST['list_bale'] : '';
+		$list_roll = isset($_POST['list_roll']) ? $_POST['list_roll'] : '';
+		$list_weight = isset($_POST['list_weight']) ? $_POST['list_weight'] : '';
+		$list_qty = isset($_POST['list_qty']) ? $_POST['list_qty'] : '';
+		$list_Shipment_code = isset($_POST['list_Shipment_code']) ? $_POST['list_Shipment_code'] : '';
+		$list_note = isset($_POST['list_note']) ? $_POST['list_note'] : '';
+		$list_item_code = isset($_POST['list_item_code']) ? $_POST['list_item_code'] : '';
+
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		$where = array('fabric_shipment_list_id' => $shipment_list_id, 'fabric_shipment_detail_id' => $fabric_shipment_detail_id);
+		$data_detail_shipment = array(
+			'fabric_shipment_list_colour' => $list_colour,
+			'fabric_shipment_list_lot' => $list_lot,
+			'fabric_shipment_list_bale' => $list_bale,
+			'fabric_shipment_list_roll' => $list_roll,
+			'fabric_shipment_list_weight' => $list_weight,
+			'fabric_shipment_list_quantity' => $list_qty,
+			'fabric_shipment_list_note' => $list_note,
+			'item_id' => $list_item_code,
+			'fabric_shipment_list_code' => $list_Shipment_code,
+		);
+		// var_dump($where);
+		$this->main->update_pop('dbo.dt_fabric_shipment_list', $data_detail_shipment, $where);
+
+		$return['valid'] = true;
+		$return['message'] = "Update successfully";
+
+		echo json_encode($return);
+	}
+	function post_add_edit_detail_old()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+
+		$purchase_order_id = isset($_POST['purchase_order_id']) ? $_POST['purchase_order_id'] : 0;
+		$purchase_order_detail_id = isset($_POST['purchase_order_detail_id']) ? $_POST['purchase_order_detail_id'] : '';
+		$item_id = isset($_POST['item_id']) ? $_POST['item_id'] : '';
+		$quantity_ordered = isset($_POST['quantity_ordered']) ? $_POST['quantity_ordered'] : '';
+		$order_delivery_date = isset($_POST['order_delivery_date']) ? $_POST['order_delivery_date'] : '';
+		$purchase_order_detail_memo = isset($_POST['purchase_order_detail_memo']) ? $_POST['purchase_order_detail_memo'] : '';
+		$uom_id = isset($_POST['uom_id']) ? $_POST['uom_id'] : '';
+		$conversion = isset($_POST['conversion']) ? $_POST['conversion'] : '';
+		$unit_price = isset($_POST['unit_price']) ? $_POST['unit_price'] : '';
+		$trans_type = isset($_POST['trans_type']) ? $_POST['trans_type'] : 1;
+		$purchase_request_detail_id = isset($_POST['purchase_request_detail_id']) ? $_POST['purchase_request_detail_id'] : '';
+		$size = isset($_POST['size']) ? $_POST['size'] : '';
+		$style = isset($_POST['style']) ? $_POST['style'] : '';
+		$colour = isset($_POST['colour']) ? $_POST['colour'] : '';
+		$po_customer = isset($_POST['po_customer']) ? $_POST['po_customer'] : '';
+
+		$fabric_code_header_id = isset($_POST['fabric_code_header_id']) ? $_POST['fabric_code_header_id'] : 0;
+		$fabric_code_header = isset($_POST['fabric_code_header']) ? $_POST['fabric_code_header'] : 0;
+		$purchase_order_warehouse_id = isset($_POST['purchase_order_warehouse_id']) ? $_POST['purchase_order_warehouse_id'] : 0;
+
+		$fabric_code_detail = isset($_POST['fabric_code_detail']) ? $_POST['fabric_code_detail'] : '';
+		$purchase_order_warehouse_detail_id = isset($_POST['purchase_order_warehouse_detail_id']) ? $_POST['purchase_order_warehouse_detail_id'] : '';
+		$fabric_code_input_detail = isset($_POST['fabric_code_input_detail']) ? $_POST['fabric_code_input_detail'] : '';
+		$fabric_description_detail = isset($_POST['fabric_description_detail']) ? $_POST['fabric_description_detail'] : '';
+		$fabric_content_detail = isset($_POST['fabric_content_detail']) ? $_POST['fabric_content_detail'] : '';
+
+		$user_id = $this->session->userdata('user_id');
+		//var_dump($fabric_code_detail);die();
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if (count($_POST) > 0) {
+			if ($purchase_order_detail_id) {
+				$this->rpc_service->setSP("dbo.sp_purchase_order_detail_edit");
+				$this->rpc_service->addField('purchase_order_detail_id', $purchase_order_detail_id);
+			} else {
+				$this->rpc_service->setSP("dbo.sp_purchase_order_detail_add");
+			}
+
+			$this->rpc_service->addField('purchase_order_id', $purchase_order_id);
+			$this->rpc_service->addField('item_id', $item_id);
+			$this->rpc_service->addField('quantity_ordered', $quantity_ordered);
+			$this->rpc_service->addField('uom_id', $uom_id);
+			$this->rpc_service->addField('conversion', $conversion);
+			$this->rpc_service->addField('unit_price', $unit_price);
+			$this->rpc_service->addField('order_delivery_date', $order_delivery_date);
+			$this->rpc_service->addField('purchase_order_detail_memo', $purchase_order_detail_memo);
+			$this->rpc_service->addField('purchase_request_detail_id', $purchase_request_detail_id);
+			$this->rpc_service->addField('trans_type', $trans_type);
+			$this->rpc_service->addField('size', $size);
+			$this->rpc_service->addField('style', $style);
+			$this->rpc_service->addField('colour', $colour);
+			$this->rpc_service->addField('po_customer', $po_customer);
+
+			$result = $this->rpc_service->resultJSON();
+
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$data = json_decode($result['data'], TRUE);
+
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+
+							//   $return['valid'] = 'valid';
+							//	$return['status_code'] = 'no';
+							//	$return['message'] ='OK Detail';
+							// ----Input Detail data warehouse ----------
+
+							$purchase_order_detail_id = $data['purchase_order_detail_id'];
+							//$purchase_order_detail_id='2';
+
+							if ($fabric_code_detail == '') {
+								$fabric_code_detail = '-99';
+							}
+
+							if ($fabric_code_detail == '-99') {
+								if ($fabric_code_input_detail != '' or $fabric_description_detail != '') {
+									$item_header = array(
+										'item_header_code' => $fabric_code_input_detail,
+										'item_header_name' => $fabric_description_detail,
+										'item_header_content' => $fabric_content_detail,
+										'item_other' => null,
+										'create_user_id' => $user_id,
+										'create_date' => date("Y-m-d"),
+									);
+									$hasil = $this->main->insert_pop2("dbo.dt_mst_item_header", $item_header);
+
+									if ($hasil['pesan']) {
+										$fabric_code_detail = $hasil['id_data'];
+										$return['fabric_code'] = $fabric_code_input_detail;
+									}
+								}
+							}
+
+
+							$data_mst_item = array(
+								'item_header_id' => $fabric_code_header_id,
+								'item_id' => $item_id
+							);
+
+							$data_PO_detail = array(
+								//'purchase_order_warehouse_detail'=>$fabric_code_header_id,
+								'purchase_order_warehouse_id' => $purchase_order_warehouse_id,
+								'purchase_order_id' => $purchase_order_id,
+								'purchase_order_detail_id' => $purchase_order_detail_id,
+								'item_id' => $item_id,
+								'colour_code_id' => $fabric_code_detail,
+								'note' => ''
+							);
+
+							if ($purchase_order_warehouse_detail_id) {
+								$where = array('purchase_order_warehouse_detail' => $purchase_order_warehouse_detail_id);
+								$this->main->update_pop('dbo.dt_purchase_order_warehouse_detail', $data_PO_detail, $where);
+							} else {
+								$in_item_central = $this->main->insert_pop2("dbo.dt_mst_item_central", $data_mst_item);
+								if ($in_item_central['pesan']) {
+									$in_detail = $this->main->insert_pop2("dbo.dt_purchase_order_warehouse_detail", $data_PO_detail);
+								}
+							}
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+
+		echo json_encode($return);
+	}
+	function delete_detail_upload()
+	{
+		$this->authentication->plainlayout();
+		$return = array();
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		$fabric_shipment_list_id = isset($_POST['fabric_shipment_list_id']) ? $_POST['fabric_shipment_list_id'] : '';
+
+		$del_detail_upload = array('fabric_shipment_list_id' => $fabric_shipment_list_id);
+		$this->main->delete_pop('dbo.dt_fabric_shipment_list', $del_detail_upload, $note = null);
+
+		$return['valid'] = true;
+		$return['message'] = "Delete successfully";
+		echo json_encode($return);
+	}
+
+	function delete_detail()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		$fabric_shipment_detail_id = isset($_POST['fabric_shipment_detail_id']) ? $_POST['fabric_shipment_detail_id'] : '';
+		$user_id = $this->session->userdata('user_id');
+
+		//var_dump($fabric_shipment_detail_id);die();
+
+		if (count($_POST) > 0) {
+
+			if ($fabric_shipment_detail_id) {
+				$this->rpc_service->setSP("dbo.sp_fabric_shipment_detail_delete");
+				$this->rpc_service->addField('fabric_shipment_detail_id', $fabric_shipment_detail_id);
+			}
+
+			$result = $this->rpc_service->resultJSON_pop();
+
+			//	if($purchase_order_detail_id){
+			//		$del_detail=array('fabric_shipment_detail_id'=>$fabric_shipment_detail_id);
+			//	    $this->main->delete_pop('dbo.dt_purchase_order_warehouse_detail',$del_detail,$note=null) ;
+			//	}
+			$data = array();
+			if (isset($result)) {
+				if (isset($result['valid'])) {
+					if ($result['valid']) {
+						if (isset($result['data'])) {
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+
+		echo json_encode($return);
+	}
+
+
+
+	function loaddata_request_item()
+	{
+		$this->authentication->plainlayout();
+
+		$purchase_order_detail_id = isset($_POST['purchase_order_detail_id']) ? $_POST['purchase_order_detail_id'] : '';
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+
+		$field = $this->purchase_order_request_table();
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+
+		$extra_param = array();
+		if ($purchase_order_detail_id) {
+			$view = 'view_purchase_order_detail_request';
+			$extra_param['where']['0']['field'] = 'r22';
+			$extra_param['where']['0']['data'] = $purchase_order_detail_id;
+		} else {
+			$view = 'view_purchase_request_item';
+		}
+
+		$extra_param['field']['rh_id'] = $purchase_order_detail_id;
+
+
+		$extra_param['methodid'] = $methodid;
+
+		$loaddata = $this->ecc_library->get_field_data($view, $field, $extra_param);
+
+		echo $loaddata;
+	}
+
+	function loaddata_request_item2()
+	{
+		$this->authentication->plainlayout();
+
+		$field = array();
+		$field[] = array('field' => 'purchase_request_detail_id', 'title' => 'purchase_request_detail_id');
+		$field[] = array('field' => 'purchase_request_id', 'title' => 'purchase_request_id');
+		$field[] = array('field' => 'purchase_request_date', 'title' => 'purchase_request_date');
+		$field[] = array('field' => 'purchase_request_no', 'title' => 'purchase_request_no');
+		$field[] = array('field' => 'item', 'title' => 'item');
+		$field[] = array('field' => 'quantity_requested', 'title' => 'quantity_requested');
+		$field[] = array('field' => 'quantity_ordered', 'title' => 'quantity_ordered');
+		$field[] = array('field' => 'unit', 'title' => 'TOTAL');
+		$field[] = array('field' => 'purchase_request_status_id', 'title' => 'purchase_request_status_id');
+		$field[] = array('field' => 'item_id', 'title' => 'item_id');
+		$field[] = array('field' => 'request_delivery_date', 'title' => 'request_delivery_date');
+		$field[] = array('field' => 'outstanding_qty', 'title' => 'outstanding_qty');
+		$field[] = array('field' => 'uom_id', 'title' => 'uom_id');
+		$field[] = array('field' => 'memo', 'title' => 'memo');
+		$field[] = array('field' => 'request_delivery_date', 'title' => 'request_delivery_date');
+
+		$new_purchase_order = isset($_POST['new_purchase_order']) ? $_POST['new_purchase_order'] : 0;
+		$purchase_order_id = isset($_POST['purchase_order_id']) ? $_POST['purchase_order_id'] : 0;
+		$lock_data = isset($_POST['lock_data']) ? $_POST['lock_data'] : 0;
+
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+		$loaddata_table = array();
+
+		if ($lock_data == 0) {
+			$view = 'dbo.view_purchase_request_item';
+			$loaddata = $this->ecc_library->loaddata($view, $field);
+
+			foreach ($loaddata['data'] as $key => $value) {
+				$this_order[$key] = 0;
+
+				$new_row = array();
+				$new_row[] = $value[0];
+				$new_row[] = $value[3];
+				$new_row[] = $value[2];
+				$new_row[] = $value[4];
+				$new_row[] = $this->mainconfig->get_decimal_format($value[5], 12);
+				$new_row[] = $this->mainconfig->get_decimal_format($value[6], 12);
+				$new_row[] = $value[7];
+				$new_row[] = "<input class=\"form-control\" name=\"quantity_ordered[" . $value[0] . "]\" type=\"text\" placeholder=\"This Order\" value=\"" . $this_order[$key] . "\" />";
+				$select = "<select class=\"form-control search_uom\" name=\"uom_id[" . $value[0] . "]\" style=\"width:150px\">";
+				$select .= "<option value=\"" . $value[12] . "\" selected=\"selectted\">" . $value[7] . "</option>";
+				$select .= "</select>";
+
+				$new_row[] = $select;
+				$new_row[] = "<input class=\"form-control\" name=\"conversion[" . $value[0] . "]\" type=\"text\" placeholder=\"Conversion\" value=\"1\" />";
+				$new_row[] = "
+				<input name=\"item_id[" . $value[0] . "]\" type=\"hidden\" value=\"" . $value[9] . "\" /><input class=\"form-control\" name=\"unit_price[" . $value[0] . "]\" type=\"text\" placeholder=\"Unit Price\" value=\"1\" />";
+				$new_row[] = "";
+
+
+				$loaddata_table[$value[0]] = $new_row;
+			}
+		}
+
+		if ($new_purchase_order == '0') {
+			$view = 'dbo.view_purchase_order_detail_request';
+
+			$field = array();
+			$field[] = array('field' => 'purchase_request_detail_id', 'title' => 'purchase_request_detail_id');
+			$field[] = array('field' => 'purchase_request_id', 'title' => 'purchase_request_id');
+			$field[] = array('field' => 'purchase_request_date', 'title' => 'purchase_request_date');
+			$field[] = array('field' => 'purchase_request_no', 'title' => 'purchase_request_no');
+			$field[] = array('field' => 'item', 'title' => 'item');
+			$field[] = array('field' => 'quantity_requested', 'title' => 'quantity_requested');
+			$field[] = array('field' => 'quantity_ordered', 'title' => 'quantity_ordered');
+			$field[] = array('field' => 'unit', 'title' => 'TOTAL');
+			$field[] = array('field' => 'purchase_request_status_id', 'title' => 'purchase_request_status_id');
+			$field[] = array('field' => 'item_id', 'title' => 'item_id');
+			$field[] = array('field' => 'request_delivery_date', 'title' => 'request_delivery_date');
+			$field[] = array('field' => 'outstanding_qty', 'title' => 'outstanding_qty');
+			$field[] = array('field' => 'uom_id', 'title' => 'uom_id');
+			$field[] = array('field' => 'request_delivery_date', 'title' => 'request_delivery_date');
+			$field[] = array('field' => 'conversion', 'title' => 'conversion');
+			$field[] = array('field' => 'unit_price', 'title' => 'unit_price');
+			$field[] = array('field' => 'unit_order', 'title' => 'unit_order');
+
+			$where = array();
+			$where['purchase_order_id'] = $purchase_order_id;
+			$loaddata_purchase = $this->ecc_library->loaddata($view, $field, $where);
+
+
+			foreach ($loaddata_purchase['data'] as $key => $value) {
+				if ($lock_data == 0) {
+
+					$loaddata_table[$value[0]][7] = "<input class=\"form-control\" name=\"quantity_ordered[" . $value[0] . "]\" type=\"text\" placeholder=\"This Order\" value=\"" . $this->mainconfig->get_decimal_format2($value[11], 12) . "\" />";
+					$select = "<select class=\"form-control search_uom\" name=\"uom_id[" . $value[0] . "]\" style=\"width:150px\">";
+					$select .= "<option value=\"" . $value[12] . "\" selected=\"selectted\">" . $value[16] . "</option>";
+					$select .= "</select>";
+					$loaddata_table[$value[0]][8] = $select;
+					$loaddata_table[$value[0]][9] = "<input class=\"form-control\" name=\"conversion[" . $value[0] . "]\" type=\"text\" placeholder=\"Conversion\" value=\"" . $this->mainconfig->get_decimal_format2($value[14], 12) . "\" />";
+					$loaddata_table[$value[0]][10] = "<input name=\"item_id[" . $value[0] . "]\" type=\"hidden\" value=\"" . $value[9] . "\" /><input class=\"form-control\" name=\"unit_price[" . $value[0] . "]\" type=\"text\" placeholder=\"Unit Price\" value=\"" . $this->mainconfig->get_decimal_format2($value[15], 12) . "\" />";
+				} else {
+					$this_order[$value[0]] = $value[11];
+					$new_row = array();
+					$new_row[] = $value[0];
+					$new_row[] = $value[3];
+					$new_row[] = $value[2];
+					$new_row[] = $value[4];
+					$new_row[] = $this->mainconfig->get_decimal_format($value[5], 12);
+					$new_row[] = $this->mainconfig->get_decimal_format($value[6], 12);
+					$new_row[] = $value[7];
+					$new_row[] = $this->mainconfig->get_decimal_format($value[11], 12);
+					$new_row[] = $value[16];
+					$new_row[] = $this->mainconfig->get_decimal_format($value[14], 12);
+					$new_row[] = $this->mainconfig->get_decimal_format($value[15], 12);
+					$new_row[] = "";
+
+					$loaddata_table[$value[0]] = $new_row;
+				}
+			}
+		}
+
+		$loaddata['data'] = array();
+		foreach ($loaddata_table as $value) {
+
+			$data = array();
+			$data[] = $value[0];
+			$data[] = $value[1];
+			$data[] = $value[2];
+			$data[] = $value[3];
+			$data[] = $value[4];
+			$data[] = $value[5];
+			$data[] = $value[6];
+			$data[] = $value[7];
+			$data[] = $value[8];
+			$data[] = $value[9];
+			$data[] = $value[10];
+			$data[] = $value[11];
+
+			$loaddata['data'][] = $data;
+		}
+
+		echo json_encode($loaddata);
+	}
+
+	function print_purchase_order()
+	{
+
+		$purchase_order_id = isset($_POST['purchase_order_id']) ? $_POST['purchase_order_id'] : false;
+		$format = isset($_POST['format']) ? $_POST['format'] : 'pdf';
+		$user_id = $this->session->userdata('user_id');
+
+		$sp = "dbo.sp_rpt_purchase_order_popstar";
+
+		$this->rpc_service->setSP(array("sp" => $sp, "mode" => "2", "debug" => "1"));
+		$this->rpc_service->addField('purchase_order_id', $purchase_order_id);
+		$this->rpc_service->addField('format', $format);
+		$this->rpc_service->addField('temp_folder', sys_get_temp_dir());
+		$this->rpc_service->addField('sort', 'e.item_code asc');
+
+		$result = $this->rpc_service->resultPrint2();
+		echo json_encode($result);
+	}
+
+	function cetak_dokumen()
+	{
+		$this->db_pop = $this->load->database('pop', TRUE);
+		$purchase_order_id = (isset($_GET['purchase_order_id']) && !empty($_GET['purchase_order_id'])) ? $_GET['purchase_order_id'] : die('{"sts":"ERROR","desc":" Param Header Tidak Ditemukan"}');
+		$item_fabric_id = (isset($_GET['item_fabric_id']) && !empty($_GET['item_fabric_id'])) ? $_GET['item_fabric_id'] : die('{"sts":"ERROR","desc":" Param Dokumen Tidak Ditemukan"}');
+		//var_dump ($purchase_order_id);
+		$data = array();
+
+		$q = $this->db_pop->query('SELECT * FROM dbo.view_purchase_order_warehouse WHERE purchase_order_id= ' . $purchase_order_id . ' ');
+
+		$purchase_order_id = "";
+		$fabric_code = "";
+		$fabric_name = "";
+		$purchase_order_no = "";
+		$purchase_order_date = "";
+
+		foreach ($q->result() as $r) {
+			$purchase_order_id = $r->purchase_order_id;
+			$purchase_order_no = $r->purchase_order_no;
+			$purchase_order_date = $r->purchase_order_date;
+			$fabric_code = $r->fabric_code;
+			$fabric_name = $r->fabric_name;
+			$fabric_content = $r->fabric_content;
+			$weight = $r->weight;
+			$width = $r->width;
+			$w = $r->w;
+			$l = $r->l;
+			$t = $r->t;
+			$partner_id = $r->partner_id;
+			$packing_instructions = $r->packing_instructions;
+			$shipping_sample = $r->shipping_sample;
+			$requested_etd = $r->requested_etd;
+			$other_instructions = $r->other_instructions;
+			$currencies = $r->currencies;
+		}
+
+		$hasil = $this->main->getData("dbo.dt_partner", null, array("partner_id" => $partner_id));
+		$data['partner_name'] = $hasil[0]['partner_name'];
+		$data['partner_address'] = $hasil[0]['partner_address'];
+		$data['partner_city'] = $hasil[0]['partner_city'];
+		$data['partner_state'] = $hasil[0]['partner_state'];
+		// var_dump($purchase_order_id);die();
+		$data['purchase_order_id'] = $purchase_order_id;
+		$data['purchase_order_no'] = $purchase_order_no;
+		$data['purchase_order_date'] = $purchase_order_date;
+		$data['fabric_code'] = $fabric_code;
+		$data['fabric_name'] = $fabric_name;
+		$data['fabric_content'] = $fabric_content;
+		$data['weight'] = $weight;
+		$data['width'] = $width;
+		$data['w'] = $w;
+		$data['l'] = $l;
+		$data['t'] = $t;
+		$data['packing_instructions'] = $packing_instructions;
+		$data['shipping_sample'] = $shipping_sample;
+		$data['requested_etd'] = $requested_etd;
+		$data['other_instructions'] = $other_instructions;
+		$data['partner_id'] = $partner_id;
+		$data['currencies'] = $currencies;
+
+		//$data['partner_id'] = $partner_id; 
+
+		$this->load->view('draft/warehouse/purchase_order', $data);
+	}
+
+	function download_shipment()
+	{
+		$this->db_pop = $this->load->database('pop', TRUE);
+		$this->load->model('main');
+		$this->load->library('mainconfig');
+		$fabric_shipment_id = isset($_POST['fabric_shipment_id']) ? $_POST['fabric_shipment_id'] : false;
+		$format = isset($_POST['format']) ? $_POST['format'] : 'pdf';
+		$user_id = $this->session->userdata('user_id');
+
+		$fabric_shipment = $this->main->getData_pop("dbo.dt_fabric_shipment", null, array("fabric_shipment_id" => $fabric_shipment_id));
+		$fabric_shipment_no = $fabric_shipment[0]['fabric_shipment_no'];
+		$fabric_shipment_date = $fabric_shipment[0]['fabric_shipment_date'];
+		$fabric_shipment_note = $fabric_shipment[0]['fabric_shipment_note'];
+
+
+
+
+		$temp = sys_get_temp_dir() . '\\';
+		$host_libreoffice = '127.0.0.1'; // setting host service libreoffice
+		$port_libreoffice = '8080';      // setting port service libreoffice
+		//$TEMPLATE_EXT='fods';
+		$NEWLINE = '<text:line-break/>';
+		$unoconv = '"C:/Program Files/LibreOffice 5/program/python.exe" "C:\Program Files\LibreOffice 5\program\unoconv" ' . '--connection "socket,host=' . $host_libreoffice . ',port=' .            $port_libreoffice . ',tcpNoDelay=1;urp;StarOffice.ComponentContext" ';
+
+		$report_time = date('_Ymd_His');
+
+		if ($format == 'xlsx') {
+			$template = 'C:/tmp_sipop/warehouse/shipment/excel/fabric_shipment.fods';
+			$template_data_1 = 'C:/tmp_sipop/warehouse/shipment/excel/fabric_shipment_data_1.fods';
+			$templateData = 'C:/tmp_sipop/warehouse/shipment/excel/fabric_shipment_data.fods';
+			$templatetotal = 'C:/tmp_sipop/warehouse/shipment/excel/fabric_shipment_total_data.fods';
+			$tmp_ext = 'fods';
+			$EXTENSION = 'xlsx';
+			$CONTENT_TYPE = 'application/msexcel';
+			$CONVERT_TO = 'xlsx';
+			$report_name = 'Detail_Packing_List';
+			// $des='Excel';
+		} else {
+			$template = 'C:/tmp_sipop/warehouse/purchase_order/pdf/purchase_order.fodt';
+			$templateData = 'C:/tmp_sipop/warehouse/purchase_order/pdf/purchase_order_data.fodt';
+			$tmp_ext = 'fodt';
+			$EXTENSION = 'pdf';
+			$CONTENT_TYPE = 'application/pdf';
+			$CONVERT_TO = 'pdf';
+			$report_name = 'Detail_Packing_List';
+			// $des='PDF';
+		}
+
+		$template_doc = file_get_contents($template);
+		$template_data_1 = file_get_contents($template_data_1);
+		$template_data = file_get_contents($templateData);
+		$template_total = file_get_contents($templatetotal);
+
+		//==== untuk detail =============
+
+		$data_1 = array('{data_1}');
+		$data_detail = array('{colour}', '{lot}', '{bale}', '{roll}', '{weight}', '{qty}', '{detail_code}', '{code_id}');
+		$data_detail_lengkap = array('{data_shipment}', '{total_weight}', '{total_qty}');
+
+		$data_header = array('{invoice_no}', '{date}', '{PO_number}', '{item_fabric_code}', '{item_fabric_name}', '{shipement_number}', '{item_fabric_content}', '{code_hs}', '{colour}', '{bale}', '{unit_quantity}', '{made_in}', '{data}');
+
+
+		$cek_data_list = $this->db_pop->query('SELECT fabric_shipment_id,fabric_shipment_detail_id FROM dbo.view_fabric_shipment_list WHERE fabric_shipment_id=' . $fabric_shipment_id . ' group by fabric_shipment_id,fabric_shipment_detail_id order by fabric_shipment_detail_id ASC');
+
+		//$dtlist='';
+		$value_header = '';
+		foreach ($cek_data_list->result() as $list) {
+			$fabric_shipment_detail = $this->main->getData_pop("dbo.view_fabric_shipment_detail", null, array("fabric_shipment_detail_id" => $list->fabric_shipment_detail_id));
+			$fabric_shipment_detail_id = $list->fabric_shipment_detail_id;
+			$purchase_order_no = $fabric_shipment_detail[0]['purchase_order_no'];
+			$item_fabric_code = $fabric_shipment_detail[0]['item_fabric_code'];
+			$item_fabric_id = $fabric_shipment_detail[0]['item_fabric_id'];
+
+			$fabric_shipment_detail_invoice_number = $fabric_shipment_detail[0]['fabric_shipment_detail_invoice_number'];
+			$uom_code = $fabric_shipment_detail[0]['uom_code'];
+			$code_qty = $fabric_shipment_detail[0]['code_qty'];
+			$fabric_shipment_detail_made_in = $fabric_shipment_detail[0]['fabric_shipment_detail_made_in'];
+			$fabric_shipment_detail_note = $fabric_shipment_detail[0]['fabric_shipment_detail_note'];
+			$fabric_shipment_detail_colour = $fabric_shipment_detail[0]['fabric_shipment_detail_colour'];
+			$fabric_shipment_detail_bale = $fabric_shipment_detail[0]['fabric_shipment_detail_bale'];
+
+			$item_fabric = $this->main->getData_pop("dbo.dt_mst_item_fabric", null, array("item_fabric_id" => $item_fabric_id));
+			$item_fabric_name = $item_fabric[0]['item_fabric_name'];
+			$item_fabric_content = $item_fabric[0]['item_fabric_content'];
+
+
+			//$dtlist .= $list->fabric_shipment_detail_id;
+			$cek_warna = $this->db_pop->query('SELECT * FROM dbo.view_list_fabric_shipment_detail WHERE id = ' . $list->fabric_shipment_detail_id . ' ');
+
+			$value_total = '';
+			foreach ($cek_warna->result() as $warna) {
+				$value_detail = '';
+				$weight = 0;
+				$qty = 0;
+				$q = $this->db_pop->query("SELECT * FROM dbo.view_fabric_shipment_list WHERE fabric_shipment_detail_id = " . $fabric_shipment_detail_id . " and fabric_shipment_list_colour ='" . $warna->value . "'");
+				foreach ($q->result() as $r2) {
+					$weight = $weight + $r2->fabric_shipment_list_weight;
+					$qty = $qty + $r2->fabric_shipment_list_quantity;
+					$isi_detail = array(
+						$r2->fabric_shipment_list_colour,
+						$r2->fabric_shipment_list_lot,
+						$r2->fabric_shipment_list_bale,
+						$r2->fabric_shipment_list_roll,
+						number_format($r2->fabric_shipment_list_weight, 4),
+						number_format($r2->fabric_shipment_list_quantity, 4),
+						$r2->item_code,
+						$r2->fabric_shipment_list_code
+					);
+					$value_detail .= str_replace($data_detail, $isi_detail, $template_data);
+				}
+
+				$isi_detail_lengkap = array($value_detail, number_format($weight, 4), number_format($qty, 4));
+				$value_total .= str_replace($data_detail_lengkap, $isi_detail_lengkap, $template_total);
+			}
+
+			$isi_header = array($fabric_shipment_detail_invoice_number, $fabric_shipment_date, $purchase_order_no, $item_fabric_code, $item_fabric_name, $fabric_shipment_no, $item_fabric_content, '', $fabric_shipment_detail_colour, $fabric_shipment_detail_bale, '', $fabric_shipment_detail_made_in, $value_total);
+			$value_header .= str_replace($data_header, $isi_header, $template_data_1);
+		}
+		$isi_data_1 = array($value_header);
+		$value_data_1 = str_replace($data_1, $isi_data_1, $template_doc);
+
+		file_put_contents($temp . $report_name . $report_time . '.' . $tmp_ext, $value_data_1);
+
+		exec(
+			$unoconv .
+				'-f ' . $CONVERT_TO . ' ' .
+				'-o "' . $temp . $report_name . $report_time . '.' . $EXTENSION . '" ' .
+				'"' . $temp . $report_name . $report_time . '.' . $tmp_ext . '"'
+		);
+
+		$file = $temp . $report_name . $report_time . '.' . $EXTENSION;
+		$namafile = $report_name . $report_time . '.' . $EXTENSION;
+		unlink($temp . $report_name . $report_time . '.' . $tmp_ext);
+
+		$return['valid'] = true;
+		$return['xfile'] = $file;
+		$return['namafile'] = $namafile;
+
+		//$return['valid'] =false;
+		//$return['des'] =$des; 
+
+		//$return['status_code'] = $result['no'];
+		//$return['message'] = $result['des'];
+		//$return['spec_detail_id'] = $data_result['spec_detail_id'];
+		//$get_field['r16']['editable'] = true;
+		//$get_field['r17']['editable'] = true;
+
+		echo json_encode($return);
+
+		//	var_dump($dtlist);die();
+
+		//===============================
+	}
+
+	function download_shipment_old()
+	{
+		$this->db_pop = $this->load->database('pop', TRUE);
+		$this->load->model('main');
+		$this->load->library('mainconfig');
+		$fabric_shipment_id = isset($_POST['fabric_shipment_id']) ? $_POST['fabric_shipment_id'] : false;
+		$format = isset($_POST['format']) ? $_POST['format'] : 'pdf';
+		$user_id = $this->session->userdata('user_id');
+
+		$fabric_shipment = $this->main->getData_pop("dbo.dt_fabric_shipment", null, array("fabric_shipment_id" => $fabric_shipment_id));
+		$fabric_shipment_no = $fabric_shipment[0]['fabric_shipment_no'];
+		$fabric_shipment_date = $fabric_shipment[0]['fabric_shipment_date'];
+		$fabric_shipment_note = $fabric_shipment[0]['fabric_shipment_note'];
+
+		$fabric_shipment_detail = $this->main->getData_pop("dbo.view_fabric_shipment_detail", null, array("fabric_shipment_id" => $fabric_shipment_id));
+		$fabric_shipment_detail_id = $fabric_shipment_detail[0]['fabric_shipment_detail_id'];
+		$purchase_order_no = $fabric_shipment_detail[0]['purchase_order_no'];
+		$item_fabric_code = $fabric_shipment_detail[0]['item_fabric_code'];
+		$item_fabric_id = $fabric_shipment_detail[0]['item_fabric_id'];
+
+		$fabric_shipment_detail_invoice_number = $fabric_shipment_detail[0]['fabric_shipment_detail_invoice_number'];
+		$uom_code = $fabric_shipment_detail[0]['uom_code'];
+		$code_qty = $fabric_shipment_detail[0]['code_qty'];
+		$fabric_shipment_detail_made_in = $fabric_shipment_detail[0]['fabric_shipment_detail_made_in'];
+		$fabric_shipment_detail_note = $fabric_shipment_detail[0]['fabric_shipment_detail_note'];
+		$fabric_shipment_detail_colour = $fabric_shipment_detail[0]['fabric_shipment_detail_colour'];
+		$fabric_shipment_detail_bale = $fabric_shipment_detail[0]['fabric_shipment_detail_bale'];
+
+		$item_fabric = $this->main->getData_pop("dbo.dt_mst_item_fabric", null, array("item_fabric_id" => $item_fabric_id));
+		$item_fabric_name = $item_fabric[0]['item_fabric_name'];
+		$item_fabric_content = $item_fabric[0]['item_fabric_content'];
+
+		$temp = sys_get_temp_dir() . '\\';
+		$host_libreoffice = '127.0.0.1'; // setting host service libreoffice
+		$port_libreoffice = '8080';      // setting port service libreoffice
+		//$TEMPLATE_EXT='fods';
+		$NEWLINE = '<text:line-break/>';
+		$unoconv = '"C:/Program Files/LibreOffice 5/program/python.exe" "C:\Program Files\LibreOffice 5\program\unoconv" ' . '--connection "socket,host=' . $host_libreoffice . ',port=' .            $port_libreoffice . ',tcpNoDelay=1;urp;StarOffice.ComponentContext" ';
+
+		$report_time = date('_Ymd_His');
+
+		if ($format == 'xlsx') {
+			$template = 'C:/tmp_sipop/warehouse/shipment/excel/fabric_shipment.fods';
+			$templateData = 'C:/tmp_sipop/warehouse/shipment/excel/fabric_shipment_data.fods';
+			$templatetotal = 'C:/tmp_sipop/warehouse/shipment/excel/fabric_shipment_total_data.fods';
+			$tmp_ext = 'fods';
+			$EXTENSION = 'xlsx';
+			$CONTENT_TYPE = 'application/msexcel';
+			$CONVERT_TO = 'xlsx';
+			$report_name = 'Detail Packing List';
+			// $des='Excel';
+		} else {
+			$template = 'C:/tmp_sipop/warehouse/purchase_order/pdf/purchase_order.fodt';
+			$templateData = 'C:/tmp_sipop/warehouse/purchase_order/pdf/purchase_order_data.fodt';
+			$tmp_ext = 'fodt';
+			$EXTENSION = 'pdf';
+			$CONTENT_TYPE = 'application/pdf';
+			$CONVERT_TO = 'pdf';
+			$report_name = 'Detail Packing List';
+			// $des='PDF';
+		}
+
+		$template_doc = file_get_contents($template);
+		$template_data = file_get_contents($templateData);
+		$template_total = file_get_contents($templatetotal);
+
+		//==== untuk detail =============
+
+		$data_detail = array('{colour}', '{lot}', '{bale}', '{roll}', '{weight}', '{qty}', '{detail_code}', '{code_id}');
+		$data_detail_lengkap = array('{data_shipment}', '{total_weight}', '{total_qty}');
+		$cek_warna = $this->db_pop->query('SELECT * FROM dbo.view_list_fabric_shipment_detail WHERE id = ' . $fabric_shipment_detail_id . ' ');
+		//var_dump($cek_warna->result());die();
+
+		$value_total = '';
+		foreach ($cek_warna->result() as $warna) {
+			$value_detail = '';
+			$weight = 0;
+			$qty = 0;
+			$q = $this->db_pop->query("SELECT * FROM dbo.view_fabric_shipment_list WHERE fabric_shipment_detail_id = " . $fabric_shipment_detail_id . " and fabric_shipment_list_colour ='" . $warna->value . "'");
+			foreach ($q->result() as $r2) {
+				$weight = $weight + $r2->fabric_shipment_list_weight;
+				$qty = $qty + $r2->fabric_shipment_list_quantity;
+
+				$isi_detail = array(
+					$r2->fabric_shipment_list_colour,
+					$r2->fabric_shipment_list_lot,
+					$r2->fabric_shipment_list_bale,
+					$r2->fabric_shipment_list_roll,
+					number_format($r2->fabric_shipment_list_weight, 4),
+					number_format($r2->fabric_shipment_list_quantity, 4),
+					$r2->item_code,
+					$r2->fabric_shipment_list_code
+				);
+				$value_detail .= str_replace($data_detail, $isi_detail, $template_data);
+			}
+
+			$isi_detail_lengkap = array($value_detail, number_format($weight, 4), number_format($qty, 4));
+			$value_total .= str_replace($data_detail_lengkap, $isi_detail_lengkap, $template_total);
+		}
+
+		//	    $q = $this->db_pop->query('SELECT * FROM dbo.view_fabric_shipment_list WHERE fabric_shipment_detail_id = '. $fabric_shipment_detail_id .' ');
+		//		$data_detail=array('{colour}','{lot}','{bale}','{roll}','{weight}','{qty}','{detail_code}','{code_id}','{data_total}');
+		//	    //var_dump($q2->result());die();
+		//		$value_detail ='';
+		//		$i=1;
+		//	    foreach($q->result() as $r2){
+		//			$bale=$r2->fabric_shipment_list_bale;
+		//			
+		//			//--tidak bisa karena nomor bale tidak selalu berurutan---
+		//			if($i>1){
+		//				if($bale>1){
+		//				  $isi_detail=array($r2->fabric_shipment_list_colour,$r2->fabric_shipment_list_lot,$r2->fabric_shipment_list_bale,$r2->fabric_shipment_list_roll,
+		//		         number_format($r2->fabric_shipment_list_weight,4),number_format($r2->fabric_shipment_list_quantity,4),$r2->item_code,$r2->fabric_shipment_list_code,'');	
+		//				}else{
+		//				  $isi_detail=array($r2->fabric_shipment_list_colour,$r2->fabric_shipment_list_lot,$r2->fabric_shipment_list_bale,$r2->fabric_shipment_list_roll,
+		//		         number_format($r2->fabric_shipment_list_weight,4),number_format($r2->fabric_shipment_list_quantity,4),$r2->item_code,$r2->fabric_shipment_list_code,'Total disini');	
+		//				}
+		//			}else{
+		//			 $isi_detail=array($r2->fabric_shipment_list_colour,$r2->fabric_shipment_list_lot,$r2->fabric_shipment_list_bale,$r2->fabric_shipment_list_roll,
+		//		      number_format($r2->fabric_shipment_list_weight,4),number_format($r2->fabric_shipment_list_quantity,4),$r2->item_code,$r2->fabric_shipment_list_code,'');
+		//			}
+		//		 
+		//		  //,number_format($r2->quantity_ordered,4),$qty,$amount,$r2->purchase_order_detail_memo,$r2->item_code);
+		//		  $value_detail .=str_replace($data_detail,$isi_detail,$template_data);
+		//		  $i=$i+1;
+		//		}
+		//===============================
+
+		$data_header = array('{invoice_no}', '{date}', '{PO_number}', '{item_fabric_code}', '{item_fabric_name}', '{shipement_number}', '{item_fabric_content}', '{code_hs}', '{colour}', '{bale}', '{unit_quantity}', '{made_in}', '{data}');
+
+		$isi_header = array(
+			$fabric_shipment_detail_invoice_number,
+			$fabric_shipment_date,
+			$purchase_order_no,
+			$item_fabric_code,
+			$item_fabric_name,
+			$fabric_shipment_no,
+			$item_fabric_content,
+			'',
+			$fabric_shipment_detail_colour,
+			$fabric_shipment_detail_bale,
+			'',
+			$fabric_shipment_detail_made_in,
+			$value_total
+		);
+		// $isi_header=array($fabric_shipment_detail_invoice_number,$fabric_shipment_date,$purchase_order_no,$item_fabric_code,$item_fabric_name,$fabric_shipment_no,$item_fabric_content,'',
+		// $fabric_shipment_detail_colour,$fabric_shipment_detail_bale,'',$fabric_shipment_detail_made_in,$value_detail);
+		//number_format($jml,4),$total_amount,$partner_name);
+
+		$value_header = str_replace($data_header, $isi_header, $template_doc);
+
+		file_put_contents($temp . $report_name . $report_time . '.' . $tmp_ext, $value_header);
+
+		exec(
+			$unoconv .
+				'-f ' . $CONVERT_TO . ' ' .
+				'-o "' . $temp . $report_name . $report_time . '.' . $EXTENSION . '" ' .
+				'"' . $temp . $report_name . $report_time . '.' . $tmp_ext . '"'
+		);
+
+		$file = $temp . $report_name . $report_time . '.' . $EXTENSION;
+		$namafile = $report_name . $report_time . '.' . $EXTENSION;
+		unlink($temp . $report_name . $report_time . '.' . $tmp_ext);
+
+		$return['valid'] = true;
+		$return['xfile'] = $file;
+		$return['namafile'] = $namafile;
+
+		//$return['valid'] =false;
+		//$return['des'] =$des; 
+
+		//$return['status_code'] = $result['no'];
+		//$return['message'] = $result['des'];
+		//$return['spec_detail_id'] = $data_result['spec_detail_id'];
+		//$get_field['r16']['editable'] = true;
+		//$get_field['r17']['editable'] = true;
+
+		echo json_encode($return);
+
+		// var_dump($item_fabric);
+	}
+
+
+	function download_purchase_order_warehouse()
+	{
+		$this->db_pop = $this->load->database('pop', TRUE);
+		$this->load->model('main');
+		$this->load->library('mainconfig');
+		$purchase_order_id = isset($_POST['purchase_order_id']) ? $_POST['purchase_order_id'] : false;
+		$format = isset($_POST['format']) ? $_POST['format'] : 'pdf';
+		$user_id = $this->session->userdata('user_id');
+
+		$q = $this->db_pop->query('SELECT * FROM dbo.view_purchase_order_warehouse WHERE purchase_order_id= ' . $purchase_order_id . ' ');
+
+		$purchase_order_id = "";
+		$fabric_code = "";
+		$fabric_name = "";
+		$purchase_order_no = "";
+		$purchase_order_date = "";
+
+		foreach ($q->result() as $r) {
+			$purchase_order_id = $r->purchase_order_id;
+			$purchase_order_no = $r->purchase_order_no;
+			$purchase_order_date = $r->purchase_order_date;
+			$fabric_code = $r->fabric_code;
+			$fabric_name = $r->fabric_name;
+			$fabric_content = $r->fabric_content;
+			$weight = $r->weight;
+			$width = $r->width;
+			$w = $r->w;
+			$l = $r->l;
+			$t = $r->t;
+			$partner_id = $r->partner_id;
+			$packing_instructions = $r->packing_instructions;
+			$shipping_sample = $r->shipping_sample;
+			$requested_etd = $r->requested_etd;
+			$other_instructions = $r->other_instructions;
+			$currencies = $r->currencies;
+		}
+
+		$hasil = $this->main->getData("dbo.dt_partner", null, array("partner_id" => $partner_id));
+		$partner_name = $hasil[0]['partner_name'];
+		$partner_address = $hasil[0]['partner_address'];
+		$partner_city = $hasil[0]['partner_city'];
+		$partner_state = $hasil[0]['partner_state'];
+
+		$ship_name = 'PT.POPSTAR';
+		$ship_address = 'Jl.Nanjung Km.3 No.99';
+		$ship_city = 'Lagadar Margaasih Kab. Bandung';
+		$ship_state = 'Indonesia 40216';
+
+		$temp = sys_get_temp_dir() . '\\';
+		// var_dump($xrow_detail);die();
+		$host_libreoffice = '127.0.0.1'; // setting host service libreoffice
+		$port_libreoffice = '8080';      // setting port service libreoffice
+		$TEMPLATE_EXT = 'fods';
+		$NEWLINE = '<text:line-break/>';
+		$unoconv = '"C:/Program Files/LibreOffice 5/program/python.exe" "C:\Program Files\LibreOffice 5\program\unoconv" ' . '--connection "socket,host=' . $host_libreoffice . ',port=' .            $port_libreoffice . ',tcpNoDelay=1;urp;StarOffice.ComponentContext" ';
+
+		$report_time = date('_Ymd_His');
+
+		if ($format == 'xlsx') {
+			$template = 'C:/tmp_sipop/warehouse/purchase_order/excel/excel_po_warehouse.fods';
+			$templateData = 'C:/tmp_sipop/warehouse/purchase_order/excel/excel_po_warehouse_data.fods';
+			$tmp_ext = 'fods';
+			$EXTENSION = 'xlsx';
+			$CONTENT_TYPE = 'application/msexcel';
+			$CONVERT_TO = 'xlsx';
+			$report_name = 'Purchase_order_warehouse';
+
+			// $des='Excel';
+		} else {
+			$template = 'C:/tmp_sipop/warehouse/purchase_order/pdf/purchase_order.fodt';
+			$templateData = 'C:/tmp_sipop/warehouse/purchase_order/pdf/purchase_order_data.fodt';
+			$tmp_ext = 'fodt';
+			$EXTENSION = 'pdf';
+			$CONTENT_TYPE = 'application/pdf';
+			$CONVERT_TO = 'pdf';
+			$report_name = 'invoice';
+
+			// $des='PDF';
+		}
+		$template_doc = file_get_contents($template);
+		$template_data = file_get_contents($templateData);
+
+		$shrinkage = 'W=' . $w . ' L=' . $l . ' T=' . $t;
+
+
+		//======= Detail ================
+		$q2 = $this->db->query('SELECT * FROM dbo.view_purchase_order_detail WHERE purchase_order_id= ' . $purchase_order_id . ' ');
+		$jml = 0;
+		$jml_amount = 0;
+		$value_detail = '';
+		$data_detail = array('{color}', '{color_code}', '{qty_yard}', '{unit_price}', '{amount}', '{remark}', '{item_code}');
+		//var_dump($q2->result());die();
+		foreach ($q2->result() as $r2) {
+			$jml = $jml + $r2->quantity_ordered;
+			$amount = $r2->quantity_ordered * $r2->unit_price;
+			$jml_amount = $jml_amount + $amount;
+			if ($currencies == 'USD') {
+				//$amount="$ &nbsp;&nbsp;".number_format($amount,4);
+				//$qty="$ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".number_format($r2->unit_price,4);
+				$amount = "$ " . number_format($amount, 4);
+				$qty = "$ " . number_format($r2->unit_price, 4);
+				//$jml="$ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".number_format($jml_amount,4);
+			} else {
+				//$amount="Rp &nbsp;".number_format($amount,4);
+				//$qty="Rp &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".number_format($r2->unit_price,4);
+				$amount = "Rp " . number_format($amount, 4);
+				$qty = "Rp " . number_format($r2->unit_price, 4);
+				//$jml="R &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".number_format($jml_amount,4);
+			}
+			$isi_detail = array($r2->colour, '', number_format($r2->quantity_ordered, 4), $qty, $amount, $r2->purchase_order_detail_memo, $r2->item_code);
+			$value_detail .= str_replace($data_detail, $isi_detail, $template_data);
+		}
+
+		if ($currencies == 'USD') {
+			//$total_amount="$ &nbsp;&nbsp;&nbsp;".number_format($jml_amount,4);
+			$total_amount = "$ " . number_format($jml_amount, 4);
+		} else {
+			$total_amount = "Rp " . number_format($jml_amount, 4);
+		}
+
+
+		// var_dump($value_detail);die();
+		//===============================
+		$data_header = array('{no_purchase_order}', '{date}', '{nama_vendor}', '{Nama_ship}', '{alamat_vendor}', '{alamat_ship}', '{city_vendor}', '{city_ship}', '{state_vendor}', '{state_ship)', '{fabric_code}', '{fabric_description}', '{fabric_content}', '{fabric_weight}', '{fabric_width}', '{shrinkage}', '{packing_intructions}', '{shipping_sample}', '{request_etd}', '{other_intructions}', '{data}', '{sum_qty}', '{sum_amount}', '{vendor_accepted}');
+
+		$isi_header = array($purchase_order_no, $purchase_order_date, $partner_name, $ship_name, $partner_address, $ship_address, $partner_city, $ship_city, $partner_state, $ship_state, $fabric_code, $fabric_name, $fabric_content, $weight, $width, $shrinkage, $packing_instructions, $shipping_sample, $requested_etd, $other_instructions, $value_detail, number_format($jml, 4), $total_amount, $partner_name);
+		//$value_detail,number_format($jml,4),$total_amount,
+		$value_header = str_replace($data_header, $isi_header, $template_doc);
+
+		file_put_contents($temp . $report_name . $report_time . '.' . $tmp_ext, $value_header);
+		exec(
+			$unoconv .
+				'-f ' . $CONVERT_TO . ' ' .
+				'-o "' . $temp . $report_name . $report_time . '.' . $EXTENSION . '" ' .
+				'"' . $temp . $report_name . $report_time . '.' . $tmp_ext . '"'
+		);
+
+		$file = $temp . $report_name . $report_time . '.' . $EXTENSION;
+		$namafile = $report_name . $report_time . '.' . $EXTENSION;
+		unlink($temp . $report_name . $report_time . '.' . $tmp_ext);
+
+		$return['valid'] = true;
+		$return['xfile'] = $file;
+		$return['namafile'] = $namafile;
+
+		//$return['valid'] =false;
+		//$return['des'] =$des; 
+
+		//$return['status_code'] = $result['no'];
+		//$return['message'] = $result['des'];
+		//$return['spec_detail_id'] = $data_result['spec_detail_id'];
+		//$get_field['r16']['editable'] = true;
+		//$get_field['r17']['editable'] = true;
+
+		echo json_encode($return);
+	}
+
+	public function upload_config($path)
+	{
+		if (!is_dir($path))
+			mkdir($path, 0755, TRUE);
+		$config['upload_path'] 		= './' . $path;
+		$config['allowed_types'] 	= 'xlsx|XLSX|xls|XLS';
+		$config['max_filename']	 	= '255';
+		$config['encrypt_name'] 	= TRUE;
+		$config['max_size'] 		= 4096;
+		$this->load->library('upload', $config);
+	}
+
+	function cetak_barcode_receive()
+	{
+		$this->db_pop = $this->load->database('pop', TRUE);
+		$fabric_shipment_list_id = (isset($_GET['fabric_shipment_list_id']) && !empty($_GET['fabric_shipment_list_id'])) ? $_GET['fabric_shipment_list_id'] : die('{"sts":"ERROR","desc":" Param Header Tidak Ditemukan"}');
+		$data['fabric_shipment_list_id'] = $fabric_shipment_list_id;
+
+		// $this->load->view('draft/warehouse/draft_barcode',$data);
+		$this->load->view('draft/warehouse/draft_cetak_barcode_receive', $data);
+	}
+	function cetak_barcode_receive_other()
+	{
+		$this->db_pop = $this->load->database('pop', TRUE);
+		$fabric_warehouse_receive_detail_id = (isset($_GET['fabric_warehouse_receive_detail_id']) && !empty($_GET['fabric_warehouse_receive_detail_id'])) ? $_GET['fabric_warehouse_receive_detail_id'] : die('{"sts":"ERROR","desc":" Param Header Tidak Ditemukan"}');
+		$data['fabric_warehouse_receive_detail_id'] = $fabric_warehouse_receive_detail_id;
+
+		// $this->load->view('draft/warehouse/draft_barcode',$data);
+		$this->load->view('draft/warehouse/draft_cetak_barcode_receive_other', $data);
+	}
+
+	public function message($to = 'World')
+	{
+		echo "Hello {$to}!" . PHP_EOL;
+	}
+
+
+	function post_add_edit_scan_other()
+	{
+		$this->load->model('main');
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+
+		$q = isset($_POST['q']) ? $_POST['q'] : 0;
+		$code_barcode = isset($_POST['code_barcode']) ? $_POST['code_barcode'] : '';
+		$fabric_shipment_id = isset($_POST['fabric_shipment_id']) ? $_POST['fabric_shipment_id'] : '';
+		$fabric_warehouse_receive_id = isset($_POST['fabric_warehouse_receive_id']) ? $_POST['fabric_warehouse_receive_id'] : '';
+
+		$bc_in_barang_id = isset($_POST['bc_in_barang_id']) ? $_POST['bc_in_barang_id'] : '';
+		$bc_in_header_id = isset($_POST['bc_in_header_id']) ? $_POST['bc_in_header_id'] : '';
+		//$fabric_warehouse_receive_id = isset($_POST['fabric_warehouse_receive_id']) ? $_POST['fabric_warehouse_receive_id'] : '';
+
+		$user_id = $this->session->userdata('user_id');
+
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+
+		if (count($_POST) > 0) {
+			// Gabungkan bc_in_header_id dan bc_in_barang_id
+			//str_pad($stringAsli, $panjangTarget, $karakterIsi, STR_PAD_LEFT);
+			$str_bc_in_header=str_pad($bc_in_header_id, 4, '0', STR_PAD_LEFT);
+			$str_bc_in_barang_id=str_pad($bc_in_barang_id, 4, '0', STR_PAD_LEFT);
+			$str_fabric_warehouse_receive_id=str_pad($fabric_warehouse_receive_id, 4, '0', STR_PAD_LEFT);
+			$fabric_shipment_list_code = $str_bc_in_header.$str_bc_in_barang_id.$str_fabric_warehouse_receive_id;
+
+			if ($q == 0) {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_scan_add_manual_other");
+				$this->rpc_service->addField('bc_in_barang_id', $bc_in_barang_id);
+				$this->rpc_service->addField('bc_in_header_id', $bc_in_header_id);
+				$this->rpc_service->addField('fabric_shipment_list_code', $fabric_shipment_list_code); // Tambahkan ini
+				$this->rpc_service->addField('fabric_warehouse_receive_id', $fabric_warehouse_receive_id);
+				$this->rpc_service->addField('fabric_shipment_id', $fabric_shipment_id);
+			} elseif ($q == 2) {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_scan_insert_barcode");
+				$this->rpc_service->addField('bc_in_barang_id', $bc_in_barang_id);
+				$this->rpc_service->addField('code_barcode', $code_barcode);
+				$this->rpc_service->addField('fabric_shipment_list_code', $fabric_shipment_list_code); // Tambahkan ini
+			} else {
+				$this->rpc_service->setSP("dbo.sp_fabric_receive_scan_add");
+				$this->rpc_service->addField('code_barcode', $code_barcode);
+				$this->rpc_service->addField('fabric_shipment_list_code', $fabric_shipment_list_code); // Tambahkan ini
+			}
+
+			$this->rpc_service->addField('fabric_shipment_id', $fabric_shipment_id);
+			$this->rpc_service->addField('fabric_warehouse_receive_id', $fabric_warehouse_receive_id);
+
+			$result = $this->rpc_service->resultJSON_pop();
+
+			if (isset($result)) {
+				if (isset($result['valid']) && $result['valid']) {
+					$data_result = json_decode($result['data'], true);
+					$return['valid'] = true;
+					$return['status_code'] = $result['no'];
+					$return['message'] = $result['des'];
+					$return['bc_in_barang_id'] = $data_result['bc_in_barang_id'];
+					$return['bc_in_header_id'] = $data_result['bc_in_header_id'];
+				} else {
+					$return['status_code'] = $result['no'];
+					$return['message'] = $result['des'];
+					$return['total_lot'] = 0;
+					$return['total_roll'] = 0;
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		echo json_encode($return);
+	}
+}

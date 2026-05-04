@@ -1,0 +1,3 @@
+@echo off
+echo 'test';
+//print_good_receive_warehouse

@@ -1,0 +1,851 @@
+<script type="text/javascript">
+	$(function() {
+		"use strict";
+
+		$("#table_<?php echo $methodid ?>").jqGrid({
+			url: baseurl + '<?php echo $class_uri ?>/loaddata',
+			mtype: "post",
+			postData: {
+				'type_id': '0',
+				'location_base_id': '0',
+				'location_id': '0',
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+			},
+			datatype: "json",
+			colNames: ['item_id', 'ITEM BASE', 'ITEM DETAIL', 'ITEM NAME', 'QTY', 'QTY USED', 'UNIT', 'LOC CODE', 'BLOCK', 'LOC TYPE', 'RACK', 'WAREHOUSE', 'BARCODE', 'item_category_id', 'location_id', 'location_base_id', 'stock_move_sipop_id', 'STATUS LOKASI'],
+			colModel: [{
+					name: 'r1',
+					index: 'r1',
+					hidden: true
+				},
+				{
+					name: 'r2',
+					index: 'r2'
+				},
+				{
+					name: 'r3',
+					index: 'r3'
+				},
+				{
+					name: 'r4',
+					index: 'r4'
+				},
+				{
+					name: 'r5',
+					index: 'r5'
+				},
+				{
+					name: 'r6',
+					index: 'r6'
+				},
+				//{name:'r7',index:'r7', width:200,search: false},  
+				{
+					name: 'r7',
+					index: 'r7'
+				},
+				{
+					name: 'r8',
+					index: 'r8',
+					align: 'center'
+				},
+				{
+					name: 'r9',
+					index: 'r9',
+					hidden: true
+
+				},
+				{
+					name: 'r10',
+					index: 'r10',
+					hidden: true
+				},
+				{
+					name: 'r11',
+					index: 'r11',
+					hidden: true
+				},
+				{
+					name: 'r12',
+					index: 'r12',
+					hidden: true
+				},
+				{
+					name: 'r13',
+					index: 'r13'
+				},
+				{
+					name: 'r14',
+					index: 'r14',
+					hidden: true
+				},
+				{
+					name: 'r15',
+					index: 'r15',
+					hidden: true
+				},
+				{
+					name: 'r16',
+					index: 'r16',
+					hidden: true
+				},
+				{
+					name: 'r17',
+					index: 'r17',
+					hidden: true
+				}, {
+					name: 'r18',
+					index: 'r18',
+					align: 'center',
+					width: 150,
+					cellattr: function(rowId, val, rawObject) {
+						if (rawObject.r15 === null || rawObject.r15 === '' || rawObject.r15 === undefined) {
+							// Warna merah jika lokasi kosong
+							return 'style="color: red; font-weight: bold;"';
+						} else {
+							// Warna hijau jika lokasi terisi
+							return 'style="color: green; font-weight: bold;"';
+						}
+					}
+				}
+			],
+			iconSet: "fontAwesome",
+			iconSet: "fontAwesome",
+			idPrefix: "g1_",
+			rownumbers: true,
+			rowNum: 10,
+			rowList: [10, 20, 30],
+			pager: '#ptable_<?php echo $methodid ?>',
+			sortname: "r1",
+			sortorder: "asc",
+			shrinkToFit: false,
+			autowidth: true,
+			height: 250,
+			jsonReader: {
+				repeatitems: false
+			},
+			viewrecords: true,
+			gridview: true
+		});
+
+		$("#table_<?php echo $methodid ?>").jqGrid("setColProp", "rn", {
+			hidedlg: false
+		});
+		$("#table_<?php echo $methodid ?>").jqGrid('navGrid', '#ptable_<?php echo $methodid ?>', {
+			edit: false,
+			add: false,
+			del: false,
+			view: false,
+			search: false
+		});
+		$("#table_<?php echo $methodid ?>").jqGrid('filterToolbar', {
+			stringResult: true,
+			searchOnEnter: false,
+			defaultSearch: 'cn',
+			ignoreCase: false
+		});
+
+	})
+
+	$(window).on('resize', function() {
+		const $container = $('.grid_container_<?php echo $methodid; ?>');
+		const $table = $("#table_<?php echo $methodid ?>");
+		// Pastikan container ada dan memiliki lebar
+		const containerWidth = $container.width();
+
+		if (containerWidth > 0) {
+			$table.setGridWidth(containerWidth - 20, false);
+		}
+		//      clearTimeout(window.gridResizeTimer);
+		//      window.gridResizeTimer = setTimeout(function() {
+		//       const $container = $('.grid_container_<?php //echo $methodid; 
+														?>'); // Ganti dengan class/ID parent grid
+		//       const $table = $('#table_<?php //echo $methodid 
+											?>');  
+		//    
+		//    if ($table[0].grid) {
+		//        const containerWidth = $container.width();
+		//        // Gunakan Math.floor agar angka tidak desimal
+		//        $table.setGridWidth(Math.floor(containerWidth) - 5, true);
+		//    }
+		//  }, 150); // Jeda 150ms agar render selesai dulu
+	}).trigger('resize');
+
+
+	$('#form_<?php echo $methodid ?>_location_base_id').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let base_id = $('#form_<?php echo $methodid ?>_location_base_id').val();
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				type_id: 31,
+				location_base_id: base_id,
+				location_id: 0
+			}
+
+		});
+		$('#table_<?php echo $methodid ?>').trigger('reloadGrid');
+
+	});
+
+	$('#form_<?php echo $methodid ?>_add_location_id').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let location_id = $('#form_<?php echo $methodid ?>_add_location_id').val();
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				type_id: 31,
+				location_base_id: 0,
+				location_id: location_id
+			}
+
+		});
+		$('#table_<?php echo $methodid ?>').trigger('reloadGrid');
+
+	});
+	$('#form_<?php echo $methodid ?>_add_location').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let location_id = $('#form_<?php echo $methodid ?>_add_location').val();
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				type_id: 31,
+				location_base_id: 0,
+				location_id: location_id
+			}
+
+		});
+		$('#table_<?php echo $methodid ?>').trigger('reloadGrid');
+
+	});
+
+	$('#form_cari_<?php echo $methodid ?>_add_location_id').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let location_id = $('#form_cari_<?php echo $methodid ?>_add_location_id').val();
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				type_id: 31,
+				location_base_id: 0,
+				location_id: location_id
+			}
+
+		});
+		$('#table_<?php echo $methodid ?>').trigger('reloadGrid');
+
+	});
+	$('#form_update_new_<?php echo $methodid ?>').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let location_id = $('#form_update_new_<?php echo $methodid ?>').val();
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				type_id: 31,
+				location_base_id: 0,
+				location_id: location_id
+			}
+
+		});
+		$('#table_<?php echo $methodid ?>').trigger('reloadGrid');
+
+	});
+	$('#form_shipment_<?php echo $methodid ?>').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let location_id = $('#form_shipment_<?php echo $methodid ?>').val();
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				type_id: 31,
+				location_base_id: 0,
+				location_id: location_id
+			}
+
+		});
+		$('#table_<?php echo $methodid ?>').trigger('reloadGrid');
+
+	});
+	$('#form_update_<?php echo $methodid ?>').on('change', function(event, clickedIndex, newValue, oldValue) {
+		let location_id = $('#form_update_<?php echo $methodid ?>').val();
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				type_id: 31,
+				location_base_id: 0,
+				location_id: location_id
+			}
+
+		});
+		$('#table_<?php echo $methodid ?>').trigger('reloadGrid');
+
+	});
+
+	function searchxxxx_<?php echo $methodid ?>() {
+		//date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+		//date_end = $('#form_<?php echo $methodid ?>_date_end').val();  
+		//type_bc_id = $('#form_<?php echo $methodid ?>_type_bc_id').val(); 
+
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: {
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				type_id: 31,
+				location_base_id: 2
+			}
+
+		});
+		$('#table_<?php echo $methodid ?>').trigger('reloadGrid');
+	}
+
+	$('#form_shipment_<?php echo $methodid ?>_purchase_order_detail_id_tes').on('change', function(event, clickedIndex, newValue, oldValue) {
+
+		$('#form_shipment_<?php echo $methodid ?>_purchase_order_detail_id').html('');
+		$('#form_shipment_<?php echo $methodid ?>_purchase_order_detail_id').selectpicker('refresh');
+
+	});
+
+	$('#form_<?php echo $methodid ?>_location_barcode').keydown(function(e) {
+		if (e.key === 'Enter') {
+			var barcode = $('#form_<?php echo $methodid ?>_location_barcode').val();
+			scan_location_barcode_<?php echo $methodid ?>(barcode);
+		}
+
+	});
+
+	function detectBarcodeType(barcode) {
+		barcode = barcode.trim().toUpperCase();
+
+		if (barcode.startsWith('LD')) {
+			return {
+				type: 'location_code',
+				value: barcode
+			};
+		}
+
+		if (barcode.startsWith('LB')) {
+			return {
+				type: 'location_base_code',
+				value: barcode
+			};
+		}
+
+		return {
+			type: 'fabric_shipment_list_code',
+			value: barcode
+		};
+	}
+
+	function scan_location_barcode_<?php echo $methodid ?>(barcode) {
+		var detected = detectBarcodeType(barcode);
+     console.log(detected);
+		if (detected.type === 'location_code') {
+			show_success("show", '<?php echo $page_title ?>', 'Filter berdasarkan Location Code: ' + detected.value);
+			reloadGrid({
+				location_code: detected.value
+			});
+			$('#form_<?php echo $methodid ?>_location_barcode').val('').focus();
+			return;
+		}
+		if (detected.type === 'location_base_code') {
+			show_success("show", '<?php echo $page_title ?>', 'Filter berdasarkan Location Base Code: ' + detected.value);
+			reloadGrid({
+				location_base_code: detected.value
+			});
+			$('#form_<?php echo $methodid ?>_location_barcode').val('').focus();
+			return;
+		}
+
+		if (detected.type === 'fabric_shipment_list_code') {
+
+			var currentBarcode = barcode;
+			var currentDetectedValue = detected.value;
+			show_success("show", '<?php echo $page_title ?>', 'Filter berdasarkan Fabric Shipment List Code: ' + detected.value);
+			reloadGrid({
+				fabric_shipment_list_code: detected.value
+			});
+			$('#modal_fabric_confirm_message_<?php echo $methodid ?>').text(
+				'Filter berdasarkan Fabric Shipment List Code: ' + currentDetectedValue
+			);
+			$.ajax({
+				url: baseurl + '<?php echo $class_uri ?>/post_add_edit_scan_fix',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+					code_barcode: currentBarcode,
+					keterangan: 0
+				},
+				dataType: 'json',
+				method: 'post',
+				success: function(data) {
+					if (data.valid) {
+						$('.box_prime').show();
+						$('#display_barcode_<?php echo $methodid ?>').text(currentBarcode);
+						$('#display_stock_move_sipop_id_<?php echo $methodid ?>').text(data.stock_move_sipop_id);
+						$('#display_item_code_<?php echo $methodid ?>').text(data.item_code);
+						$('#display_item_name_<?php echo $methodid ?>').text(data.item_name);
+						$('#form_update_<?php echo $methodid ?>_stock_move_sipop_id').val(data.stock_move_sipop_id);
+					} else {
+						if (data.message1 == 'update_location') {
+							show_error("show", 'Error', data.message);
+							$('#display_barcode_<?php echo $methodid ?>').text(currentBarcode);
+							$('#display_stock_move_sipop_id_<?php echo $methodid ?>').text(data.stock_move_sipop_id);
+							$('#display_item_code_<?php echo $methodid ?>').text(data.item_code);
+							$('#display_item_name_<?php echo $methodid ?>').text(data.item_name);
+							$('#form_update_<?php echo $methodid ?>_stock_move_sipop_id').val(data.stock_move_sipop_id);
+
+							setTimeout(function() {
+								$('#modal_update_lokasi_<?php echo $methodid ?>').modal('show');
+							}, 1000);
+
+						} else if (data.message1 == 'kosong') {
+
+							show_error("show", 'Error', data.message);
+							$('.box_prime').hide();
+
+							$('.form_update_new_<?php echo $methodid ?>').show();
+
+							$('#form_update_new_<?php echo $methodid ?>').data('last_scan', currentBarcode);
+
+							$('html, body').animate({
+								scrollTop: $(".form_update_new_<?php echo $methodid ?>").offset().top
+							}, 500);
+
+						} else {
+							show_error("show", 'Error', data.message);
+						}
+					}
+				},
+				error: function() {
+					show_error("show", 'Error', 'Gagal menghubungi server, silakan coba lagi.');
+				}
+			});
+
+			$('#form_<?php echo $methodid ?>_location_barcode').val('').focus();
+			return;
+		}
+	}
+
+	function add_<?php echo $methodid ?>(scannedBarcode) {
+		$('.form_update_new_<?php echo $methodid ?>').show();
+
+		$('#form_update_new_<?php echo $methodid ?>_scanned_barcode').val(scannedBarcode);
+	}
+	$('#btn_reset_barcode_<?php echo $methodid ?>').on('click', function() {
+
+		$('#form_<?php echo $methodid ?>_location_barcode').val('');
+		$('#form_<?php echo $methodid ?>_location_base_id').val('0').selectpicker('refresh');
+		$('#form_<?php echo $methodid ?>_add_location_id').val('0').selectpicker('refresh');
+
+		var defaultPostData = {
+			'type_id': '0',
+			'location_base_id': '0',
+			'location_id': '0',
+			'fabric_shipment_list_code': '',
+			'location_code': '',
+			'location_base_code': '',
+			'warehouse_code': '',
+			'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>'
+		};
+
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: defaultPostData,
+			page: 1
+		}).trigger('reloadGrid');
+
+		if ($('#badge_scan_type_<?php echo $methodid ?>').length) {
+			$('#badge_scan_type_<?php echo $methodid ?>')
+				.removeClass('badge-primary badge-success badge-warning')
+				.addClass('badge-secondary')
+				.text('Mode: Semua');
+		}
+
+		$('#form_<?php echo $methodid ?>_location_barcode').focus();
+
+		show_success("show", 'Reset', 'Filter telah dikosongkan ke kondisi awal.');
+	});
+
+	function reloadGrid(extraParams) {
+		var basePost = {
+			'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+			type_id: 0,
+			location_base_id: 0,
+			location_id: 0,
+			fabric_shipment_list_code: '',
+			location_code: '',
+			location_base_code: '',
+			warehouse_code: ''
+		};
+		var postData = $.extend(basePost, extraParams);
+		$("#table_<?php echo $methodid ?>").jqGrid('setGridParam', {
+			postData: postData
+		});
+
+		$('#table_<?php echo $methodid ?>').trigger('reloadGrid');
+		$("#table_<?php echo $methodid ?>").setGridWidth($('.grid_container_<?php echo $methodid; ?>').width() - 20, false).trigger('resize');
+	}
+
+
+
+	var check_submit = 0;
+
+	function update_location_<?php echo $methodid ?>() {
+		if (check_submit == 0) {
+
+			var data = $("#form_update_<?php echo $methodid ?>").serialize();
+
+			check_submit = 1;
+			page_loading("show", 'Save <?php echo $page_title ?>', 'Please Wait...');
+
+			$.ajax({
+				url: baseurl + '<?php echo $class_uri ?>/post_add_edit_update',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data) {
+					page_loading("hide");
+					check_submit = 0;
+					if (data.valid) {
+						show_success("show", 'Berhasil', data.message, function() {
+
+							$('#modal_update_lokasi_<?php echo $methodid ?>').modal('hide');
+
+							$('#form_update_<?php echo $methodid ?>_location_id').val('').trigger('change');
+							$('#form_update_<?php echo $methodid ?>_stock_move_sipop_id').val('');
+
+							$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+							$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+						});
+					} else {
+						show_error("show", 'Error', data.message);
+					}
+				},
+				error: function() {
+					page_loading("hide");
+					check_submit = 0;
+					show_error("show", 'Error', "Terjadi kesalahan pada server.");
+				}
+			});
+		}
+	}
+
+	var check_submit = 0;
+
+	function item_new_location_<?php echo $methodid ?>() {
+		if (check_submit == 0) {
+			var form_el = $("#form_update_new_<?php echo $methodid ?>");
+			var data = form_el.serialize();
+
+			var barcode = form_el.data('last_scan');
+
+			if (!barcode || barcode === '') {
+				show_error("show", "Error", "Barcode tidak terdeteksi, silakan scan ulang.");
+				return;
+			}
+
+			data += '&fabric_shipment_list_code=' + encodeURIComponent(barcode);
+
+			check_submit = 1;
+			page_loading("show", 'Save <?php echo $page_title ?>', 'Please Wait...');
+
+			$.ajax({
+				url: baseurl + '<?php echo $class_uri ?>/post_add_edit_item_new',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data) {
+					page_loading("hide");
+					check_submit = 0;
+					if (data.valid) {
+						show_success("show", 'Berhasil', data.message, function() {
+							// Reset Form
+							form_el[0].reset();
+							form_el.data('last_scan', '');
+
+							$('.form_update_new_<?php echo $methodid ?>').hide();
+							$('.box_prime').show();
+
+
+							$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+							$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+						});
+					} else {
+						show_error("show", 'Error', data.message);
+					}
+				},
+				error: function() {
+					page_loading("hide");
+					check_submit = 0;
+					show_error("show", 'Error', "Terjadi kesalahan pada server.");
+				}
+			});
+		}
+	}
+	var check_submit = 0;
+
+	// ============================================================
+	// Saat dropdown purchase_order_detail_id_tes berubah,
+	// sync nilainya ke hidden field fabric_warehouse_receive_id
+	// ============================================================
+	$(document).ready(function() {
+
+		// Listener perubahan dropdown shipment (purchase_order_detail_id_tes)
+		// Format ID field mengikuti konvensi ecc_library: {form_id}_{field_name}
+		$(document).on('change', '#form_shipment_<?php echo $methodid ?>_purchase_order_detail_id_tes', function() {
+			var selected_val = $(this).val();
+
+			// Sync ke hidden field fabric_warehouse_receive_id
+			$('#form_shipment_<?php echo $methodid ?>_fabric_warehouse_receive_id').val(selected_val);
+
+			console.log('[DEBUG] fabric_warehouse_receive_id set to:', selected_val);
+		});
+
+	});
+
+	// ============================================================
+	// Submit form shipment
+	// ============================================================
+	function item_shipment_location_<?php echo $methodid ?>() {
+		if (check_submit == 0) {
+
+			// ── Validasi sebelum submit ──────────────────────────────
+			var fabric_warehouse_receive_id = $('#form_shipment_<?php echo $methodid ?>_fabric_warehouse_receive_id').val();
+			var item_id = $('#form_shipment_<?php echo $methodid ?>_item_id').val();
+			var location_id = $('#form_shipment_<?php echo $methodid ?>_location_id').val();
+
+			if (!fabric_warehouse_receive_id) {
+				show_error("show", 'Validasi', "Silakan pilih Shipment No terlebih dahulu.");
+				return;
+			}
+			if (!item_id) {
+				show_error("show", 'Validasi', "Silakan pilih Item Code terlebih dahulu.");
+				return;
+			}
+			if (!location_id) {
+				show_error("show", 'Validasi', "Silakan pilih Location terlebih dahulu.");
+				return;
+			}
+			// ────────────────────────────────────────────────────────
+
+			var data = $("#form_shipment_<?php echo $methodid ?>").serialize();
+
+			check_submit = 1;
+			page_loading("show", 'Save <?php echo $page_title ?>', 'Please Wait...');
+
+			$.ajax({
+				url: baseurl + '<?php echo $class_uri ?>/post_add_edit_item_shipment',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data) {
+					page_loading("hide");
+					check_submit = 0;
+
+					if (data.valid) {
+						show_success("show", 'Berhasil', data.message, function() {
+							// Reset form
+							$('#form_shipment_<?php echo $methodid ?>_location_id').val('').trigger('change');
+							$('#form_shipment_<?php echo $methodid ?>_stock_move_sipop_id').val('');
+							$('#form_shipment_<?php echo $methodid ?>_item_id').val('');
+							$('#form_shipment_<?php echo $methodid ?>_purchase_order_detail_id_tes').val('').trigger('change');
+							$('#form_shipment_<?php echo $methodid ?>_fabric_warehouse_receive_id').val(''); // ← TAMBAH reset
+
+							clear_shipment_<?php echo $methodid ?>();
+
+							// Reload grid
+							$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+							$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+						});
+					} else {
+						show_error("show", 'Error', data.message);
+					}
+				},
+				error: function() {
+					page_loading("hide");
+					check_submit = 0;
+					show_error("show", 'Error', "Terjadi kesalahan pada server.");
+				}
+			});
+		}
+	}
+
+	function scan_mobile_location_<?php echo $methodid ?>() {
+		$('.form_<?php echo $methodid ?>_scan_mobile').hide();
+		$('.form_<?php echo $methodid ?>_back').show();
+		scan_barcode_aktif_<?php echo $methodid ?>();
+
+	}
+
+	function back_<?php echo $methodid ?>() {
+		$('.form_<?php echo $methodid ?>_scan_mobile').show();
+		$('.form_<?php echo $methodid ?>_back').hide();
+		scan_barcode_keluar_<?php echo $methodid ?>();
+	}
+
+
+	function scan_barcode_aktif_<?php echo $methodid ?>() {
+		// Definisi fungsi responsif untuk qrbox
+		// Logika QRBox Responsif (HP, Tablet, Desktop)
+		let dynamicQrBox = function(viewfinderWidth, viewfinderHeight) {
+			let finalWidth;
+			let finalHeight = 120; // Tinggi ideal untuk bidikan barcode
+
+			if (viewfinderWidth < 600) {
+				// Smartphone
+				finalWidth = viewfinderWidth * 0.8;
+			} else if (viewfinderWidth >= 600 && viewfinderWidth <= 1024) {
+				// Tablet
+				finalWidth = viewfinderWidth * 0.6;
+				finalHeight = 140;
+			} else {
+				// Desktop
+				finalWidth = viewfinderWidth * 0.4;
+			}
+
+			return {
+				width: Math.floor(finalWidth),
+				height: finalHeight
+			};
+		};
+		//let html5QrcodeScanner;
+		html5QrcodeScanner = new Html5QrcodeScanner(
+			"reader", {
+				fps: 10,
+				qrbox: dynamicQrBox,
+				aspectRatio: 1.0, //Membuat tampilan kamera lebih fokus 
+				showTorchButtonIfSupported: true,
+				videoConstraints: {
+					facingMode: "environment"
+				}
+			}
+		);
+
+		function onScanSuccess(decodedText, decodedResult) {
+			beepSound.play().catch(err => {
+				console.log("Gagal memutar suara (butuh interaksi user):", err);
+			});
+			$('#form_<?php echo $methodid ?>_location_barcode').val(decodedText);
+			//scan_barcode_<?php echo $methodid ?>(decodedText); //belum dicoba
+			scan_location_barcode_<?php echo $methodid ?>(decodedText);
+
+		}
+		html5QrcodeScanner.render(onScanSuccess);
+	}
+
+	function scan_barcode_keluar_<?php echo $methodid ?>() {
+		if (html5QrcodeScanner) {
+
+			html5QrcodeScanner.clear().catch(error => {
+				console.error("Gagal menghentikan scanner: ", error);
+			});
+		}
+	}
+
+	function add_<?php echo $methodid ?>() {
+		$('.form_<?php echo $methodid ?>_barcode').show();
+		$('.form_<?php echo $methodid ?>_base_id').hide();
+		$('.form_update_new_<?php echo $methodid ?>').show();
+		$('.box_prime').hide();
+		$('.form_shipment_<?php echo $methodid ?>_add_shipment').hide();
+		$('.form_<?php echo $methodid ?>_button_location').hide();
+	}
+
+	function add_shipment_<?php echo $methodid ?>() {
+		$('.form_<?php echo $methodid ?>_barcode').hide();
+		$('.form_<?php echo $methodid ?>_base_id').hide();
+		$('.form_update_new_<?php echo $methodid ?>').hide();
+		$('.form_shipment_<?php echo $methodid ?>_add_shipment').show();
+		$('.form_<?php echo $methodid ?>_button_location').hide();
+		$('.box_prime').hide();
+	}
+
+	function clear_<?php echo $methodid ?>() {
+		$('.form_<?php echo $methodid ?>_barcode').show();
+		$('.form_<?php echo $methodid ?>_base_id').show();
+		$('.form_update_new_<?php echo $methodid ?>').hide();
+		$('.form_shipment_<?php echo $methodid ?>_add_shipment').hide();
+		$('.form_<?php echo $methodid ?>_button_location').show();
+		$('.box_prime').show();
+	}
+
+	function clear_shipment_<?php echo $methodid ?>() {
+		$('.form_<?php echo $methodid ?>_barcode').show();
+		$('.form_<?php echo $methodid ?>_base_id').show();
+		$('.form_update_new_<?php echo $methodid ?>').hide();
+		$('.form_shipment_<?php echo $methodid ?>_add_shipment').hide();
+		$('.form_<?php echo $methodid ?>_button_location').show();
+		$('.box_prime').show();
+	}
+
+	$(function() {
+
+		$('input[name="search_type"]').change(function() {
+			if ($(this).val() === 'block') {
+				$('#block_form').show();
+				$('#location_form').hide();
+			} else {
+				$('#block_form').hide();
+				$('#location_form').show();
+			}
+		});
+	});
+
+	function print_<?php echo $methodid ?>(format) {
+		date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+		date_end = $('#form_<?php echo $methodid ?>_date_end').val();
+		type_bc_id = $('#form_<?php echo $methodid ?>_type_bc_id').val();
+		// alert(baseurl + '<?php echo $class_uri ?>/loaddata');
+		// alert(format);
+		window.open(baseurl + '<?php echo $class_uri ?>/print_laporan_pemasukan?' + 'date_start=' + date_start + '&date_end=' + date_end + '&type_bc_id=' + type_bc_id + '&format=' + format, '_BLANK');
+	}
+
+	function print_awal_<?php echo $methodid ?>(format) {
+		date_start = $('#form_<?php echo $methodid ?>_date_start').val();
+		date_end = $('#form_<?php echo $methodid ?>_date_end').val();
+		// alert(baseurl + '<?php echo $class_uri ?>/loaddata');
+		var data_send = {
+			'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+			date_start: date_start,
+			date_end: date_end,
+			format: format,
+			print: 1
+		};
+		$.ajax({
+			type: "POST",
+			url: baseurl + '<?php echo $class_uri ?>/loaddata',
+			data: data_send,
+			dataType: 'json',
+			complete: function() {},
+			success: function(msg) {
+				// alert(msg.namafile);
+				if (!msg.valid) {
+					show_error('show', 'error', msg.des);
+					return false;
+				} else {
+					download_file('<?php echo $methodid ?>', msg.xfile, msg.namafile, '<?php echo $this->security->get_csrf_token_name() ?>', '<?php echo $this->security->get_csrf_hash() ?>');
+					return false;
+				}
+			}
+		});
+	}
+
+	function edit_<?php echo $methodid ?>() {
+		var grid = $("#table_<?php echo $methodid ?>");
+		var rowId = grid.jqGrid('getGridParam', 'selrow');
+
+		if (rowId) {
+			var rowData = grid.jqGrid('getRowData', rowId);
+
+			// Ambil data dari r (sesuaikan dengan index r di colModel)
+			var stock_move_id = rowData.r17;
+			var item_code = rowData.r3;
+			var item_name = rowData.r4;
+			var barcode = rowData.r13; // Misal r13 adalah barcode/shipment code
+
+			// 1. SET VALUE KE INPUT HIDDEN (Kunci Utama Perbaikan)
+			// Library ECC men-generate ID: form_[nama_form]_[nama_field]
+			$('#form_update_<?php echo $methodid ?>_stock_move_sipop_id').val(stock_move_id);
+
+			// 2. SET DISPLAY TEXT (Untuk informasi di alert warning modal)
+			$('#display_barcode_<?php echo $methodid ?>').text(barcode);
+			$('#display_item_code_<?php echo $methodid ?>').text(item_code);
+			$('#display_item_name_<?php echo $methodid ?>').text(item_name);
+			$('#display_stock_move_sipop_id<?php echo $methodid ?>').text(stock_move_id);
+
+			// 3. Tampilkan Modal
+			$('#modal_update_lokasi_<?php echo $methodid ?>').modal('show');
+
+		} else {
+			swal("Peringatan", "Silakan pilih data pada tabel terlebih dahulu!", "warning");
+		}
+	}
+</script>

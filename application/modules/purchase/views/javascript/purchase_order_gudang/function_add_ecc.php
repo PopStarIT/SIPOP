@@ -1,0 +1,8 @@
+<script type="text/javascript">  
+	function nav_button_<?php echo $function ?>(){
+		//alert ('coba');
+		$('#modal_purchase_order_ecc').modal('show');
+
+		
+	}
+</script>

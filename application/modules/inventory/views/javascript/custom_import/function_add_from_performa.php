@@ -1,0 +1,103 @@
+<script type="text/javascript">  
+	function nav_button_<?php echo $function ?>(){
+		custom_import_<?php echo $custom_type_id ?>_new_custom_import = 1;
+		custom_import_<?php echo $custom_type_id ?>_bc_in_type_id = 2;
+		custom_import_<?php echo $custom_type_id ?>_bc_in_header_id = 0;
+		custom_import_<?php echo $custom_type_id ?>_lock_data = 0;
+		custom_import_<?php echo $custom_type_id ?>_custom_type_id = <?php echo $custom_type_id ?>;
+		
+		page_loading("show",'New <?php echo $page_title ?>','Please Wait...');
+		
+		$('.form_title_<?php echo $methodid ?>').html('New <?php echo $page_title ?>');
+		
+		$("#tab_<?php echo $methodid; ?>_detail").removeAttr("data-toggle");
+		$("#tab_<?php echo $methodid; ?>_detail").addClass( "tab_disabled");
+		
+				$("#tab_<?php echo $methodid; ?>_document").removeAttr("data-toggle");
+		$("#tab_<?php echo $methodid; ?>_document").addClass( "tab_disabled");
+		
+		$("#tab_<?php echo $methodid; ?>_packaging").removeAttr("data-toggle");
+		$("#tab_<?php echo $methodid; ?>_packaging").addClass( "tab_disabled");
+		
+		$("#tab_<?php echo $methodid; ?>_container").removeAttr("data-toggle");
+		$("#tab_<?php echo $methodid; ?>_container").addClass( "tab_disabled");
+		
+		$('#panel_content_<?php echo $methodid ?>').hide();
+		$('#panel_content_form_<?php echo $methodid ?>').show();
+		
+		$('#panel_<?php echo $methodid ?>_1').hide();
+		$('#panel_<?php echo $methodid ?>_2').show();
+		$('#panel_<?php echo $methodid ?>_3').hide();
+		$('#panel_<?php echo $methodid ?>_4').hide();
+		
+		$('.input_header_<?php echo $methodid ?>').hide();
+		$('.input_header_<?php echo $methodid ?>_<?php echo $custom_type_id ?>').show();
+		
+		$('#form_<?php echo $methodid ?>_bc_in_header_id').val('');
+		$('#form_<?php echo $methodid ?>_custom_type_id').val(custom_import_<?php echo $custom_type_id ?>_custom_type_id);
+		$('#form_<?php echo $methodid ?>_bc_in_type_id').val(custom_import_<?php echo $custom_type_id ?>_bc_in_type_id);
+		
+		if('<?php echo $custom_type_id ?>' == 1){
+			getnexttransno(5, 'form_<?php echo $methodid ?>_car');
+		} else if('<?php echo $custom_type_id ?>' == 2){
+			getnexttransno(6, 'form_<?php echo $methodid ?>_car');
+		} else if('<?php echo $custom_type_id ?>' == 3){
+			getnexttransno(7, 'form_<?php echo $methodid ?>_car');
+		} else if('<?php echo $custom_type_id ?>' == 4){
+			getnexttransno(8, 'form_<?php echo $methodid ?>_car');
+		} else if('<?php echo $custom_type_id ?>' == 5){
+			getnexttransno(9, 'form_<?php echo $methodid ?>_car');
+		} else {
+			$('#form_<?php echo $methodid ?>_car').val('');
+		}
+		
+		$('#form_<?php echo $methodid ?>_bc_no').val('');
+		$('#form_<?php echo $methodid ?>_bc_date').val('');		
+		$('#form_<?php echo $methodid ?>_nama_pengangkut').val('');		
+		$('#form_<?php echo $methodid ?>_nomor_voy_flight').val('');		
+		$('#form_<?php echo $methodid ?>_nama_pengangkut2').val('');		
+		$('#form_<?php echo $methodid ?>_nomor_polisi').val('');		
+		$('#form_<?php echo $methodid ?>_ndpbm').val(0);		
+		$('#form_<?php echo $methodid ?>_amount_origin').val(0);		
+		$('#form_<?php echo $methodid ?>_value_additional').val(0);		
+		$('#form_<?php echo $methodid ?>_discount').val(0);		
+		$('#form_<?php echo $methodid ?>_amount_insurance').val(0);		
+		$('#form_<?php echo $methodid ?>_amount_freight').val(0);		
+		$('#form_<?php echo $methodid ?>_maklon').val(0);	
+		
+		$('#form_<?php echo $methodid ?>_detail_seri').val(1);		
+		$('#form_<?php echo $methodid ?>_detail_quantity_custom').val(0);		
+		$('#form_<?php echo $methodid ?>_detail_conversion').val(1);		
+		$('#form_<?php echo $methodid ?>_detail_unitprice').val(1);		
+		$('#form_<?php echo $methodid ?>_detail_conversion').val(1);		
+		$('#form_<?php echo $methodid ?>_detail_merk').val('');		
+		$('#form_<?php echo $methodid ?>_detail_tipe').val('');		
+		$('#form_<?php echo $methodid ?>_detail_ukuran').val('');		
+		$('#form_<?php echo $methodid ?>_detail_volume').val('');		
+		$('#form_<?php echo $methodid ?>_detail_spesifikasi_lain').val('');		
+		$('#form_<?php echo $methodid ?>_detail_bruto').val(0);		
+		$('#form_<?php echo $methodid ?>_detail_netto').val(0);		
+		$('#form_<?php echo $methodid ?>_detail_quantity_package').val(0);		
+		$('#form_<?php echo $methodid ?>_detail_bm_tarif').val(10);		
+		$('#form_<?php echo $methodid ?>_detail_ppn_tarif').val(10);		
+		$('#form_<?php echo $methodid ?>_detail_pph_tarif').val(2.5);
+			
+		$('.button_<?php echo $methodid ?>_detail_edit').hide();
+		$('.button_<?php echo $methodid ?>_detail_new').show();
+		
+		$('.panel_<?php echo $methodid ?>_panel_detail').show();
+		$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+		$("#table_<?php echo $methodid ?>_document").trigger('reloadGrid');
+		$("#table_<?php echo $methodid ?>_packaging").trigger('reloadGrid');
+		$("#table_<?php echo $methodid ?>_container").trigger('reloadGrid');
+		
+			
+			
+		setTimeout(function(){ 
+			$("#table_<?php echo $methodid ?>_purchase_performa").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_purchase_performa").setGridWidth($('.grid_container_<?php echo $methodid; ?>_purchase_performa').width() - 20,true).trigger('resize');
+		
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 500);
+	}
+</script>

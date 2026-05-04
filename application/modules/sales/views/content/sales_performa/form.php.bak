@@ -1,0 +1,207 @@
+<style type="text/css">
+.modal-dialogxxx {
+  position: absolute;
+  top: 50px;
+  right: 50px;
+  bottom: 0;
+  left: 0;
+  z-index: 10040;
+  overflow: auto;
+  overflow-y: auto;
+}
+
+.modal {
+   position: absolute;
+   top: 150px;
+   right: 50px;
+   bottom: 0;
+   left: 0px;
+   z-index: 10040;
+   overflow: auto;
+   overflow-y: auto;
+}
+
+</style>
+<div class="row">
+	<div class="col-xl-12">     
+		<div class="card card-statistics h-100"> 
+			<div class="card-body" style="padding: 1.25rem !important">
+				<h5 class="card-title form_title_<?php echo $methodid ?>"><?php echo $page_title ?></h5>
+				<div class="tab tab-border">
+					<ul class="nav nav-tabs form_tab_<?php echo $methodid ?>" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active show" id="tab_<?php echo $methodid; ?>_header" data-toggle="tab" href="#content_<?php echo $methodid; ?>_header" role="tab" aria-controls="content_<?php echo $methodid; ?>_header" aria-selected="true">
+								Header
+							</a>	
+						</li>
+						
+						<li class="nav-item">
+							<a class="nav-link" id="tab_<?php echo $methodid; ?>_detail" data-toggle="tab" href="#content_<?php echo $methodid; ?>_detail" role="tab" aria-controls="content_<?php echo $methodid; ?>_detail" aria-selected="true">
+								Detail
+							</a>	
+						</li>
+					</ul>
+					
+					<div class="tab-content">
+						<div class="tab_custom_ecc tab-pane fade active show" id="content_<?php echo $methodid; ?>_header" role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_header">
+							<div class="row">
+								<div class="col-xl-12 mb-10 ml-10">
+									<form class="ui grid ecc_form" id="form_<?php echo $methodid ?>" action="javascript:post_<?php echo $methodid ?>()">
+										<?php 
+											$this->ecc_library->form('hidden','',"form_".$methodid,$this->security->get_csrf_token_name(),$this->security->get_csrf_hash());
+											$this->ecc_library->form('hidden','',"form_".$methodid,'sales_performa_id','');
+											
+										?>
+										
+										<div class="row">
+											<div class="col-xl-4">
+												<?php 
+													$this->ecc_library->form('text','Sales Proforma No',"form_".$methodid,'sales_performa_no','','','');
+													$this->ecc_library->form('date','Sales Proforma Date',"form_".$methodid,'sales_performa_date','','','');
+											
+												?>
+											</div>
+											
+											<div class="col-xl-4">
+												<?php 
+													$this->ecc_library->form('select','Customer',"form_".$methodid,'partner_id','','','customer');
+													$this->ecc_library->form('select','Currencies',"form_".$methodid,'currencies_id','','','currencies');						
+												?>
+											</div>
+										</div>
+									</form>
+									
+									<div class="ui grid form">
+										<div class="row field">
+											<div class="twelve wide column">
+												<button type="button" class="btn btn-success" onclick="save_<?php echo $methodid ?>()">
+													<i class="fa fa-save"></i> Save Header
+												</button>
+												
+												<button type="button" class="btn btn-info" onclick="cancel_<?php echo $methodid ?>()">
+													<i class="fa fa-arrow-left"></i> Back
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="tab_custom_ecc tab-pane fade" id="content_<?php echo $methodid; ?>_detail" role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_detail">
+							<?php
+								$this->ecc_library->form('hidden','',"form_".$methodid."_detail",'sales_performa_id','','','');
+								$this->ecc_library->form('hidden','',"form_".$methodid."_detail",'sales_performa_detail_id','','','');
+								$this->ecc_library->form('hidden','',"form_".$methodid."_detail",'partner_id','','','');
+								$this->ecc_library->form('hidden','',"form_".$methodid."_detail",'currencies_id','','','');
+							?>
+							<div class="row panel_<?php echo $methodid ?>_panel_sales_order mb-10" >
+								<div class="col-xl-12">
+									<?php 
+										$extra_field = array();
+										$extra_field[] = array('field' => 'partner_id','form_id' => 'form_'. $methodid .'_detail_partner_id');
+										$extra_field[] = array('field' => 'currencies_id','form_id' => 'form_'. $methodid .'_detail_currencies_id');
+										$extra_field[] = array('field' => 'sales_performa_detail_id','form_id' => 'form_'. $methodid .'_detail_sales_performa_detail_id');
+										$extra_param = array('methodid'=> $methodid,'extra_param' => $extra_field);
+										$this->ecc_library->jqgrid($methodid."_sales_order", $dashboard_table['field_sales_order'], $dashboard_table['field_sales_order_loaddata'],$extra_param); 
+									?>
+								</div>
+							</div> 
+							
+							<div class="row">
+								<div class="col-xl-12">
+									<?php 
+										$extra_param = array('methodid'=> $methodid,'extra_param' => array(0 => array('field' => 'sales_performa_id','form_id' => 'form_'. $methodid .'_detail_sales_performa_id')));
+										$this->ecc_library->jqgrid($methodid."_detail", $dashboard_table['field_detail'], $dashboard_table['field_detail_loaddata'],$extra_param); 
+									?>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>   
+	</div>
+</div>
+
+<div class="modal fade" id="mdl_form_add" tabindex="-1" role="dialog" aria-labelledby="dailyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+       <div class="modal-content">
+	      <div class="modal-header">
+            <h5 class="modal-title" id="dailyModalLabel">Add Data</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+			 </div>
+		  <form class="ui grid ecc_form" id="form_<?php echo $methodid ?>_template_spec" action="javascript:new_template_<?php echo $methodid ?>()">
+		     <div class="modal-body">
+			     <?php
+			       $this->ecc_library->form('hidden', '', "form_" . $methodid, $this->security->get_csrf_token_name(), $this->security->get_csrf_hash());
+				 ?>
+			      <input type="hidden" id="form_<?php echo $methodid ?>_sales_performa_detail_id" name="sales_performa_detail_id" class="form-control" >
+				  <input type="hidden" id="form_<?php echo $methodid ?>_performa_id" name="sales_performa_id" class="form-control">
+				 <div class="col-xl-10">
+		          <div class="form-group row">
+				     <div class="col-sm-4">
+				        <label for="absen_id" class="control-label">item Code</label>
+					  </div>
+					 <div class="col-sm-4">
+					   <input type="text"  id="form_<?php echo $methodid ?>_item_code" name="item_code" class="form-control" readonly='readonly'>
+					 </div>
+		          </div>
+		       </div>
+			   
+			   <div class="col-xl-10">
+		          <div class="form-group row">
+				     <div class="col-sm-4">
+				        <label for="absen_id" class="control-label">Komposisi</label>
+					  </div>
+					 <div class="col-sm-8">
+					   <input type="text"  id="form_<?php echo $methodid ?>_netto" name="netto" class="form-control" >
+					 </div>
+		          </div>
+		       </div>
+				
+				<div class="col-xl-10">
+		          <div class="form-group row">
+				     <div class="col-sm-4">
+				        <label for="absen_id" class="control-label">Netto</label>
+					  </div>
+					 <div class="col-sm-4">
+					   <input type="text"  id="form_<?php echo $methodid ?>_netto" name="netto" class="form-control" >
+					 </div>
+		          </div>
+		       </div>
+			   
+			    <div class="col-xl-10">
+		          <div class="form-group row">
+				     <div class="col-sm-4">
+				        <label for="absen_id" class="control-label">Bruto</label>
+					  </div>
+					 <div class="col-sm-4">
+					   <input type="text"  id="form_<?php echo $methodid ?>_bruto" name="bruto" class="form-control" >
+					 </div>
+					
+				  </div>
+				</div>
+				
+				<div class="col-xl-10">
+		          <div class="form-group row">
+				     <div class="col-sm-8">
+				       <button type="button" class="btn btn-success" onclick="javascript:post_<?php echo $methodid ?>_edit();">
+					     <i class="fa fa-save"></i> Save
+				       </button>
+					    <button type="button" class="btn btn-danger"  data-dismiss="modal">
+					     <i class="fa fa-pencil"></i> Cancel
+				       </button>
+					 </div>
+		          </div>
+		       </div>
+			    
+			 </div>
+		 </form
+		 
+         
+	  </div>
+    </div>
+ </div>

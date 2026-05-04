@@ -1,0 +1,53 @@
+<script type="text/javascript">  
+	function nav_button_<?php echo $function ?>() {	
+		var id = jQuery("#table_<?php echo $methodid ?>").jqGrid('getGridParam','selrow');
+		if (id) { 
+			var row = jQuery("#table_<?php echo $methodid ?>").jqGrid('getRowData',id);   
+
+			$('#panel_content_<?php echo $methodid ?>').hide();
+			$('#panel_content_form_<?php echo $methodid ?>').show();
+			$('.form_title_<?php echo $methodid ?>').html('Supply <?php echo $page_title ?>');
+			
+			$("#tab_<?php echo $methodid; ?>_detail").removeAttr("data-toggle");
+			$("#tab_<?php echo $methodid; ?>_detail").addClass( "tab_disabled");
+			
+			$("#tab_<?php echo $methodid; ?>_document").removeAttr("data-toggle");
+			$("#tab_<?php echo $methodid; ?>_document").addClass( "tab_disabled");
+			
+			$("#tab_<?php echo $methodid; ?>_container").removeAttr("data-toggle");
+			$("#tab_<?php echo $methodid; ?>_container").addClass( "tab_disabled");
+			
+			$("#tab_<?php echo $methodid; ?>_packaging").removeAttr("data-toggle");
+			$("#tab_<?php echo $methodid; ?>_packaging").addClass( "tab_disabled");
+			
+			$("#tab_<?php echo $methodid; ?>_pkb").removeAttr("data-toggle");
+			$("#tab_<?php echo $methodid; ?>_pkb").addClass( "tab_disabled");
+			
+			$("#tab_<?php echo $methodid; ?>_header").removeAttr("data-toggle");
+			$("#tab_<?php echo $methodid; ?>_header").addClass( "tab_disabled");
+			
+			setTimeout(function(){ 
+				$("#tab_<?php echo $methodid; ?>_supply").attr("data-toggle","tab");
+				$("#tab_<?php echo $methodid; ?>_supply").removeClass( "tab_disabled");
+				$("#tab_<?php echo $methodid; ?>_supply").click();
+			}, 100);
+			
+			
+			$('#panel_<?php echo $methodid ?>_1').hide();
+			$('#panel_<?php echo $methodid ?>_2').hide();
+			$('#panel_<?php echo $methodid ?>_3').hide();
+			$('#panel_<?php echo $methodid ?>_4').hide();
+			$('#panel_<?php echo $methodid ?>_supply').show();
+			
+			
+			custom_export_<?php echo $custom_type_id ?>_transfer_supply(row.r1);
+			
+		} else {
+			show_error("show",'Error','Please select row');
+		}
+		
+		setTimeout(function(){ 
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 100);
+	}
+</script>

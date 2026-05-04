@@ -1,0 +1,46 @@
+<script type="text/javascript">  
+	function nav_button_<?php echo $function ?>()
+	{	
+		var id = jQuery("#table_<?php echo $methodid ?>").jqGrid('getGridParam','selrow');
+		
+		if (id) { 
+			var row = jQuery("#table_<?php echo $methodid ?>").jqGrid('getRowData',id);   
+		//	alert(row.r1);
+			$.ajax({
+			     url: baseurl+'<?php echo $class_uri ?>/loaddata_cek_qty_contract',
+			     data: {
+				     '<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				      ,work_order_contract_id : row.r1
+			         },
+			     dataType: 'json',
+			     method: 'post',
+			    success: function(data){
+				
+				  $('#form_<?php echo $methodid ?>_total_quantity').val(data.hasil);
+			      $('#form_<?php echo $methodid ?>_contract_id').val(row.r1);
+			      $("#table_<?php echo $methodid ?>_monitor_contract_subcon").jqGrid('setGridParam',{
+			        postData: {
+			               	'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+			               	 work_order_contract_id:row.r1
+			               } 
+		          });
+			      $("#table_<?php echo $methodid ?>_monitor_contract_subcon").trigger('reloadGrid');
+				   $("#table_<?php echo $methodid ?>_monitor_subcon_per_item").trigger('reloadGrid');
+		 	      $('#mdl_monitoring_contract_subcon').modal('show');
+			     }
+			 });
+            
+			
+		//	edit_<?php echo $methodid?>(row.r1);
+			
+		} else {
+			show_error("show",'Error','Please select row');
+		}
+		
+		setTimeout(function(){ 
+		  // $("#table_<?php echo $methodid ?>_monitor_contract_subcon").trigger('reloadGrid');
+		  // $("#table_<?php echo $methodid ?>_monitor_contract_subcon").setGridWidth($('.grid_container_<?php echo $methodid; ?>_monitor_contract_subcon').width() - 20,true).trigger('resize');
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 100);
+	}
+</script>

@@ -1,0 +1,253 @@
+<div class="row">
+	<div class="col-xl-12">     
+		<div class="card card-statistics h-100"> 
+			<div class="card-body" style="padding: 1.25rem !important">
+				<h5 class="card-title form_title_<?php echo $methodid ?>"><?php echo $page_title ?></h5>
+				<div class="tab tab-border">
+					<ul class="nav nav-tabs form_tab_<?php echo $methodid ?>" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active show" id="tab_<?php echo $methodid; ?>_production_request" data-toggle="tab" href="#content_<?php echo $methodid; ?>_production_request" 
+							role="tab" aria-controls="content_<?php echo $methodid; ?>_production_request" aria-selected="true">
+								Production Request
+							</a>	
+						</li>
+						
+						<li class="nav-item">
+							<a class="nav-link" id="tab_<?php echo $methodid; ?>_production_transfer" data-toggle="tab" href="#content_<?php echo $methodid; ?>_production_transfer" role="tab" aria-controls="content_<?php echo $methodid; ?>_production_transfer" aria-selected="true">
+								Production Transfer
+							</a>	
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="tab_<?php echo $methodid; ?>_production" data-toggle="tab" href="#content_<?php echo $methodid; ?>_production" role="tab" aria-controls="content_<?php echo $methodid; ?>_production" aria-selected="true">
+								Production Result
+							</a>	
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="tab_<?php echo $methodid; ?>_production_scrap" data-toggle="tab" href="#content_<?php echo $methodid; ?>_production_scrap" role="tab" aria-controls="content_<?php echo $methodid; ?>_production_scrap" aria-selected="true">
+								Production Scrap
+							</a>	
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="tab_<?php echo $methodid; ?>_production_return" data-toggle="tab" href="#content_<?php echo $methodid; ?>_production_return" role="tab" aria-controls="content_<?php echo $methodid; ?>_production_return" aria-selected="true">
+								Production return
+							</a>	
+						</li>
+					
+					</ul>
+					
+					<div class="tab-content">
+						<div class="tab_custom_ecc tab-pane fade active show" id="content_<?php echo $methodid; ?>_production_request" 
+						role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_production_request">
+							<div class="row">
+								<div class="col-xl-12 mb-10 ml-10">
+									 <div class="col-xl-12 grid_container_<?php echo $methodid ?>_monitor_request">
+									   <div class="form-group row" >
+			                             <table id="table_<?php echo $methodid ?>_monitor_request"></table>
+			                            <div id="ptable_<?php echo $methodid ?>_monitor_request"></div>
+			                        	</div>
+		                             </div>
+									
+									<div class="ui grid form">
+										<div class="row field">
+											<div class="twelve wide column">
+												<button type="button" class="btn btn-success" onclick="check_<?php echo $methodid ?>_production_request()">
+													<i class="fa fa-save"></i> Rechecking
+												</button>
+												
+												<button type="button" class="btn btn-info" onclick="cancel_<?php echo $methodid ?>()">
+													<i class="fa fa-arrow-left"></i> Back
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="tab_custom_ecc tab-pane fade" id="content_<?php echo $methodid; ?>_production_transfer" role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_production_transfer">
+							<div class="row">
+								<div class="col-xl-12 mb-10 ml-10">
+									 <div class="col-xl-12 grid_container_<?php echo $methodid ?>_monitor_transfer">
+									   <div class="form-group row" >
+			                             <table id="table_<?php echo $methodid ?>_monitor_transfer"></table>
+			                             <div id="ptable_<?php echo $methodid ?>_monitor_transfer"></div>
+			                        	</div>
+		                             </div>
+									
+									<div class="ui grid form">
+										<div class="row field">
+											<div class="twelve wide column">
+												<button type="button" class="btn btn-success" onclick="check_<?php echo $methodid ?>_production_transfer()">
+													<i class="fa fa-save"></i> Rechecking
+												</button>
+												
+												<button type="button" class="btn btn-info" onclick="cancel_<?php echo $methodid ?>()">
+													<i class="fa fa-arrow-left"></i> Back
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						
+						</div>
+						
+						<div class="tab_custom_ecc tab-pane fade" id="content_<?php echo $methodid; ?>_production" role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_production">
+							<div class="row">
+								<div class="col-xl-12 mb-10 ml-10">
+									<div class="col-xl-12 grid_container_<?php echo $methodid ?>_monitor_production">
+									   <div class="form-group row" >
+			                             <table id="table_<?php echo $methodid ?>_monitor_production"></table>
+			                            <div id="ptable_<?php echo $methodid ?>_monitor_production"></div>
+			                        	</div>
+		                             </div>
+									
+									<div class="ui grid form">
+										<div class="row field">
+											<div class="twelve wide column">
+												<button type="button" class="btn btn-success" onclick="check_<?php echo $methodid ?>_monitor_production()">
+													<i class="fa fa-save"></i> Rechecking
+												</button>
+												
+												<button type="button" class="btn btn-info" onclick="cancel_<?php echo $methodid ?>()">
+													<i class="fa fa-arrow-left"></i> Back
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+									
+						</div>
+						
+						<div class="tab_custom_ecc tab-pane fade" id="content_<?php echo $methodid; ?>_production_scrap" role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_production_scrap">
+							<div class="row">
+								<div class="col-xl-12 mb-10 ml-10">
+									<div class="col-xl-12 grid_container_<?php echo $methodid ?>_monitor_scrap">
+									   <div class="form-group row" >
+			                             <table id="table_<?php echo $methodid ?>_monitor_scrap"></table>
+			                            <div id="ptable_<?php echo $methodid ?>_monitor_scrap"></div>
+			                        	</div>
+		                             </div>
+									
+									<div class="ui grid form">
+										<div class="row field">
+											<div class="twelve wide column">
+												<button type="button" class="btn btn-success" onclick="check_<?php echo $methodid ?>_monitor_scrap()">
+													<i class="fa fa-save"></i> Rechecking
+												</button>
+												
+												<button type="button" class="btn btn-info" onclick="cancel_<?php echo $methodid ?>()">
+													<i class="fa fa-arrow-left"></i> Back
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+									
+						</div>
+						
+						<div class="tab_custom_ecc tab-pane fade" id="content_<?php echo $methodid; ?>_production_return" role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_production_scrap">
+							<div class="row">
+								<div class="col-xl-12 mb-10 ml-10">
+									<div class="col-xl-12 grid_container_<?php echo $methodid ?>_monitor_return">
+									   <div class="form-group row" >
+			                             <table id="table_<?php echo $methodid ?>_monitor_return"></table>
+			                            <div id="ptable_<?php echo $methodid ?>_monitor_return"></div>
+			                        	</div>
+		                             </div>
+									
+									<div class="ui grid form">
+										<div class="row field">
+											<div class="twelve wide column">
+												<button type="button" class="btn btn-success" onclick="check_<?php echo $methodid ?>_monitor_return()">
+													<i class="fa fa-save"></i> Rechecking
+												</button>
+												
+												<button type="button" class="btn btn-info" onclick="cancel_<?php echo $methodid ?>()">
+													<i class="fa fa-arrow-left"></i> Back
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+									
+						</div>
+						
+						<div class="tab_custom_ecc tab-pane fade" id="content_<?php echo $methodid; ?>_forecast" role="tabpanel" aria-labelledby="tab_<?php echo $methodid; ?>_forecast">
+							<div class="row">
+								<div class="col-xl-11 mb-10 ml-10">
+									<form class="ui grid ecc_form" id="form_<?php echo $methodid ?>_forecast">
+										<?php 
+											$this->ecc_library->form('hidden','',"form_".$methodid."_forecast",'work_order_plan_id','');
+										?>
+										
+										<div class="row">
+											<div class="col-xl-6">
+												<?php 
+													$this->ecc_library->form('readonly','Production Plan No',"form_".$methodid."_forecast",'work_order_plan_no','','','');
+												?>
+											</div>
+											
+											<div class="col-xl-3">
+												<?php 
+													$this->ecc_library->form('readonly','Production Plan Date',"form_".$methodid."_forecast",'work_order_plan_date','','','');
+												?>
+											</div>
+											
+											<div class="col-xl-3">
+												<?php 
+													$this->ecc_library->form('readonly','Required Date',"form_".$methodid."_forecast",'work_order_required_date','','','');
+												?>
+											</div>
+											
+											<div class="col-xl-3">
+												<?php 
+													$this->ecc_library->form('readonly','Plan Type',"form_".$methodid."_forecast",'work_order_plan_type','','','');
+												?>
+											</div>
+											
+											<div class="col-xl-6">
+												<?php 
+													$this->ecc_library->form('readonly','Contract Subcon',"form_".$methodid."_forecast",'contract_subcon_no','','','');
+												?>
+											</div>
+											
+										</div>
+									</form>
+									
+									<div class="ui grid form">
+										<div class="row field">
+											<div class="twelve wide column">
+												<button type="button" class="btn btn-info" onclick="cancel_<?php echo $methodid ?>()">
+													<i class="fa fa-arrow-left"></i> Back
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-xl-12 grid_container_<?php echo $methodid ?>_forecast">
+									<table id="table_<?php echo $methodid ?>_forecast"></table>
+									<div id="ptable_<?php echo $methodid ?>_forecast"></div>                                                     
+								</div>
+							</div>
+							<br>
+							<div class="row">
+								<div class="col-xl-12">
+									<button type="button" class="btn btn-success" onclick="javascript:add_<?php echo $methodid ?>_forecast()">
+										<i class="fa fa-save"></i> Create Purchase Request
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>   
+	</div>
+</div>

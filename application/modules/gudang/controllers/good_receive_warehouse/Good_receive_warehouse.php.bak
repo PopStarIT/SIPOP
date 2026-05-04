@@ -1,0 +1,2050 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+Class Good_receive_warehouse extends CI_Controller { 
+
+	function __construct(){ 
+		parent::__construct(); 
+		
+		$this->data_request = $_REQUEST;
+		
+		$module = $this->router->module;
+		$directory = $this->router->directory;
+		$class = $this->router->class;
+		$method = $this->router->method;
+		$directory = trim(str_replace('../modules/'.$module ,'',str_replace('/controllers/','',$directory)),'/');
+		
+		$this->module = $module;
+		if(trim($directory) != ''){
+			$this->directory = $directory;
+		} else {
+			$this->directory = '0';
+			$this->directory2 = '';
+		}
+		$this->class = $class;
+		$this->method = $method;
+	}
+	
+	function good_receive_table() {
+		$view = 'view_grn';
+		$get_field = $this->ecc_library->get_field($view);
+		
+		$get_field['r1']['hidden'] = true;
+		$get_field['r16']['hidden'] = true;
+		$get_field['r17']['hidden'] = true;
+		$get_field['r18']['hidden'] = true;
+		$get_field['r19']['hidden'] = true;
+		$get_field['r20']['hidden'] = true;
+		$get_field['r21']['hidden'] = true;
+		
+		return $get_field;
+	}
+	
+	function good_receive_detail_table() {
+		//$view = 'view_grn_detail';
+		//$get_field = $this->ecc_library->get_field($view);
+		
+		$view = 'view_grn_warehouse_detail';
+		$get_field = $this->ecc_library->get_field_pop($view);
+		
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		
+		$get_field['r10']['hidden'] = true;
+		$get_field['r11']['hidden'] = true;
+		$get_field['r12']['hidden'] = true;
+		
+		// $get_field['r12']['hidden'] = true;
+		// $get_field['r13']['hidden'] = true;
+		// $get_field['r14']['hidden'] = true;
+		// $get_field['r15']['hidden'] = true;
+		
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = '#';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations';
+		$get_field['act']['width'] = 300;
+		
+		return $get_field;
+	}
+	
+	function good_receive_custom_table() {
+		$view = 'view_custom_import_item_warehouse';
+		$get_field = $this->ecc_library->get_field_pop($view);
+		
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		
+		$get_field['r12']['hidden'] = true;
+		$get_field['r13']['hidden'] = true;
+		$get_field['r14']['hidden'] = true;
+		$get_field['r15']['hidden'] = true;
+		$get_field['r16']['hidden'] = true;
+		$get_field['r17']['hidden'] = true;
+		$get_field['r19']['hidden'] = true;
+		$get_field['r20']['hidden'] = true;
+		$get_field['r21']['hidden'] = true;
+		
+		$get_field['r9']['editable'] = true;
+		//$get_field['r18']['editable'] = true;
+		
+		//$get_field['r18']['edittype'] = "select";
+		//$get_field['r18']['formatter'] = 'select';
+		//$listOptions ="FE:FedEx;IN:InTime;TN:TNT;AR:ARAMEX";
+		//$listOptions ="{value:'FE:FedEx;IN:InTime;TN:TNT;AR:ARAMEX'}";
+		//$val='{value:'.$listOptions.'}';
+		
+		//$get_field['r18']['editoptions'] = $listOptions;
+		//$get_field['r18']['editoptions'] = "{value:'FE:FedEx;2:Two'}";
+	//	$get_field['r18']['editoptions'] ='formatOperations_selectx';
+		//$get_field['r18']['formatter'] ='formatOperations_select';
+		//$get_field['r18']['editoptions'] = '{value:"FE:FedEx;IN:InTime"}';
+		
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = '#';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations2';
+		//$get_field['act']['formatter'] = 'select';
+		$get_field['act']['width'] = 300;
+		
+		return $get_field;
+	}
+	
+	function good_receive_purchase_table() {
+		$view = 'view_purchase_order_grn';
+		$get_field = $this->ecc_library->get_field($view);
+		
+		$get_field['r1']['hidden'] = true;
+		$get_field['r2']['hidden'] = true;
+		
+		$get_field['r12']['hidden'] = true;
+		$get_field['r13']['hidden'] = true;
+		$get_field['r14']['hidden'] = true;
+		$get_field['r15']['hidden'] = true;
+		$get_field['r16']['hidden'] = true;
+		$get_field['r17']['hidden'] = true;
+		
+		$get_field['r9']['editable'] = true;
+		
+		$get_field['act']['sc'] = 'act';
+		$get_field['act']['title'] = '#';
+		$get_field['act']['bypassvalue'] = '';
+		$get_field['act']['ctype'] = 'text';
+		$get_field['act']['align'] = 'center';
+		$get_field['act']['search'] = false;
+		$get_field['act']['sortable'] = false;
+		$get_field['act']['formatter'] = 'formatOperations2';
+		$get_field['act']['width'] = 300;
+		
+		return $get_field;
+	}
+	
+	function index(){
+		$this->load->model('main');
+		$component['loadlayout'] = true;
+		$component['view_load'] = 'good_receive_warehouse/view';
+		$component['view_load_form'] = 'good_receive_warehouse/form';
+		$component['load_js'][] = 'good_receive_warehouse/view';
+		$component['load_js'][] = 'good_receive_warehouse/form';
+		
+		$component['page_title'] = "Good Receive Warehouse";
+		
+		$dashboard_table = array();
+		
+		$nav_button = array();
+		$nav_button[] = array('method_id' => 781171,'title' => 'Add','btn'=>'btn-success', 'icon' => 'fa fa-plus', 'load' => 'good_receive_warehouse/function_add');
+		$nav_button[] = array('method_id' => 7811189,'title' => 'Add From Shipment', 'btn'=>'btn-success', 'icon' => 'fa fa-plus', 'load' => 'good_receive_warehouse/function_add_from_shipment');
+		$nav_button[] = array('method_id' => 781177,'title' => 'Add From Purchase', 'btn'=>'btn-success', 'icon' => 'fa fa-plus', 'load' => 'good_receive_warehouse/function_add_from_purchase');
+		$nav_button[] = array('method_id' => 781172,'title' => 'Edit','btn'=>'btn-warning', 'icon' => 'fa fa-pencil', 'load' => 'good_receive_warehouse/function_edit');
+		$nav_button[] = array('method_id' => 781198,'title' => 'Approve', 'btn'=>'btn-info', 'icon' => 'fa fa-check', 'load' => 'good_receive_warehouse/function_approve');
+		$nav_button[] = array('method_id' => 781173,'title' => 'Delete', 'btn'=>'btn-danger','icon' => 'fa fa-trash-o', 'load' => 'good_receive_warehouse/function_delete');
+	 	//$nav_button[] = array('method_id' => 781197,'title' => 'Download', 'btn'=>'btn-primary','icon' => 'fa fa-print', 'load' => 'good_receive_warehouse/function_print');
+		$nav_button[] = array('method_id' => 781202,'title' => 'Cancel Approve', 'btn'=>'btn-danger','icon' => 'fa fa-thumbs-down', 'load' => 'good_receive_warehouse/function_cancel_approve');
+		$nav_button[] = array('method_id' => 781197,'title' => 'Download', 'btn'=>'btn-primary','icon' => 'fa fa-print', 'load' => 'good_receive_warehouse/function_print2');
+		
+	//	$nav_button[] = array('method_id' => 224,'title' => 'Approve', 'icon' => 'fa fa-check', 'load' => 'general/good_receive/function_approve');
+	//	$nav_button[] = array('method_id' => 223,'title' => 'Delete', 'icon' => 'fa fa-trash-o', 'load' => 'general/good_receive/function_delete');
+	//	$nav_button[] = array('method_id' => 751,'title' => 'Cancel Approve', 'icon' => 'fa fa-cross', 'load' => 'general/good_receive/function_cancel_approve');
+
+	//$nav_button[] = array('method_id' => 781130,'title' => 'Download','btn'=>'btn-primary','icon' => 'fa fa-download', 'load' => 'fabric_shipment/function_download_shipment');
+		
+		$field = $this->good_receive_table();
+		$field_detail = $this->good_receive_detail_table();
+		$field_custom_item = $this->good_receive_custom_table();
+		$field_purchase_item = $this->good_receive_purchase_table();
+		
+		$dashboard_table['nav_button'] = $nav_button;
+		$dashboard_table['field'] = $field;
+		$dashboard_table['field_detail'] = $field_detail;
+		$dashboard_table['field_detail_loaddata'] = 'loaddata_detail';
+		$dashboard_table['field_custom_item'] = $field_custom_item;
+		$dashboard_table['field_custom_item_loaddata'] = 'loaddata_custom_item';
+		$dashboard_table['field_purchase_item'] = $field_purchase_item;
+		$dashboard_table['field_purchase_item_loaddata'] = 'loaddata_purchase_item';
+		
+		$dashboard_table['caption'] = '.:: Good Receive Warehouse ::.';
+		
+		$component['dashboard_table'] = $dashboard_table;
+		
+		$this->authentication->ajaxlayout($component);
+	}
+	
+	function loaddata() {
+		$this->authentication->plainlayout();
+		
+		$view = 'view_grn';
+		$field = $this->good_receive_table();
+		
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+ 
+		$loaddata = $this->ecc_library->get_field_data($view,$field);
+			
+		echo $loaddata;
+	}
+	
+	function approve(){
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+				
+		$grn_id = isset($_POST['grn_id']) ? $_POST['grn_id'] : false;
+		
+		$user_id = $this->session->userdata('user_id');
+		
+		$result2 = array();
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error lagi";
+		
+		if(count($_POST) > 0){
+	        if($grn_id){
+		      $this->rpc_service->setSP("dbo.sp_grn_approve");
+			   $this->rpc_service->addField('grn_id',$grn_id);
+			}
+					
+			$result = $this->rpc_service->resultJSON();
+			
+		//$result['valid']=true;
+		//$result['data']=true;
+		//$result['no']='00';
+			
+			$data = array();
+			if(isset($result)){
+				if(isset($result['valid'])){
+					if($result['valid']){
+						if(isset($result['data'])){
+							//var_dump($grn_id);die();
+							if($grn_id){
+			                    $this->rpc_service->setSP("dbo.sp_grn_warehouse_approve");
+			                    $this->rpc_service->addField('grn_id_sipop',$grn_id);
+			                 }
+							 
+							$result2 = $this->rpc_service->resultJSON_pop();
+							//var_dump($result2);die();
+							if(isset($result2)){
+							   if(isset($result2['valid'])){
+					             if($result2['valid']){
+						           if(isset($result2['data'])){
+									  $return['valid'] = $result['valid'];
+							          $return['status_code'] = $result['no'];
+							          $return['message'] = $result['des'];
+								   }
+								 }else{
+									 $return['valid'] = $result2['valid'];
+									 $return['status_code'] =$result2['no'];
+					         	     $return['message'] = $result2['des'];
+								 }
+							   }else{
+								   $return['status_code'] = $result2['no'];
+						           $return['message'] = $result2['des'];
+							   }
+							   
+							}else{
+								$return['valid'] = false;
+								$return['status_code'] = 501;
+					         	$return['message'] = 'No result2';
+							}
+							//return['valid'] = $result['valid'];
+							//return['status_code'] = $result['no'];
+							//return['message'] = $result['des'];
+						}
+						
+						//proses approve warehouse
+						
+						
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			 }
+			
+			
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		
+		echo json_encode($return);
+	}
+	
+	function approve_awal(){
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+				
+		$grn_id = isset($_POST['grn_id']) ? $_POST['grn_id'] : false;
+		
+		$user_id = $this->session->userdata('user_id');
+		
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+		
+		if(count($_POST) > 0){
+			
+			if($grn_id){
+				$this->rpc_service_portal->setSP("dbo.sp_grn_approve");
+				$this->rpc_service_portal->addField('grn_id',$grn_id);
+			}
+					
+			$result = $this->rpc_service_portal->resultJSON();
+			// print_r($result);
+			
+			$data = array();
+			if(isset($result)){
+				if(isset($result['valid'])){
+					if($result['valid']){
+						if(isset($result['data'])){
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+			
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		
+		echo json_encode($return);
+	}
+	
+	function cancel_approve(){
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+				
+		$grn_id = isset($_POST['grn_id']) ? $_POST['grn_id'] : false;
+		
+		$user_id = $this->session->userdata('user_id');
+		
+		$result2 = array();
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+		
+		if(count($_POST) > 0){
+			
+			if($grn_id){
+				$this->rpc_service->setSP("dbo.sp_grn_cancel_approve");
+				$this->rpc_service->addField('grn_id',$grn_id);
+			}
+					
+			$result = $this->rpc_service->resultJSON();
+			// print_r($result);
+			
+			$data = array();
+			if(isset($result)){
+				if(isset($result['valid'])){
+					if($result['valid']){
+						if(isset($result['data'])){
+							 if($grn_id){
+			                    $this->rpc_service->setSP("dbo.sp_grn_warehouse_cancel_approve");
+			                    $this->rpc_service->addField('grn_id_sipop',$grn_id);
+			                 }
+							 
+							$result2 = $this->rpc_service->resultJSON_pop();
+							//var_dump($result2);die();
+							if(isset($result2)){
+							   if(isset($result2['valid'])){
+					             if($result2['valid']){
+						           if(isset($result2['data'])){
+									  $return['valid'] = $result['valid'];
+							          $return['status_code'] = $result['no'];
+							          $return['message'] = $result['des'];
+								   }
+								 }else{
+									 $return['valid'] = $result2['valid'];
+									 $return['status_code'] =$result2['no'];
+					         	     $return['message'] = $result2['des'];
+								 }
+							   }else{
+								   $return['status_code'] = $result2['no'];
+						           $return['message'] = $result2['des'];
+							   }
+							   
+							}else{
+								$return['valid'] = false;
+								$return['status_code'] = 501;
+					         	$return['message'] = 'No result2';
+							}
+							//return['valid'] = $result['valid'];
+							//return['status_code'] = $result['no'];
+							//return['message'] = $result['des'];
+						
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+			
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		
+		echo json_encode($return);
+	}
+	
+	function delete(){
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+				
+		$grn_id = isset($_POST['grn_id']) ? $_POST['grn_id'] : false;
+		
+		$user_id = $this->session->userdata('user_id');
+		
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+		//var_dump($grn_id);die();
+		if(count($_POST) > 0){
+			
+			if($grn_id){
+				$this->rpc_service->setSP("dbo.sp_grn_delete");
+				$this->rpc_service->addField('grn_id',$grn_id);
+			}
+					
+			$result = $this->rpc_service->resultJSON();
+			// print_r($result);
+			
+			$data = array();
+			if(isset($result)){
+				if(isset($result['valid'])){
+					if($result['valid']){
+						if(isset($result['data'])){
+						    if($grn_id){
+				               $this->rpc_service->setSP("dbo.sp_grn_warehouse_delete");
+				               $this->rpc_service->addField('grn_id',$grn_id);
+			                 }
+					        
+			                $result2 = $this->rpc_service->resultJSON_pop();
+							if(isset($result2)){
+							   if(isset($result2['valid'])){
+					             if($result2['valid']){
+						          if(isset($result2['data'])){
+									  $return['valid'] = $result['valid'];
+							          $return['status_code'] = $result['no'];
+							          $return['message'] = $result['des'];
+								  }
+								 }
+							   }
+							}
+							
+						
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+						
+					}
+				}
+			}
+			
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		
+		echo json_encode($return);
+	}
+		
+	function post_add_edit(){
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+				
+		$grn_id = isset($_POST['grn_id']) ? $_POST['grn_id'] : '';
+		$grn_no = isset($_POST['grn_no']) ? $_POST['grn_no'] : '';
+		$grn_date = isset($_POST['grn_date']) ? $_POST['grn_date'] : '';
+		$grn_type_id = isset($_POST['grn_type_id']) ? $_POST['grn_type_id'] : '';
+		$warehouse_id = isset($_POST['warehouse_id']) ? $_POST['warehouse_id'] : '';
+		$partner_id = isset($_POST['partner_id']) ? $_POST['partner_id'] : '';
+		$bc_in_header_id = isset($_POST['bc_in_header_id']) ? $_POST['bc_in_header_id'] : '';
+		$purchase_order_id = isset($_POST['purchase_order_id']) ? $_POST['purchase_order_id'] : '';
+		$quantity_received = isset($_POST['quantity_received']) ? $_POST['quantity_received'] : array();
+		$bc_in_barang_id = isset($_POST['bc_in_barang_id']) ? $_POST['bc_in_barang_id'] : array();
+		$no_surat_jalan = isset($_POST['no_surat_jalan']) ? $_POST['no_surat_jalan'] : '';
+		$tgl_surat_jalan = isset($_POST['tgl_surat_jalan']) ? $_POST['tgl_surat_jalan'] : '';
+		
+		$grn_warehouse_type_id = isset($_POST['grn_warehouse_type_id']) ? $_POST['grn_warehouse_type_id'] : '';
+		$fabric_shipment_id = isset($_POST['fabric_shipment_id']) ? $_POST['fabric_shipment_id'] : '';
+		
+		$user_id = $this->session->userdata('user_id');
+		
+		var_dump ($warehouse_id);die()	;
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+		
+		if(count($_POST) > 0){
+			
+			if($grn_id){
+				$this->rpc_service->setSP("dbo.sp_grn_edit");
+				$this->rpc_service->addField('grn_id',$grn_id);
+			} else {
+				$this->rpc_service->setSP("dbo.sp_grn_add");
+			}		
+			
+			$this->rpc_service->addField('grn_no',$grn_no);
+			$this->rpc_service->addField('grn_date',$grn_date);
+			$this->rpc_service->addField('warehouse_id',$warehouse_id);
+			$this->rpc_service->addField('grn_type_id',$grn_type_id);
+			$this->rpc_service->addField('partner_id',$partner_id);
+			$this->rpc_service->addField('bc_in_header_id',$bc_in_header_id);
+			$this->rpc_service->addField('purchase_order_id',$purchase_order_id);
+			$this->rpc_service->addField('no_surat_jalan',$no_surat_jalan);
+			$this->rpc_service->addField('tgl_surat_jalan',$tgl_surat_jalan);
+		
+            $result = $this->rpc_service->resultJSON();		
+			
+        //   $result = array('valid'=>true,'no'=>'0000','des'=>'', 'sts'=>json_encode(array('valid'=>true,'no'=>'0000','des'=>'')),'data'=>array('grn_no'=>'GRN-2025/08/12-0001','grn_type_id'=>4,
+		//	'grn_id'=>'28065','partner_id'=>480));			
+		//	
+		//	if(isset($result)){
+		//		var_dump ($result['data']);
+		//	}else{
+		//		var_dump ('No result');
+		//	}
+				
+			$data = array();
+			if(isset($result)){
+				if(isset($result['valid'])){
+					if($result['valid']){
+						if(isset($result['data'])){
+							$data_result = json_decode($result['data'],true);
+							//$data_result = $result['data'];
+																					
+							$return['valid'] = $result['valid'];
+							$return['status_code'] = $result['no'];
+							$return['message'] = $result['des'];
+							$return['grn_id'] = $data_result['grn_id'];
+							$return['grn_type_id'] = $data_result['grn_type_id'];
+							$return['partner_id'] = $data_result['partner_id'];
+							$return['bc_in_header_id'] = $data_result['bc_in_header_id'];
+							$return['purchase_order_id'] = $data_result['purchase_order_id'];
+							$return['new_grn'] = $data_result['new_grn'];
+							//var_dump ($return);die();
+							
+							if($grn_id){
+								$this->rpc_service->setSP("dbo.sp_grn_warehouse_add");
+							}else{
+								$this->rpc_service->setSP("dbo.sp_grn_warehouse_add");
+							}
+							 $this->rpc_service->addField('grn_id_ecc',$data_result['grn_id']);
+							 $this->rpc_service->addField('grn_type_id_ecc',$return['grn_type_id']);
+							 $this->rpc_service->addField('grn_date_ecc',$grn_date);
+							 $this->rpc_service->addField('fabric_shipment_id',$fabric_shipment_id);
+							 $this->rpc_service->addField('partner_id_ecc',$data_result['partner_id']);
+							 $this->rpc_service->addField('bc_in_header_id_ecc',$data_result['bc_in_header_id']);
+							 $this->rpc_service->addField('purchase_order_id_ecc',$data_result['purchase_order_id']);
+							 $this->rpc_service->addField('grn_no_ecc',$grn_no);
+							 $this->rpc_service->addField('grn_warehouse_type_id',$grn_warehouse_type_id);
+							 $this->rpc_service->addField('warehouse_id',$warehouse_id);
+							
+							 //create
+							 //purchase_order_warehouse_id
+							 $result2 = $this->rpc_service->resultJSON_pop();
+							 if(isset($result2)){
+				              if(isset($result2['valid'])){
+					            if($result2['valid']){
+								  if(isset($result2['data'])){
+									  $data_result2 = json_decode($result2['data'],true);
+									 // var_dump($data_result2);die();
+																	  
+									  $return['valid'] = $result2['valid'];
+							          $return['status_code'] = $result2['no'];
+							          $return['message'] = $result2['des'];
+							          $return['grn_id_ecc'] = $data_result2['grn_id_ecc'];
+									  $return['grn_no'] = $data_result2['grn_no'];
+									  $return['grn_date'] = $data_result2['grn_date'];
+									  $return['grn_warehouse_id'] = $data_result2['grn_warehouse_id'];
+									  $return['fabric_shipment_id'] = $data_result2['fabric_shipment_id'];
+										  
+								  }
+								}
+							  }else {
+								  
+						          $return['status_code'] = $result['no'];
+						          $return['message'] = $result['des'];
+					           }
+							 }
+							
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+			
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		die();
+		echo json_encode($return);
+	}
+	
+	function loaddata_detail(){
+		$this->authentication->plainlayout();
+		
+		$grn_id = isset($_REQUEST['grn_id']) ? is_numeric($_REQUEST['grn_id']) ? $_REQUEST['grn_id']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+		
+		$view = 'view_grn_warehouse_detail';
+		//$view = 'view_grn_detail';
+		$field = $this->good_receive_detail_table();
+		
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+		
+		$extra_param = array();
+		$extra_param['where']['0']['field'] = 'r2';
+		$extra_param['where']['0']['data'] = $grn_id;
+		$extra_param['methodid'] = $methodid;
+		
+		//$loaddata = $this->ecc_library->get_field_data($view,$field,$extra_param);
+		$loaddata = $this->ecc_library->get_field_data_pop($view,$field,$extra_param);
+			
+		echo $loaddata;
+	}
+	
+	function post_add_edit_detail(){
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+		
+		$grn_id = isset($_POST['grn_id']) ? $_POST['grn_id'] : 0;
+		$grn_detail_id = isset($_POST['grn_detail_id']) ? $_POST['grn_detail_id'] : '';
+		$quantity_received = isset($_POST['quantity_received']) ? $_POST['quantity_received'] : 0;
+		$bc_in_barang_id = isset($_POST['bc_in_barang_id']) ? $_POST['bc_in_barang_id'] : '';
+		$purchase_order_detail_id = isset($_POST['purchase_order_detail_id']) ? $_POST['purchase_order_detail_id'] : '';
+		$user_id = $this->session->userdata('user_id');
+		//var_dump($bc_in_barang_id);die($bc_in_barang_id);
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+		
+		if(count($_POST) > 0){
+			if($grn_detail_id){
+				$this->rpc_service->setSP("dbo.sp_grn_detail_edit");
+				$this->rpc_service->addField('grn_detail_id',$grn_detail_id);
+			} else {
+				$this->rpc_service->setSP("dbo.sp_grn_detail_add");
+			}
+			
+			$this->rpc_service->addField('grn_id',$grn_id);
+			$this->rpc_service->addField('quantity_received',$quantity_received);
+			$this->rpc_service->addField('purchase_order_detail_id',$purchase_order_detail_id);
+			$this->rpc_service->addField('bc_in_barang_id',$bc_in_barang_id);
+			
+			$result = $this->rpc_service->resultJSON();
+			$data_warehouse=array();
+			$data = array();
+			if(isset($result)){
+				if(isset($result['valid'])){
+					if($result['valid']){
+						if(isset($result['data'])){
+							$data = json_decode($result['data'],TRUE);
+							
+							if($grn_detail_id){
+								$this->rpc_service->setSP("dbo.sp_grn_warehouse_detail_edit");
+							}else{
+								$this->rpc_service->setSP("dbo.sp_grn_warehouse_detail_add");
+							}
+							
+							 $this->rpc_service->addField('grn_id2',$grn_id);
+			                 $this->rpc_service->addField('quantity_received2',$quantity_received);
+			                 $this->rpc_service->addField('purchase_order_detail_id2',$purchase_order_detail_id);
+			                 $this->rpc_service->addField('bc_in_barang_id2',$bc_in_barang_id);
+							 $this->rpc_service->addField('grn_detail_id', $data['grn_detail_id']);
+							 
+							 $result2 = $this->rpc_service->resultJSON_pop();
+							 if(isset($result2)){
+			                    if(isset($result2['valid'])){
+									if($result2['valid']){
+										if(isset($result2['data'])){
+										   $data_warehouse = json_decode($result2['data'],TRUE);
+										   $return['grn_no'] = $data['grn_no'];
+										   $return['grn_date'] = $data['grn_date'];
+										   $return['item'] = $data['item'];
+										   $return['quantity_received'] = $data['quantity_received'];
+										   $return['unit'] = $data['unit'];
+										   $return['grn_id'] = $data['grn_id'];
+										   $return['grn_detail_id'] = $data['grn_detail_id'];
+										   
+										   $return['item_fabric_warehouse'] = $data_warehouse['item_fabric_warehouse'];
+										   $return['item_fabric_id'] = $data_warehouse['item_fabric_id'];
+										   $return['item_id'] = $data_warehouse['item_id'];
+										  										   
+										   $return['valid'] = $result['valid'];
+							               $return['status_code'] = $result['no'];
+							               $return['message'] = $result['des'];
+										}
+									}else {
+						                $return['status_code'] = $result2['no'];
+						                $return['message'] = $result2['des'];
+				                	}
+								}
+							 }
+							
+							
+							
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+		
+		echo json_encode($return);
+	}
+	
+	function delete_detail(){
+		$this->authentication->plainlayout();
+		$parameter = array();
+		$return = array();
+		
+		$result = array();
+		$return['valid'] = false;
+		$return['status_code'] = 501;
+		$return['message'] = "Internal Server Error";
+		
+		$grn_detail_id = isset($_POST['grn_detail_id']) ? $_POST['grn_detail_id'] : '';
+		$user_id = $this->session->userdata('user_id');
+		
+		
+		if(count($_POST) > 0){
+			
+			$this->rpc_service->setSP("dbo.sp_grn_detail_delete");
+			$this->rpc_service->addField('grn_detail_id',$grn_detail_id);
+			
+			$result = $this->rpc_service->resultJSON();
+						
+			$data = array();
+			$data_delete = array();
+			if(isset($result)){
+				if(isset($result['valid'])){
+					if($result['valid']){
+						if(isset($result['data'])){
+							$data = json_decode($result['data'],TRUE);
+							//sp_grn_warehouse_detail_delete
+							$this->rpc_service->setSP("dbo.sp_grn_warehouse_detail_delete");
+			                $this->rpc_service->addField('grn_detail_id2',$data['grn_detail_id']);
+						    $result2 = $this->rpc_service->resultJSON_pop();
+							if(isset($result2)){
+							  if(isset($result2['valid'])){
+					            if($result2['valid']){
+									if(isset($result2['data'])){
+										//var_dump($result2);
+									   $return['valid'] = $result['valid'];
+						   	           $return['status_code'] = $result['no'];
+							           $return['message'] = $result['des'];									 
+								    }	
+							    }else{
+								  $return['status_code'] = $result2['no'];
+							      $return['message'] = $result2['des'];
+								}
+							  }
+							}
+						}
+					} else {
+						$return['status_code'] = $result['no'];
+						$return['message'] = $result['des'];
+					}
+				}
+			}
+			
+		} else {
+			$return['valid'] = false;
+			$return['message'] = "Session expired";
+		}
+
+		echo json_encode($return);
+	}
+	
+	function loaddata_custom_item(){
+		$this->authentication->plainlayout();
+		
+		$grn_detail_id = isset($_REQUEST['grn_detail_id']) ? $_REQUEST['grn_detail_id'] : '';
+		$partner_id = isset($_REQUEST['partner_id']) ? is_numeric($_REQUEST['partner_id']) ? $_REQUEST['partner_id']  : -1 : -1;
+		$bc_in_header_id = isset($_REQUEST['bc_in_header_id']) ? is_numeric($_REQUEST['bc_in_header_id']) ? $_REQUEST['bc_in_header_id']  : -1 : -1;
+		$purchase_order_id = isset($_REQUEST['purchase_order_id']) ? is_numeric($_REQUEST['purchase_order_id']) ? $_REQUEST['purchase_order_id']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+		
+		$field = $this->good_receive_custom_table();
+		
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+		
+		$extra_param = array();
+		//$extra_param['methodidx'] = $methodid;
+		//var_dump($extra_param);
+		if($grn_detail_id){
+			//$view = 'view_grn_detail_custom';
+			$view = 'view_grn_detail_custom_warehouse';
+			$extra_param['where']['0']['field'] = 'r17';
+			$extra_param['where']['0']['data'] = $grn_detail_id;
+		} else {
+			//$view = 'view_custom_import_item';
+			$view = 'view_custom_import_item_warehouse';
+			$extra_param['where']['0']['field'] = 'r14';
+			$extra_param['where']['0']['data'] = $partner_id;
+			$extra_param['where']['1']['field'] = 'r15';
+			$extra_param['where']['1']['data'] = $bc_in_header_id;
+		}
+		
+		$extra_param['field']['rh_id'] = $grn_detail_id;
+		
+		
+		$extra_param['methodid'] = $methodid;
+		
+		$loaddata = $this->ecc_library->get_field_data_pop($view,$field,$extra_param);
+			
+		echo $loaddata;
+	}
+	
+	function loaddata_purchase_item(){
+		$this->authentication->plainlayout();
+		
+		$grn_detail_id = isset($_REQUEST['grn_detail_id']) ? $_REQUEST['grn_detail_id'] : '';
+		$partner_id = isset($_REQUEST['partner_id']) ? is_numeric($_REQUEST['partner_id']) ? $_REQUEST['partner_id']  : -1 : -1;
+		$bc_in_header_id = isset($_REQUEST['bc_in_header_id']) ? is_numeric($_REQUEST['bc_in_header_id']) ? $_REQUEST['bc_in_header_id']  : -1 : -1;
+		$purchase_order_id = isset($_REQUEST['purchase_order_id']) ? is_numeric($_REQUEST['purchase_order_id']) ? $_REQUEST['purchase_order_id']  : -1 : -1;
+		$methodid = isset($_REQUEST['methodid']) ? is_numeric($_REQUEST['methodid']) ? $_REQUEST['methodid']  : -1 : -1;
+		
+		$field = $this->good_receive_custom_table();
+		
+		$return = array();
+		$return['valid'] = false;
+		$return['message'] = "Internal Server Error";
+		
+		$extra_param = array();
+		if($grn_detail_id){
+			$view = 'view_grn_detail_purchase';
+			$extra_param['where']['0']['field'] = 'r17';
+			$extra_param['where']['0']['data'] = $grn_detail_id;
+		} else {
+			$view = 'view_purchase_order_grn';
+			$extra_param['where']['0']['field'] = 'r14';
+			$extra_param['where']['0']['data'] = $partner_id;
+			$extra_param['where']['1']['field'] = 'r16';
+			$extra_param['where']['1']['data'] = $purchase_order_id;
+		}
+		//view_custom_import_item
+		$extra_param['field']['rh_id'] = $grn_detail_id;
+		
+		
+		$extra_param['methodid'] = $methodid;
+		
+		$loaddata = $this->ecc_library->get_field_data($view,$field,$extra_param);
+			
+		echo $loaddata;
+	}
+  
+   function print_good_receive_warehouse_awal()
+   {
+      $grn_id = isset($_POST['grn_id']) ? $_POST['grn_id'] : false;
+      $format = isset($_POST['format']) ? $_POST['format'] : 'xlsx';
+      $user_id = $this->session->userdata('user_id');
+	  
+	  
+	    $temp=sys_get_temp_dir().'\\';
+	    $host_libreoffice='127.0.0.1'; // setting host service libreoffice
+        $port_libreoffice='8080';      // setting port service libreoffice
+	    $TEMPLATE_EXT='fods';
+	    $NEWLINE='<text:line-break/>';
+	    $unoconv='"C:/Program Files/LibreOffice 5/program/python.exe" "C:\Program Files\LibreOffice 5\program\unoconv" '.'--connection "socket,host='.$host_libreoffice.',port='.                 $port_libreoffice.',tcpNoDelay=1;urp;StarOffice.ComponentContext" ';
+      
+      $sp = "dbo.sp_rpt_slip_penerimaan_barang_masuk_warehouse";
+
+     // $this->rpc_service->setSP(array("sp"=>$sp,"mode"=>"2","debug"=>"1"));
+	  $this->rpc_service->setSP("dbo.sp_rpt_slip_penerimaan_barang_masuk_warehouse");
+	  $this->rpc_service->addField('grn_id',$grn_id);
+      $this->rpc_service->addField('format',$format);
+      $this->rpc_service->addField('temp_folder',sys_get_temp_dir());
+      $this->rpc_service->addField('sort','item.item_code asc');  
+	  
+      $result = $this->rpc_service->resultJSON_pop();
+     // $result = $this->rpc_service->resultPrint_sipop();
+	 
+	 if(isset($result)){
+	   if(isset($result['valid'])){
+	      if($result['valid']){
+			if(isset($result['data'])){
+				//var_dump($result2);
+				 $data_warehouse = json_decode($result['data'],TRUE);
+				 $grn_id=$data_warehouse['xrow_h']['0']['grn_id'];
+				 $grn_no=$data_warehouse['xrow_h']['0']['grn_no'];
+				 $grn_date=$data_warehouse['xrow_h']['0']['grn_date'];
+				 $partner_name=$data_warehouse['xrow_h']['0']['partner_name'];
+				 $custom_type_name=$data_warehouse['xrow_h']['0']['custom_type_name'];
+				 $car=$data_warehouse['xrow_h']['0']['car'];
+				 $bc_no=$data_warehouse['xrow_h']['0']['bc_no'];
+				 $bc_date=$data_warehouse['xrow_h']['0']['bc_date'];
+				 $report_time=date('_Ymd_His');  
+				 
+				 if ($format =='xlsx'){
+					 $template='C:/tmp_sipop/warehouse/good_receive/excel/Bukti_barang.fods';
+		             $templateData='C:/tmp_sipop/warehouse/good_receive/excel/Bukti_barang_data.fods';
+		  	         $tmp_ext='fods';
+			         $EXTENSION='xlsx';
+			         $CONTENT_TYPE='application/msexcel';
+			         $CONVERT_TO='xlsx';
+			         $report_name='Bukti_Barang_Masuk';
+				 }else{
+					 $template='C:/tmp_sipop/warehouse/good_receive/pdf/Bukti_barang.fodt';
+		             $templateData='C:/tmp_sipop/warehouse/good_receive/pdf/Bukti_barang.fodt';
+		  	         $tmp_ext='fodt';
+			         $EXTENSION='pdf';
+			         $CONTENT_TYPE='application/pdf';
+			         $CONVERT_TO='pdf';
+			         $report_name='Bukti_Barang_Masuk';
+				 }
+				 
+				  $template_doc=file_get_contents($template);
+                  $template_data=file_get_contents($templateData);
+                   
+                   $value_detail ='';
+		           $data_detail=array('{no_item}','{kode_barang}','{nama_item}','{qty}','{sat}','{keterangan}');	
+                   $i=1;				   
+				   foreach($data_warehouse['xrow_d']as $k=>$v){
+					    
+					$isi_detail=array($i,$v['r1'],$v['r2'],number_format($v['r3'],4),$v['r4'],$v['r5']);
+			        $value_detail .=str_replace($data_detail,$isi_detail,$template_data);
+					$i=$i+1;
+				   }
+				   
+				    $data_header=array('{no}','{jns_dokumen}','{date}','{aju}','{pemasok}','{no_pendaftaran}','{tgl_pendaftara}','{data}');
+                    $isi_header=array($grn_no,$custom_type_name,$grn_date,$car,$partner_name,$bc_no,$bc_date,$value_detail);
+                    $value_header=str_replace($data_header,$isi_header,$template_doc);
+					//var_dump($temp);die();
+					file_put_contents($temp.$report_name.$report_time.'.'.$tmp_ext,$value_header);
+	                exec(
+                      $unoconv.
+                      '-f '.$CONVERT_TO.' '.
+                      '-o "'.$temp.$report_name.$report_time.'.'.$EXTENSION.'" '.
+                      '"'.$temp.$report_name.$report_time.'.'.$tmp_ext.'"'
+                     );
+		
+                    $file=$temp.$report_name.$report_time.'.'.$EXTENSION;
+		            $namafile=$report_name.$report_time.'.'.$EXTENSION;
+					$file_path=$file.$namafile;
+	                unlink($temp.$report_name.$report_time.'.'.$tmp_ext);		
+		          //  var_dump($file.' Dan ' .$namafile );die();
+                    $return['valid'] =true;
+		            $return['xfile'] =$file;
+		            $return['namafile'] =$namafile; 
+				//	$this->download_file($namafile,$file,$EXTENSION);
+				 //var_dump(basename($file));die();
+					$ctype="application/octet-stream";
+					
+		//		if(!empty($file) && file_exists($file)){ /*check keberadaan file*/
+        //            header("Pragma:public");
+        //            header("Expired:0");
+        //            header("Cache-Control:must-revalidate");
+        //            header("Content-Control:public");
+        //            header("Content-Description: File Transfer");
+        //            header("Content-Type:$ctype");
+        //            header("Content-Disposition:attachment; filename=\"".basename($file)."\"");
+        //            header("Content-Transfer-Encoding:binary");
+        //            header("Content-Length:".filesize($file));
+        //            flush();
+        //            readfile($file);
+        //            exit();
+        //         }else{
+        //            echo "The File does not exist.";
+        //         }
+        //     var_dump($file);die();
+                //    header("Content-Type: application/force-download");
+				//	header( 'Content-Type: "'.$mime.'"' );
+				//	header("Content-Disposition: attachment; filename=\"".basename($file)."\";" ); 
+				//	header( 'Expires: 0' );
+				//	header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+				//	header( "Content-Transfer-Encoding: binary" );
+				//	header( 'Pragma: public' );
+				//	header( "Content-Length: ".filesize( $namafile ) );	
+
+                   // $write=PHPExcel_IOFactory::CreateWriter($namafile,'excel2007');
+					//$write->save('php://output';
+				
+				// var_dump($value_detail);die();
+				// var_dump($data_warehouse['xrow_h']['0']['grn_no']);die();
+				//=== cetak========
+				
+				
+				 //=================
+			 // $return['valid'] = $result['valid'];
+	         // $return['status_code'] = $result['no'];
+	         // $return['message'] = $result['des'];									 
+		    }	
+	   }else{
+		  $return['status_code'] = $result2['no'];
+	     $return['message'] = $result2['des'];
+		}
+	   }
+	 }
+	 //var_dump($result);die();
+	 
+    //  echo json_encode($result);
+	 echo json_encode($return);
+   }
+   
+   function print_good_receive_warehouse()
+   {
+	  // var_dump($_REQUEST['grn_id']);die();
+	    $format = isset($_REQUEST['format']) ? $_REQUEST['format'] : false;
+		$grn_id = isset($_REQUEST['grn_id']) ? $_REQUEST['grn_id'] : false;
+		  if ($format =='xlsx'){
+			$this->print_grn_excel();  
+		  }else{
+			 // var_dump($grn_id);die();
+			  $this->print_grn_pdf();
+		  }
+		  
+		   $return['status_code'] = $grn_id;
+		  return $return;
+	   
+   }
+   function print_grn_excel(){
+	   $this->load->library('excel');
+	 // var_dump("masuk".$_REQUEST['grn_id']);die();
+	  $grn_id = isset($_REQUEST['grn_id']) ? $_REQUEST['grn_id'] : false;
+      $format = isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xlsx';
+	  
+	  //$grn_id = isset($_GET['grn_id']) ? $_GET['grn_id'] : false;
+      //$format = isset($_GET['format']) ? $_GET['format'] : 'xlsx';
+      $user_id = $this->session->userdata('user_id');
+	 //var_dump("masuk lagi ".$grn_id);die();
+	   $excel = new PHPExcel();
+       // Settingan awal fil excel
+       $excel->getProperties()->setCreator('My Notes Code')
+                 ->setLastModifiedBy('My Notes Code')
+                 ->setTitle("Bukti Barang Masuk")
+                 ->setSubject("Barang Masuk")
+                 ->setDescription("Surat BuktiBarang Masuk")
+                 ->setKeywords("Barang Masuk");
+				 
+          // Buat sebuah variabel untuk menampung pengaturan style dari header tabel
+		$style_col_header = array(
+		                   'font' => array('bold' => true), // Set font nya jadi bold
+                           'alignment' => array(
+                           'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT, // Set text jadi ditengah secara horizontal (center)
+                           'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+                         )
+		   
+        );
+		
+		$style_row_header = array(
+		                   'alignment' => array(
+                           'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT, // Set text jadi ditengah secara horizontal (center)
+                           'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+                         )
+		   
+        );
+        $style_col = array(
+                        'font' => array('bold' => true), // Set font nya jadi bold
+                        'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER, // Set text jadi ditengah secara horizontal (center)
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+                       ),
+                      'borders' => array(
+                      'top' => array('style'  => PHPExcel_Style_Border::BORDER_THIN), // Set border top dengan garis tipis
+                      'right' => array('style'  => PHPExcel_Style_Border::BORDER_THIN),  // Set border right dengan garis tipis
+                      'bottom' => array('style'  => PHPExcel_Style_Border::BORDER_THIN), // Set border bottom dengan garis tipis
+                      'left' => array('style'  => PHPExcel_Style_Border::BORDER_THIN) // Set border left dengan garis tipis
+                      )
+          );
+		  
+         // Buat sebuah variabel untuk menampung pengaturan style dari isi tabel
+         $style_row = array(
+                        'alignment' => array(
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+                        ),
+                        'borders' => array(
+                        'top' => array('style'  => PHPExcel_Style_Border::BORDER_THIN), // Set border top dengan garis tipis
+                        'right' => array('style'  => PHPExcel_Style_Border::BORDER_THIN),  // Set border right dengan garis tipis
+                        'bottom' => array('style'  => PHPExcel_Style_Border::BORDER_THIN), // Set border bottom dengan garis tipis
+                        'left' => array('style'  => PHPExcel_Style_Border::BORDER_THIN) // Set border left dengan garis tipis
+        ));
+		
+		 $objDrawing = new PHPExcel_Worksheet_Drawing();
+         $objDrawing->setName('test_img');
+         $objDrawing->setDescription('test_img');
+         $objDrawing->setPath('./assets/template/webmin/images/logo-popstar.png');
+         $objDrawing->setCoordinates('A1');                      
+         //setOffsetX works properly
+         $objDrawing->setOffsetX(5); 
+         $objDrawing->setOffsetY(5);                
+         //set width, height
+         $objDrawing->setWidth(100); 
+         $objDrawing->setHeight(35); 
+         $objDrawing->setWorksheet($excel->getActiveSheet());
+		
+		
+		$excel->setActiveSheetIndex(0)->setCellValue('A1', "BUKTI BARANG MASUK"); // Set kolom A1 dengan tulisan "DATA SISWA"
+		$excel->getActiveSheet()->mergeCells('A1:L1'); // Set Merge Cell pada kolom A1 sampai L1
+        $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE); // Set bold kolom A1
+        $excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(14); // Set font size 15 untuk kolom A1
+        $excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER); // Set text center untuk kolom A1
+		
+		 $sp = "dbo.sp_rpt_slip_penerimaan_barang_masuk_warehouse";
+
+         // $this->rpc_service->setSP(array("sp"=>$sp,"mode"=>"2","debug"=>"1"));
+	      $this->rpc_service->setSP("dbo.sp_rpt_slip_penerimaan_barang_masuk_warehouse");
+	      $this->rpc_service->addField('grn_id',$grn_id);
+          $this->rpc_service->addField('format',$format);
+          $this->rpc_service->addField('temp_folder',sys_get_temp_dir());
+          $this->rpc_service->addField('sort','item.item_code asc');  
+	      
+          $result = $this->rpc_service->resultJSON_pop();
+          // $result = $this->rpc_service->resultPrint_sipop();
+		
+		 if(isset($result)){
+	      if(isset($result['valid'])){
+	         if($result['valid']){
+				 if(isset($result['data'])){
+				//var_dump($result2);
+				 $data_warehouse = json_decode($result['data'],TRUE);
+				 $grn_id=$data_warehouse['xrow_h']['0']['grn_id'];
+				 $grn_no=$data_warehouse['xrow_h']['0']['grn_no'];
+				 $grn_date=$data_warehouse['xrow_h']['0']['grn_date'];
+				 $partner_name=$data_warehouse['xrow_h']['0']['partner_name'];
+				 $custom_type_name=isset($data_warehouse['xrow_h']['0']['custom_type_name'])? $data_warehouse['xrow_h']['0']['custom_type_name']:'';
+				 $car=isset($data_warehouse['xrow_h']['0']['car']) ? $data_warehouse['xrow_h']['0']['car']:'';
+				 $bc_no=isset($data_warehouse['xrow_h']['0']['bc_no']) ? $data_warehouse['xrow_h']['0']['bc_no']:'';
+				 $bc_date=isset($data_warehouse['xrow_h']['0']['bc_date']) ? $data_warehouse['xrow_h']['0']['bc_date']:'';
+				 $report_time=date('_Ymd_His'); 
+				 
+				 // Buat header tabel nya pada baris ke 3
+                 $excel->setActiveSheetIndex(0)->setCellValue('A3', "NO"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('A3:B3');
+		         // Apply style header yang telah kita buat tadi ke masing-masing kolom header
+                 $excel->getActiveSheet()->getStyle('A3:B3')->applyFromArray($style_col_header);
+		         $excel->setActiveSheetIndex(0)->setCellValue('C3', $grn_no);
+		         $excel->getActiveSheet()->getStyle('C3')->applyFromArray($style_row_header);
+				 
+				 $excel->setActiveSheetIndex(0)->setCellValue('G3', "JENIS DOKUMEN"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('G3:J3');
+		         // Apply style header yang telah kita buat tadi ke masing-masing kolom header
+                 $excel->getActiveSheet()->getStyle('G3:J3')->applyFromArray($style_col_header);
+		         $excel->setActiveSheetIndex(0)->setCellValue('K3', $custom_type_name);
+		         $excel->getActiveSheet()->getStyle('K3')->applyFromArray($style_row_header);
+				 
+				 //=== baris untuk Date dan No aju ===========
+				 $excel->setActiveSheetIndex(0)->setCellValue('A4', "DATE"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('A4:B4');
+		         $excel->getActiveSheet()->getStyle('A4:B4')->applyFromArray($style_col_header);
+		         $excel->setActiveSheetIndex(0)->setCellValue('C4', $grn_date);
+		         $excel->getActiveSheet()->getStyle('C4')->applyFromArray($style_row_header);
+				 
+				 $excel->setActiveSheetIndex(0)->setCellValue('G4', "NO AJU"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('G4:J4');
+		         $excel->getActiveSheet()->getStyle('G4:J4')->applyFromArray($style_col_header);
+		         $excel->setActiveSheetIndex(0)->setCellValue('K4', $car);
+		         $excel->getActiveSheet()->getStyle('K4')->applyFromArray($style_row_header);
+				 
+				 //=== baris untuk Pemasok dan No Pendaftaran ===========
+				 $excel->setActiveSheetIndex(0)->setCellValue('A5', "PEMASOK"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('A5:B5');
+		         $excel->getActiveSheet()->getStyle('A5:B5')->applyFromArray($style_col_header);
+		         $excel->setActiveSheetIndex(0)->setCellValue('C5', $partner_name);
+		         $excel->getActiveSheet()->getStyle('C5')->applyFromArray($style_row_header);
+				 
+				 $excel->setActiveSheetIndex(0)->setCellValue('G5', "NO PENDAFTARAN"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('G5:J5');
+		         $excel->getActiveSheet()->getStyle('G5:J5')->applyFromArray($style_col_header);
+		         $excel->setActiveSheetIndex(0)->setCellValue('K5', $bc_no);
+		         $excel->getActiveSheet()->getStyle('K5')->applyFromArray($style_row_header);
+				 
+				 //=== baris untuk tgl Pendaftaran ===========
+				 $excel->setActiveSheetIndex(0)->setCellValue('G6', "TANGGAL PENDAFTARAN"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('G6:J6');
+		         $excel->getActiveSheet()->getStyle('G6:J6')->applyFromArray($style_col_header);
+		         $excel->setActiveSheetIndex(0)->setCellValue('K6', $bc_date);
+		         $excel->getActiveSheet()->getStyle('K6')->applyFromArray($style_row_header);
+				 
+				 // Buat header tabel nya pada baris ke 3
+                  $excel->setActiveSheetIndex(0)->setCellValue('A8', "NO"); // Set kolom A3 dengan tulisan "NO"
+                  $excel->setActiveSheetIndex(0)->setCellValue('B8', "KODE BARANG"); // Set kolom B3 dengan tulisan "KODE BARANG"
+                  $excel->setActiveSheetIndex(0)->setCellValue('D8', "NAMA ITEM"); // Set kolom C3 dengan tulisan "NAMA ITEM"
+				  $excel->setActiveSheetIndex(0)->setCellValue('H8', "QTY"); // Set kolom C3 dengan tulisan "QTY"
+				  $excel->setActiveSheetIndex(0)->setCellValue('J8', "SAT"); // Set kolom C3 dengan tulisan "SAT"
+				  $excel->setActiveSheetIndex(0)->setCellValue('L8', "KETERANGAN"); // Set kolom C3 dengan tulisan "KETERANGAN"
+				  
+				   // Apply style header yang telah kita buat tadi ke masing-masing kolom header
+                   $excel->getActiveSheet()->getStyle('A8')->applyFromArray($style_col);
+				   
+				   $excel->getActiveSheet()->mergeCells('B8:C8');
+                   $excel->getActiveSheet()->getStyle('B8:C8')->applyFromArray($style_col);
+				   
+				   $excel->getActiveSheet()->mergeCells('D8:G8');
+                   $excel->getActiveSheet()->getStyle('D8:G8')->applyFromArray($style_col);
+				   
+				   $excel->getActiveSheet()->mergeCells('H8:I8');
+                   $excel->getActiveSheet()->getStyle('H8:I8')->applyFromArray($style_col);
+				   
+				   $excel->getActiveSheet()->mergeCells('J8:K8');
+                   $excel->getActiveSheet()->getStyle('J8:K8')->applyFromArray($style_col);
+				   
+				   $excel->getActiveSheet()->getStyle('L8')->applyFromArray($style_col);
+				   $excel->getActiveSheet()->getColumnDimension('L')->setWidth(50);
+				   $excel->getActiveSheet()->getColumnDimension('J')->setWidth(5);
+				   $excel->getActiveSheet()->getColumnDimension('K')->setWidth(5);
+				   
+				   $i=1;	
+				   $numrow = 9; // Set baris pertama untuk isi tabel adalah baris ke 4
+				   foreach($data_warehouse['xrow_d']as $k=>$v){
+					 $excel->setActiveSheetIndex(0)->setCellValue('A'.$numrow, $i);
+		             $excel->getActiveSheet()->getStyle('A'.$numrow)->applyFromArray($style_row);
+					 
+					 $excel->setActiveSheetIndex(0)->setCellValue('B'.$numrow, $v['r1']);
+					 $excel->getActiveSheet()->mergeCells('B'.$numrow.':C'.$numrow);
+		             $excel->getActiveSheet()->getStyle('B'.$numrow.':C'.$numrow)->applyFromArray($style_row);
+					 
+					 $excel->setActiveSheetIndex(0)->setCellValue('D'.$numrow, $v['r2']);
+					 $excel->getActiveSheet()->mergeCells('D'.$numrow.':G'.$numrow);
+		             $excel->getActiveSheet()->getStyle('D'.$numrow.':G'.$numrow)->applyFromArray($style_row);
+					 
+					 $excel->setActiveSheetIndex(0)->setCellValue('H'.$numrow, number_format($v['r3']));
+					 $excel->getActiveSheet()->mergeCells('H'.$numrow.':I'.$numrow);
+		             $excel->getActiveSheet()->getStyle('H'.$numrow.':I'.$numrow)->applyFromArray($style_row);
+					 
+					 $excel->setActiveSheetIndex(0)->setCellValue('J'.$numrow, $v['r4']);
+					 $excel->getActiveSheet()->mergeCells('J'.$numrow.':K'.$numrow);
+		             $excel->getActiveSheet()->getStyle('J'.$numrow.':K'.$numrow)->applyFromArray($style_row);
+					 
+					 $excel->setActiveSheetIndex(0)->setCellValue('L'.$numrow, $v['r5']);
+					 $excel->getActiveSheet()->getStyle('L'.$numrow)->applyFromArray($style_row);
+					 
+					$i=$i+1;
+					$numrow++; // Tambah 1 setiap kali looping
+				   }
+				   
+				   $numrow2=$numrow+1;
+				    //=== baris untuk Tanda tangan ===========
+				 $excel->setActiveSheetIndex(0)->setCellValue('A'.$numrow2, "DIBUAT"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('A'.$numrow2.':D'.$numrow2);
+		         $excel->getActiveSheet()->getStyle('A'.$numrow2.':D'.$numrow2)->applyFromArray($style_col);
+				 
+				 $excel->setActiveSheetIndex(0)->setCellValue('E'.$numrow2, "DIKETAHUI"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('E'.$numrow2.':H'.$numrow2);
+		         $excel->getActiveSheet()->getStyle('E'.$numrow2.':H'.$numrow2)->applyFromArray($style_col);
+				 
+				 $excel->setActiveSheetIndex(0)->setCellValue('I'.$numrow2, "DISETUJUI"); // Set kolom A3 dengan tulisan "NO"
+		         $excel->getActiveSheet()->mergeCells('I'.$numrow2.':L'.$numrow2);
+		         $excel->getActiveSheet()->getStyle('I'.$numrow2.':L'.$numrow2)->applyFromArray($style_col);
+				 
+				 $numrow3=$numrow2+1;
+				 $excel->getActiveSheet()->getRowDimension($numrow3)->setRowHeight(50);
+				 $excel->getActiveSheet()->mergeCells('A'.$numrow3.':D'.$numrow3);
+		         $excel->getActiveSheet()->getStyle('A'.$numrow3.':D'.$numrow3)->applyFromArray($style_col);
+				 
+				 $excel->getActiveSheet()->mergeCells('E'.$numrow3.':H'.$numrow3);
+		         $excel->getActiveSheet()->getStyle('E'.$numrow3.':H'.$numrow3)->applyFromArray($style_col);
+				 
+				  $excel->getActiveSheet()->mergeCells('I'.$numrow3.':L'.$numrow3);
+		         $excel->getActiveSheet()->getStyle('I'.$numrow3.':L'.$numrow3)->applyFromArray($style_col);
+		        // $excel->setActiveSheetIndex(0)->setCellValue('K6', $bc_date);
+		         //$excel->getActiveSheet()->getStyle('K6')->applyFromArray($style_row_header);
+
+				 
+				 } 
+			 }else{
+				$return['status_code'] = $result2['no']; 
+				
+	            $return['message'] = $result2['des'];
+			 }
+		  }
+		 }
+		
+			 
+         
+		
+		 // Set height semua kolom menjadi auto (mengikuti height isi dari kolommnya, jadi otomatis)
+         $excel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
+         // Set orientasi kertas jadi LANDSCAPE
+         $excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+         // Set judul file excel nya
+         $excel->getActiveSheet(0)->setTitle("Bukti_barang_masuk");
+         $excel->setActiveSheetIndex(0);
+		 $nama_file='Bukti_barang_masuk'.$report_time.'.xlsx';
+		 // var_dump($nama_file);die();
+         // Proses file excel
+         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+         header('Content-Disposition: attachment; filename="Bukti_barang_masuk'.$report_time.'.xlsx"'); // Set nama file excel nya
+		 header('Cache-Control: max-age=0');
+		 
+		 header("Content-Type: application/force-download");
+		 header("Content-Type: application/download");
+		
+		 
+         $write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+		// $asa='D:\\print/'.$nama_file;
+		// var_dump($asa);die();
+		// $writer->save(storage_path('app/'. $filename));
+		 $write->save('php://output');
+		 //$excelOutput = ob_get_clean();
+		// var_dump($write);die();
+		 //$tempfile=sys_get_temp_dir().'\\';
+		// $tempfile=tempnam();
+		 //$write->save($tempfile);
+		// header("Content-Type: application/download");
+		// header( 'Content-Length: '.filesize($file ) );
+		// header('Content-Disposition: attachment; filename=\"'.$nama_file.'\"' ); 
+		// header( "Content-Transfer-Encoding: binary" );
+		 
+       // 
+          //return $excelOutput;
+
+   }
+   
+   function print_excel_incoming_detail(){
+	   $this->load->library('excel');
+	 // var_dump("masuk".$_REQUEST['grn_id']);die();
+	  $grn_id = isset($_REQUEST['grn_id']) ? $_REQUEST['grn_id'] : false;
+      $format = isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xlsx';
+	  
+	  //$grn_id = isset($_GET['grn_id']) ? $_GET['grn_id'] : false;
+      //$format = isset($_GET['format']) ? $_GET['format'] : 'xlsx';
+      $user_id = $this->session->userdata('user_id');
+	 //var_dump("masuk lagi ".$grn_id);die();
+	   $excel = new PHPExcel();
+       // Settingan awal fil excel
+       $excel->getProperties()->setCreator('My Notes Code')
+                 ->setLastModifiedBy('My Notes Code')
+                 ->setTitle("Bukti Barang Masuk")
+                 ->setSubject("Barang Masuk")
+                 ->setDescription("Surat BuktiBarang Masuk")
+                 ->setKeywords("Barang Masuk");
+				 
+          // Buat sebuah variabel untuk menampung pengaturan style dari header tabel
+		$style_col_header = array(
+		                   'font' => array('bold' => true), // Set font nya jadi bold
+                           'alignment' => array(
+                           'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT, // Set text jadi ditengah secara horizontal (center)
+                           'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+                         )
+		   
+        );
+		
+		$style_row_header = array(
+		                   'alignment' => array(
+                           'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT, // Set text jadi ditengah secara horizontal (center)
+                           'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+                         )
+		   
+        );
+        $style_col = array(
+                        'font' => array('bold' => true), // Set font nya jadi bold
+                        'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER, // Set text jadi ditengah secara horizontal (center)
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+                       ),
+                      'borders' => array(
+                      'top' => array('style'  => PHPExcel_Style_Border::BORDER_THIN), // Set border top dengan garis tipis
+                      'right' => array('style'  => PHPExcel_Style_Border::BORDER_THIN),  // Set border right dengan garis tipis
+                      'bottom' => array('style'  => PHPExcel_Style_Border::BORDER_THIN), // Set border bottom dengan garis tipis
+                      'left' => array('style'  => PHPExcel_Style_Border::BORDER_THIN) // Set border left dengan garis tipis
+                      )
+          );
+		  
+         // Buat sebuah variabel untuk menampung pengaturan style dari isi tabel
+         $style_row = array(
+                        'alignment' => array(
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+                        ),
+                        'borders' => array(
+                        'top' => array('style'  => PHPExcel_Style_Border::BORDER_THIN), // Set border top dengan garis tipis
+                        'right' => array('style'  => PHPExcel_Style_Border::BORDER_THIN),  // Set border right dengan garis tipis
+                        'bottom' => array('style'  => PHPExcel_Style_Border::BORDER_THIN), // Set border bottom dengan garis tipis
+                        'left' => array('style'  => PHPExcel_Style_Border::BORDER_THIN) // Set border left dengan garis tipis
+        ));
+		
+		 $objDrawing = new PHPExcel_Worksheet_Drawing();
+         $objDrawing->setName('test_img');
+         $objDrawing->setDescription('test_img');
+         $objDrawing->setPath('./assets/template/webmin/images/logo-popstar.png');
+         $objDrawing->setCoordinates('A1');                      
+         //setOffsetX works properly
+         $objDrawing->setOffsetX(5); 
+         $objDrawing->setOffsetY(5);                
+         //set width, height
+         $objDrawing->setWidth(100); 
+         $objDrawing->setHeight(35); 
+         $objDrawing->setWorksheet($excel->getActiveSheet());
+		
+		
+		$excel->setActiveSheetIndex(0)->setCellValue('A1', "BUKTI BARANG MASUK"); // Set kolom A1 dengan tulisan "DATA SISWA"
+		$excel->getActiveSheet()->mergeCells('A1:L1'); // Set Merge Cell pada kolom A1 sampai L1
+        $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE); // Set bold kolom A1
+        $excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(14); // Set font size 15 untuk kolom A1
+        $excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER); // Set text center untuk kolom A1
+		
+		 // Set height semua kolom menjadi auto (mengikuti height isi dari kolommnya, jadi otomatis)
+         $excel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
+         // Set orientasi kertas jadi LANDSCAPE
+         $excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+         // Set judul file excel nya
+         $excel->getActiveSheet(0)->setTitle("Asset_incoming_detail");
+         $excel->setActiveSheetIndex(0);
+		 $nama_file='asset_incoming_detail'.$report_time.'.xlsx';
+		 
+         // Proses file excel
+         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+         header('Content-Disposition: attachment; filename="asset_incoming_detail_'.$report_time.'.xlsx"'); // Set nama file excel nya
+		 header('Cache-Control: max-age=0');
+		 
+		 header("Content-Type: application/force-download");
+		 header("Content-Type: application/download");
+		
+		 
+         $write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+		 $write->save('php://output');
+		
+          //return $excelOutput;
+		
+   }
+   	
+	function print_grn_pdf(){
+	   $this->load->model('main');
+	   $this->load->library('Pdf');
+	   
+	   $grn_id = isset($_GET['grn_id']) ? $_GET['grn_id'] : false;
+       $format = isset($_GET['format']) ? $_GET['format'] : 'xlsx';
+       $user_id = $this->session->userdata('user_id');
+	  
+	    $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+	   // set document information
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('https://popstar.com');
+        $pdf->SetTitle('BUKTI BARANG MASUK');
+        $pdf->SetSubject('Report generated using Codeigniter and TCPDF');
+        $pdf->SetKeywords('TCPDF, PDF, MySQL, Codeigniter');
+
+        // set default header data
+        $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
+
+        // set header and footer fonts
+        $pdf->setHeaderFont(array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+        // set default monospaced font
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+        // set margins
+       // $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+          $pdf->SetMargins('3', '3', '1','5');
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        // set image scale factor
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        // set font
+        // $pdf->SetFont('times', 'BI', '12');
+        $pdf->SetFont('times', '', '12');
+        // ---------------------------------------------------------
+
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+		
+		 $sp = "dbo.sp_rpt_slip_penerimaan_barang_masuk_warehouse";
+
+         // $this->rpc_service->setSP(array("sp"=>$sp,"mode"=>"2","debug"=>"1"));
+	      $this->rpc_service->setSP("dbo.sp_rpt_slip_penerimaan_barang_masuk_warehouse");
+	      $this->rpc_service->addField('grn_id',$grn_id);
+          $this->rpc_service->addField('format',$format);
+          $this->rpc_service->addField('temp_folder',sys_get_temp_dir());
+          $this->rpc_service->addField('sort','item.item_code asc');  
+	      
+          $result = $this->rpc_service->resultJSON_pop();
+          // $result = $this->rpc_service->resultPrint_sipop();
+		
+		 if(isset($result)){
+	      if(isset($result['valid'])){
+	         if($result['valid']){
+          if(isset($result['data'])){
+			  
+				 $data_warehouse = json_decode($result['data'],TRUE);
+				 $grn_id=$data_warehouse['xrow_h']['0']['grn_id'];
+				 $grn_no=$data_warehouse['xrow_h']['0']['grn_no'];
+				 $grn_date=$data_warehouse['xrow_h']['0']['grn_date'];
+				 $partner_name=$data_warehouse['xrow_h']['0']['partner_name'];
+				 $custom_type_name=isset($data_warehouse['xrow_h']['0']['custom_type_name'])? $data_warehouse['xrow_h']['0']['custom_type_name']:'';
+				 $car=isset($data_warehouse['xrow_h']['0']['car']) ? $data_warehouse['xrow_h']['0']['car']:'';
+				 $bc_no=isset($data_warehouse['xrow_h']['0']['bc_no']) ? $data_warehouse['xrow_h']['0']['bc_no']:'';
+				 $bc_date=isset($data_warehouse['xrow_h']['0']['bc_date']) ? $data_warehouse['xrow_h']['0']['bc_date']:'';
+				 $report_time=date('_Ymd_His'); 
+           // add a page
+           $pdf->AddPage('P', 'A4');
+		
+		    $image_file = "<img src=\"./assets/template/webmin/images/logo-popstar.png\" width=\"140\" height=\"30\"/>";
+            $pdf->SetY(5);
+            $isi_header="<table align=\"left\" style=\"margin-left:auto;vertical-align:'center'\" border=\"0\">
+              <tr>
+                 <td width=\"30%\">".$image_file."</td>
+		   	  <td align=\"left\" valign=\"center\"><font size=\"14px\"><strong>BUKTI BARANG MASUK</strong></font></td>
+              </tr>
+		      </table>";
+            $pdf->writeHTML($isi_header, true, false, false, false, '');
+		   	
+           $style2 = array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0));
+           // $pdf->Line(5, 13, 200, 13, $style2);
+		   
+		   
+		   
+           // QRCODE,Q : QR-CODE Better error correction
+           $style = array(
+            'border' => 0,
+            'vpadding' => 'auto',
+            'hpadding' => 'auto',
+            'fgcolor' => array(0, 0, 0),
+            'bgcolor' => false, //array(255,255,255)
+            'module_width' => 1, // width of a single module in points
+            'module_height' => 1 // height of a single module in points
+           );
+		
+		    $data_one="<table align='left'>
+		    <tr>
+		      <td width=\"20%\"><font size=\"10px\"><strong>NO</strong></font></td>
+		      <td width=\"30%\"><font size=\"10px\">".$grn_no."</font></td>
+		      <td width=\"20%\"><font size=\"10px\"><strong>JENIS DOKUMEN</strong></font></td>
+		      <td width=\"30%\"><font size=\"10px\">".$custom_type_name."</font></td>
+		    </tr>
+		    <tr>
+		      <td width=\"20%\"><font size=\"10px\"><strong>DATE</strong></font></td>
+		      <td width=\"30%\"><font size=\"10px\">".$grn_date."</font></td>
+		      <td width=\"20%\"><font size=\"10px\"><strong>NO AJU</strong></font></td>
+		      <td width=\"30%\"><font size=\"10px\">".$car."</font></td>
+		    </tr>
+		    <tr>
+		      <td width=\"20%\"><font size=\"10px\"><strong>PEMASOK</strong></font></td>
+		      <td width=\"30%\"><font size=\"10px\">".$partner_name."</font></td>
+		      <td width=\"20%\"><font size=\"10px\"><strong>NO PENDAFTARAN</strong></font></td>
+		      <td width=\"30%\"><font size=\"10px\">".$bc_no."</font></td>
+		    </tr>
+			 <tr>
+		      <td width=\"20%\"></td>
+		      <td width=\"30%\"></td>
+		      <td width=\"20%\"><font size=\"10px\"><strong>TANGGAL PENDAFTARAN</strong></font></td>
+		      <td width=\"30%\"><font size=\"10px\">".$bc_date."</font></td>
+		    </tr>
+		    </table>";
+		    $pdf->writeHTML($data_one, true, false, false, false, '');
+			  //<td width=\"5%\"><font size=\"10px\"><strong>NO</strong></font></td>
+		     // <td width=\"15%\"><font size=\"10px\"><strong>KODE BARANG</strong></font></td>
+		     //<td width=\"25%\"><font size=\"10px\"><strong>NAMA ITEM</strong></font></td>
+		      //<td width=\"15%\"><font size=\"10px\"><strong>QTY</strong></font></td>
+			 // <td width=\"15%\"><font size=\"10px\"><strong>SAT</strong></font></td>
+			  //<td width=\"25%\"><font size=\"10px\"><strong>KETERANGAN</strong></font></td>
+			  
+			 //$pdf->SetFillColor(0, 180, 255); //biru muda
+			 //$pdf->SetFillColor(224, 235, 255);
+			 $pdf->SetFillColor(255, 255, 255);
+            // $pdf->SetTextColor(0); 
+			 // $pdf->SetDrawColor(0, 0, 255); //biru
+             $pdf->SetLineWidth(0.1);
+             //$pdf->SetFont('', 'B'); //BOLD (cetak tebal)
+			 $pdf->SetFont('helvetica', '', '10');
+          
+			  $pdf->Ln(); //newline → enter
+			  //$html='<table cellpadding="2" cellspacing="1"  style="font-family: sans-serif;border:solid 1px #555;">
+			$html='<table cellspacing="1" width="100%" bgcolor="#666666" cellpadding="2" style="border:1px solid #555;">
+			             <tr bgcolor="#ffffff">
+                            <th width="5%" align="center" style="border:1px solid #555;"><font size="10px">NO</font></th>
+                            <th width="20%" align="center" style="border:1px solid #555;"><font size="10px">KODE BARANG</font></th>
+                            <th width="25%" align="center" style="border:1px solid #555;"><font size="10px">NAMA ITEM</font></th>
+                            <th width="10%" align="center" style="border:1px solid #555;"><font size="10px">QTY</font></th>
+							<th width="10%" align="center" style="border:1px solid #555;"><font size="10px">SAT</font></th>
+							<th width="20%"align="center" style="border:1px solid #555;"><font size="10px">KETERANGAN</font></th>
+                        </tr>';
+			  $i=1;	
+			 foreach($data_warehouse['xrow_d']as $k=>$v){
+				 
+                    $html.='<tr bgcolor="#ffffff">
+                            <td align="center" style="border:0.5px solid #555;"><font size="8px">'.$i.'</font></td>
+                            <td style="border:0.5px solid #555;"><font size="8px">'.$v['r1'].'</font></td>
+                            <td style="border:1px solid #555;"><font size="8px">'.$v['r2'].'</font></td>
+                            <td align="center" style="border:1px solid #555;"><font size="8px">'.number_format($v['r3']).'</font></td>
+							<td style="border:1px solid #555;" align="center"><font size="8px">'.$v['r4'].'</font></td>
+							<td style="border:1px solid #555;"><font size="8px">'.$v['r5'].'</font></td>
+                        </tr>';
+						$i++;
+			 }
+			  $html.='</table>';
+			  $pdf->writeHTML($html, true, false, false, false, '');
+			  
+			   //$pdf->Ln(); //newline → enter
+			   $html2='<table bgcolor="#666666"  width="100%" cellspacing="1" cellpadding="2" style="border:1px solid #555;font-family: sans-serif;">
+			           <tr bgcolor="#ffffff">
+                            <th width="30%" align="center" style="border:1px solid #555;"><font size="10px">DIBUAT</font></th>
+                            <th width="30%" align="center" style="border:1px solid #555;"><font size="10px">DIKETAHUI</font></th>
+                            <th width="30%" align="center" style="border:1px solid #555;"><font size="10px">DISETUJUI</font></th>
+                       </tr>
+					    <tr bgcolor="#ffffff">
+                            <td width="30%" align="center" height="80px" style="border:1px solid #555;"></td>
+                            <td width="30%" align="center" height="80px" style="border:1px solid #555;"></td>
+                            <td width="30%" align="center" height="80px" style="border:1px solid #555;"></td>
+                       </tr>
+					   </table>';
+			  $pdf->writeHTML($html2, true, false, false, false, '');
+			//$data_two="<table align='left' width=\"100%\"border=\"1\" cellspacing=\"0\" cellpadding=\"3\">
+		    //<tr>
+		    //  <td width=\"5%\" align=\"center\" ><font size=\"10px\"><strong>NO</strong></font></td>
+		    //  <td align=\"center\"><font size=\"10px\"><strong>KODE BARANG</strong></font></td>
+		    //  <td align=\"center\"><font size=\"10px\"><strong>NAMA ITEM</strong></font></td>
+		    //  <td align=\"center\"><font size=\"10px\"><strong>QTY</strong></font></td>
+			//  <td align=\"center\"><font size=\"10px\"><strong>SAT</strong></font></td>
+			//  <td align=\"center\" width=\"25%\"><font size=\"10px\"><strong>KETERANGAN</strong></font></td>
+		    //</tr>
+			// </table>";
+		    //$pdf->writeHTML($data_two, true, false, false, false, '');
+		   // $pdf->SetFont('helvetica', 'B', 14);
+            // $pdf->write2DBarcode($nomor_po, 'QRCODE,Q', 175, 20, 20, 20, $style, '');
+           // $pdf->Cell(200, 0, "BUKTI BARANG MASUK", 0, 1, 'C', 0, '', 1);
+            // $pdf->Line(35, 36, 160, 36, $style2);
+	       // $pdf->SetFont('helvetica', 'I', 10);
+           // $pdf->Ln(2);
+		   // $pdf->Cell(160, 0, "POPSTAR, PT", 0, 1, 'L', 0, '', 1);
+		  // $data = $pdf->loadData('dbo.view_grn_rpt_warehouse_ecc',array('grn_id=>'.$grn_id));
+		   // $data= $this->main->find_table_pop('dbo.view_grn_rpt_warehouse_ecc',array('grn_id=>'.$grn_id));
+		   //var_dump($data);die();
+		   }
+		  }else{
+			 $return['status_code'] = $result2['no']; 
+			 $return['message'] = $result2['des']; 
+			}
+		  }
+		 }
+		//$time = time();
+		// $sFilePath = md5($time) . '.pdf';
+		$report_time=date('_Ymd_His'); 
+        $sFilePath = 'Bukti_barang_masuk'.$report_time. '.pdf';
+
+        // Clean any content of the output buffer
+        //ob_end_clean(); //jika di aktifkan maka tidak bisa di lihat variabel contohnya untuk var dum
+
+        //Close and output PDF document
+        // $pdf->Output($sFilePath); 
+        $pdf->Output($sFilePath, 'D');
+	
+	}
+   function print_good_receive_asli()
+   {
+      $grn_id = isset($_POST['grn_id']) ? $_POST['grn_id'] : false;
+      $format = isset($_POST['format']) ? $_POST['format'] : 'xlsx';
+      $user_id = $this->session->userdata('user_id');
+      
+      $sp = "dbo.sp_rpt_slip_penerimaan_barang_masuk";
+
+      $this->rpc_service_portal->setSP(array("sp"=>$sp,"mode"=>"2","debug"=>"1"));
+      $this->rpc_service_portal->addField('grn_id',$grn_id);
+      $this->rpc_service_portal->addField('format',$format);
+      $this->rpc_service_portal->addField('temp_folder',sys_get_temp_dir());
+      $this->rpc_service_portal->addField('sort','item.item_code asc');  
+      
+      $result = $this->rpc_service_portal->resultPrint2();
+      echo json_encode($result);
+   }
+   
+  
+    function print_good_receive_warehouse_OK()
+   {
+    //  $grn_id = isset($_POST['grn_id']) ? $_POST['grn_id'] : false;
+    //  $format = isset($_POST['format']) ? $_POST['format'] : 'xlsx';
+	   $grn_id = isset($_GET['grn_id']) ? $_GET['grn_id'] : false;
+      $format = isset($_GET['format']) ? $_GET['format'] : 'xlsx';
+      $user_id = $this->session->userdata('user_id');
+	  
+	//  var_dump($grn_id);
+	    $temp=sys_get_temp_dir().'\\';
+	    $host_libreoffice='127.0.0.1'; // setting host service libreoffice
+        $port_libreoffice='8080';      // setting port service libreoffice
+	    $TEMPLATE_EXT='fods';
+	    $NEWLINE='<text:line-break/>';
+	    $unoconv='"C:/Program Files/LibreOffice 5/program/python.exe" "C:\Program Files\LibreOffice 5\program\unoconv" '.'--connection "socket,host='.$host_libreoffice.',port='.                 $port_libreoffice.',tcpNoDelay=1;urp;StarOffice.ComponentContext" ';
+      
+      $sp = "dbo.sp_rpt_slip_penerimaan_barang_masuk_warehouse";
+
+     // $this->rpc_service->setSP(array("sp"=>$sp,"mode"=>"2","debug"=>"1"));
+	  $this->rpc_service->setSP("dbo.sp_rpt_slip_penerimaan_barang_masuk_warehouse");
+	  $this->rpc_service->addField('grn_id',$grn_id);
+      $this->rpc_service->addField('format',$format);
+      $this->rpc_service->addField('temp_folder',sys_get_temp_dir());
+      $this->rpc_service->addField('sort','item.item_code asc');  
+	  
+      $result = $this->rpc_service->resultJSON_pop();
+     // $result = $this->rpc_service->resultPrint_sipop();
+	 
+	 if(isset($result)){
+	   if(isset($result['valid'])){
+	      if($result['valid']){
+			if(isset($result['data'])){
+				//var_dump($result2);
+				 $data_warehouse = json_decode($result['data'],TRUE);
+				 $grn_id=$data_warehouse['xrow_h']['0']['grn_id'];
+				 $grn_no=$data_warehouse['xrow_h']['0']['grn_no'];
+				 $grn_date=$data_warehouse['xrow_h']['0']['grn_date'];
+				 $partner_name=$data_warehouse['xrow_h']['0']['partner_name'];
+				 $custom_type_name=isset($data_warehouse['xrow_h']['0']['custom_type_name'])? $data_warehouse['xrow_h']['0']['custom_type_name']:'';
+				 $car=isset($data_warehouse['xrow_h']['0']['car']) ? $data_warehouse['xrow_h']['0']['car']:'';
+				 $bc_no=isset($data_warehouse['xrow_h']['0']['bc_no']) ? $data_warehouse['xrow_h']['0']['bc_no']:'';
+				 $bc_date=isset($data_warehouse['xrow_h']['0']['bc_date']) ? $data_warehouse['xrow_h']['0']['bc_date']:'';
+				 $report_time=date('_Ymd_His');  
+				 
+				 if ($format =='xlsx'){
+					 $template='C:/tmp_sipop/warehouse/good_receive/excel/Bukti_barang.fods';
+		             $templateData='C:/tmp_sipop/warehouse/good_receive/excel/Bukti_barang_data.fods';
+		  	         $tmp_ext='fods';
+			         $EXTENSION='xlsx';
+			         $CONTENT_TYPE='application/msexcel';
+			         $CONVERT_TO='xlsx';
+			         $report_name='Bukti_Barang_Masuk';
+				 }else{
+					 $template='C:/tmp_sipop/warehouse/good_receive/pdf/Bukti_barang.fodt';
+		             $templateData='C:/tmp_sipop/warehouse/good_receive/pdf/Bukti_barang_data.fodt';
+					 $tmp_ext='fodt';
+			         $EXTENSION='pdf';
+			         $CONTENT_TYPE='application/pdf';
+			         $CONVERT_TO='pdf';
+			         $report_name='Bukti_Barang_Masuk';
+				 }
+				 
+				  $template_doc=file_get_contents($template);
+                  $template_data=file_get_contents($templateData);
+                   
+                   $value_detail ='';
+		           $data_detail=array('{no_item}','{kode_barang}','{nama_item}','{qty}','{sat}','{keterangan}');	
+                   $i=1;				   
+				   foreach($data_warehouse['xrow_d']as $k=>$v){
+					    
+					$isi_detail=array($i,$v['r1'],$v['r2'],number_format($v['r3'],4),$v['r4'],$v['r5']);
+			        $value_detail .=str_replace($data_detail,$isi_detail,$template_data);
+					$i=$i+1;
+				   }
+				  // var_dump($value_detail);die();
+				    $data_header=array('{no}','{jns_dokumen}','{date}','{aju}','{pemasok}','{no_pendaftaran}','{tgl_pendaftara}','{data}');
+                    $isi_header=array($grn_no,$custom_type_name,$grn_date,$car,$partner_name,$bc_no,$bc_date,$value_detail);
+                    $value_header=str_replace($data_header,$isi_header,$template_doc);
+					//var_dump($format);die();
+					file_put_contents($temp.$report_name.$report_time.'.'.$tmp_ext,$value_header);
+	                exec(
+                      $unoconv.
+                      '-f '.$CONVERT_TO.' '.
+                      '-o "'.$temp.$report_name.$report_time.'.'.$EXTENSION.'" '.
+                      '"'.$temp.$report_name.$report_time.'.'.$tmp_ext.'"'
+                     );
+		
+                    $file=$temp.$report_name.$report_time.'.'.$EXTENSION;
+		            $namafile=$report_name.$report_time.'.'.$EXTENSION;
+					$file_path=$file.$namafile;
+					//var_dump($file.' Dan ' .$namafile );die();
+	                unlink($temp.$report_name.$report_time.'.'.$tmp_ext);		
+		            
+                    $return['valid'] =true;
+		            $return['xfile'] =$file;
+		            $return['namafile'] =$namafile; 
+				//	$this->download_file($namafile,$file,$EXTENSION);
+				    $extension = strtolower( pathinfo( basename($namafile ), PATHINFO_EXTENSION ) );
+					//var_dump(basename($extension));die();
+				    $mime_types = array(
+					    // adobe
+		                'pdf' => 'application/pdf',
+		                'psd' => 'image/vnd.adobe.photoshop',
+		                'ai' => 'application/postscript',
+		                'eps' => 'application/postscript',
+		                'ps' => 'application/postscript',
+		                
+		                // ms office
+		                'doc' => 'application/msword',
+		                'rtf' => 'application/rtf',
+						
+		                //'xls' => 'application/msexcel',
+		                'xlsx'	=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		                'xls' => 'application/vnd.ms-excel',
+		                'ppt' => 'application/vnd.ms-powerpoint',
+		                	                
+		                // open office
+		                'odt' => 'application/vnd.oasis.opendocument.text',
+		                'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+		                );
+					 
+					 if( !isset( $mime_types[$extension] ))
+		               {
+		                 $mime = 'application/octet-stream';
+		               }
+		               else
+		               {
+		                 $mime = ( is_array( $mime_types[$extension] ) ) ? $mime_types[$extension][0] : $mime_types[$extension];
+		               }
+					//$ctype="application/octet-stream";
+					//var_dump(strstr($_SERVER['HTTP_USER_AGENT'], "MSIE" ));die();
+					
+			if(file_exists($file)) {
+		
+				if( strstr( $_SERVER['HTTP_USER_AGENT'], "MSIE" ) )
+				{
+					header("Content-Type: application/force-download");
+					header( 'Content-Type: "'.$mime.'"' );
+					header("Content-Disposition: attachment; filename=\"".basename($file)."\";" ); 
+					header( 'Expires: 0' );
+					header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+					header( "Content-Transfer-Encoding: binary" );
+					header( 'Pragma: public' );
+					header( "Content-Length: ".filesize($file ) );
+				}
+				else
+				{
+					header( "Pragma: public" );
+					header( "Expires: 0" );
+					header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+					header( "Cache-Control: private", false );
+					header("Content-Type: application/force-download");
+					header( "Content-Type: ".$mime, true, 200 );
+					header("Content-Type: application/download");
+					header( 'Content-Length: '.filesize($file ) );
+					header("Content-Disposition: attachment; filename=\"".basename($file)."\";" ); 
+					header( "Content-Transfer-Encoding: binary" );
+				}
+		
+				flush(); // this doesn't really matter.
+				$fp = fopen($file, "r");
+				while (!feof($fp))
+				{
+					echo fread($fp, 65536);
+					//echo fread($fp, 100);
+					//echo readfile($fp);
+					flush(); // this is essential for large downloads
+				} 
+				fclose($fp); 
+				 unlink($file);	
+				exit("ok");
+		}
+		else {
+			die('The provided file path: ' . $file .' is not valid.');
+		}
+					
+					
+					
+		//		if(!empty($file) && file_exists($file)){ /*check keberadaan file*/
+        //           header("Pragma:public");
+        //           header("Expired:0");
+        //           header("Cache-Control:must-revalidate");
+        //           header("Content-Control:public");
+        //           header("Content-Description: File Transfer");
+        //           header("Content-Type:".$mime);
+        //           header("Content-Disposition:attachment; filename=\"".basename($file)."\"");
+        //           header("Content-Transfer-Encoding:binary");
+        //           header("Content-Length:".filesize($file));
+        //           flush();
+        //           readfile($file);
+        //           exit();
+        //        }else{
+        //           echo "The File does not exist.";
+        //        }
+      					 
+		    }	
+	   }else{
+		  $return['status_code'] = $result2['no'];
+	      $return['message'] = $result2['des'];
+		}
+	   }
+	 }
+	 //var_dump($result);die();
+	 
+    //  echo json_encode($result);
+	// echo json_encode($return);
+   }
+   
+   function download_file($saveAs,$filename,$extension) {
+		///	get the file mime type using the file extension
+		//var_dump($filename);die();	
+		
+		//$saveAs=isset($_POST['saveAs'])?$_POST['saveAs']:'';  
+		//$filename=isset($_POST['filename'])?$_POST['filename']:'';  
+	   // $extension = strtolower( pathinfo( basename( $saveAs ), PATHINFO_EXTENSION ) );
+		set_time_limit(0);
+		 //var_dump($saveAs);
+         //var_dump($extension);
+		// our list of mime types
+		$mime_types = array(
+
+		'txt' => 'text/plain',
+		'htm' => 'text/html',
+		'html' => 'text/html',
+		'php' => 'text/html',
+		'css' => 'text/css',
+		'js' => 'application/javascript',
+		'json' => 'application/json',
+		'xml' => 'application/xml',
+		'swf' => 'application/x-shockwave-flash',
+		'flv' => 'video/x-flv',
+
+		// images
+		'png' => 'image/png',
+		'jpe' => 'image/jpeg',
+		'jpeg' => 'image/jpeg',
+		'jpg' => 'image/jpeg',
+		'gif' => 'image/gif',
+		'bmp' => 'image/bmp',
+		'ico' => 'image/vnd.microsoft.icon',
+		'tiff' => 'image/tiff',
+		'tif' => 'image/tiff',
+		'svg' => 'image/svg+xml',
+		'svgz' => 'image/svg+xml',
+
+		// archives
+		'zip' => 'application/zip',
+		'rar' => 'application/x-rar-compressed',
+		'exe' => 'application/x-msdownload',
+		'msi' => 'application/x-msdownload',
+		'cab' => 'application/vnd.ms-cab-compressed',
+
+		// audio/video
+		'mp3' => 'audio/mpeg',
+		'qt' => 'video/quicktime',
+		'mov' => 'video/quicktime',
+
+		// adobe
+		'pdf' => 'application/pdf',
+		'psd' => 'image/vnd.adobe.photoshop',
+		'ai' => 'application/postscript',
+		'eps' => 'application/postscript',
+		'ps' => 'application/postscript',
+
+		// ms office
+		'doc' => 'application/msword',
+		'rtf' => 'application/rtf',
+		//'xls' => 'application/msexcel',
+		'xlsx'	=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		'xls' => 'application/vnd.ms-excel',
+		'ppt' => 'application/vnd.ms-powerpoint',
+		//'xls'	=>	array('application/vnd.ms-excel', 'application/msexcel', 'application/x-msexcel', 'application/x-ms-excel', 'application/x-excel', 'application/x-dos_ms_excel', 'application/xls', 'application/x-xls', 'application/excel', 'application/download', 'application/vnd.ms-office', 'application/msword','application/octet-stream'),
+         //'xlsx'	=>	array('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/zip', 'application/vnd.ms-excel', 'application/msword', 'application/x-zip','application/octet-stream'),
+
+		// open office
+		'odt' => 'application/vnd.oasis.opendocument.text',
+		'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+		'fods' => 'application/vnd.oasis.opendocument.spreadsheet'
+		);
+
+		// Set a default mime if we can't find it
+	
+		if( !isset( $mime_types[$extension] ) )
+		{
+		$mime = 'application/octet-stream';
+		}
+		else
+		{
+		$mime = ( is_array( $mime_types[$extension] ) ) ? $mime_types[$extension][0] : $mime_types[$extension];
+		}
+		//	var_dump($mime);
+	//	var_dump($filename);
+		//$filename='application/vnd.ms-excel';
+		//$filename='list1_20231031_042426_408792.xls';
+		//	$filename='C:/Users/Ali/AppData/Local/Temp/list1_20231031_042426_408792.xls';
+		
+         //var_dump($mime_types[$extension]);
+		
+	   // var_dump($filename);die();
+		if(file_exists($filename)) {
+		  var_dump('masuk');
+				if( strstr( $_SERVER['HTTP_USER_AGENT'], "MSIE" ) )
+				{
+					header("Content-Type: application/force-download");
+					header( 'Content-Type: "'.$mime.'"' );
+					header("Content-Disposition: attachment; filename=\"".basename($saveAs)."\";" ); 
+					header( 'Expires: 0' );
+					header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+					header( "Content-Transfer-Encoding: binary" );
+					header( 'Pragma: public' );
+					header( "Content-Length: ".filesize( $filename ) );
+				}
+				else
+				{
+					header( "Pragma: public" );
+					header( "Expires: 0" );
+					header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+					header( "Cache-Control: private", false );
+					header("Content-Type: application/force-download");
+					header( "Content-Type: ".$mime, true, 200 );
+					header("Content-Type: application/download");
+					header( 'Content-Length: '.filesize( $filename ) );
+					header("Content-Disposition: attachment; filename=\"".basename($saveAs)."\";" ); 
+					header( "Content-Transfer-Encoding: binary" );
+				}
+		
+				flush(); // this doesn't really matter.
+				$fp = fopen($filename, "r");
+				while (!feof($fp))
+				{
+					echo fread($fp, 65536);
+					flush(); // this is essential for large downloads
+				} 
+				fclose($fp); 
+				 unlink($filename);	
+				exit("ok");
+		}else {
+			die('The provided file path: ' . $filename .' is not valid.');
+		}
+    	
+	}
+}
+
+?>

@@ -1,0 +1,1554 @@
+<script type="text/javascript">
+    var new_shipment = 1;
+    var fabric_shipment_id = 0;
+	//var new_purchase_order = 1;
+	//var purchase_order_id = 0;
+	var purchase_type_id = 1;
+	var purchase_order_this_memo = 0;
+	var purchase_order_lock_data = 0;
+	var purchase_order_open_form = 0;
+	
+	 $(function() {
+		// item_id = $('#autocomplete').val();
+		//	alert(item_id);
+		  $("#autocomplete").autocomplete({
+			 
+			  source: function(request, response) {
+				 $.ajax({
+				       url: baseurl+'loader',
+                       data: {
+						   '<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+						   ,param: 'get_colour_auto'
+						   ,nama : request.term
+                        },
+					   dataType: "json",
+					   method: 'post',
+                       success: function(data) {
+						   console.log(data);
+                           response(data);
+                       }
+                  });
+			  },
+              minLength: 2, // Minimal karakter sebelum autocomplete aktif
+               select: function(event, ui) {
+                   // Aksi yang dilakukan saat item dipilih, misalnya mengisi field lain
+                   console.log(ui.item.label);
+               }			  
+		  });
+	 });
+	 
+	  $('.autocomplete').on("click", "a", function (e) {
+           alert("coba");
+	  });
+	  
+	  // $(this).removeAttr('tabindex');
+	
+	$(".form_tab_<?php echo $methodid ?>").on("click", "a", function (e) {
+        e.preventDefault();
+		setTimeout(function(){ 
+		   // change_form_<?php echo $methodid ?>_detail_purchase_order_warehouse_id();
+		   // change_form_<?php echo $methodid ?>_detail_fabric_shipment_detail_unit_weight('301');
+		   change_form_<?php echo $methodid ?>_detail_fabric_shipment_detail_unit_weight('75');
+			change_form_<?php echo $methodid ?>_detail_fabric_shipment_detail_unit_qty('179');
+		 
+			$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20,true).trigger('resize');
+			
+			$("#table_<?php echo $methodid ?>_fabric_list").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_fabric_list").setGridWidth($('.grid_container_<?php echo $methodid; ?>_fabric_list').width() - 20,true).trigger('resize');
+			
+			$("#table_<?php echo $methodid ?>_detail_shipment_receive").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_detail_shipment_receive").setGridWidth($('.grid_container_<?php echo $methodid; ?>_fabric_list').width() - 20,true).trigger('resize');
+		   
+		    $("#table_<?php echo $methodid ?>_detail_receive").trigger('reloadGrid');
+			$("#table_<?php echo $methodid ?>_detail_receive").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail_receive').width() - 20,true).trigger('resize');
+			
+			$("#table_<?php echo $methodid ?>_mdl_shipment").trigger('reloadGrid');
+		    $("#table_<?php echo $methodid ?>_mdl_shipment").setGridWidth($('.grid_container_<?php echo $methodid; ?>_mdl_shipment').width(-10)-20,true);
+			
+			$('#form_<?php echo $methodid ?>_detail_scan_fabric_barcode').focus();
+			
+			$('.tab_scrollbar').getNiceScroll().resize(); 
+		}, 1000);
+    });
+	
+	 $('#form_<?php echo $methodid ?>_detail_purchase_order_warehouse_id').on('change', function (event, clickedIndex, newValue, oldValue) {
+		 //let selectedValue = this.value;
+		//alert(selectedValue);
+		$('#form_<?php echo $methodid ?>_detail_shipment_code').html('');
+		$('#form_<?php echo $methodid ?>_detail_shipment_code').selectpicker('refresh');
+		
+		//$('#form_<?php echo $methodid ?>_detail_item_fabric_id').html('');
+		//$('#form_<?php echo $methodid ?>_detail_item_fabric_id').selectpicker('refresh');
+		
+		//$('#form_<?php echo $methodid ?>_detail_item_id').html('');
+		//$('#form_<?php echo $methodid ?>_detail_item_id').selectpicker('refresh');
+		
+		//change_form_<?php echo $methodid ?>_detail_shipment_code();
+	 });
+	 
+	//$('#form_<?php echo $methodid ?>_detail_shipment_code').on('change', function () {
+	//	//item_fabric_id
+	//	var selectedValue = this.value;
+	//	//alert("test "+ selectedValue);
+	//	//console.log(oldValue);
+	//	//$('#form_<?php echo $methodid ?>_detail_shipment_code').html('');
+	//	//$('#form_<?php echo $methodid ?>_detail_shipment_code').selectpicker('refresh');
+	//	
+	//
+	// })
+	 
+	//  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_fabric_colour_id').on('change', function (event, clickedIndex, newValue, oldValue) {
+//	     $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_fabric_colour_id').removeAttr('readonly');
+//		  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_fabric_colour_id').html('');
+//		  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_fabric_colour_id').selectpicker('refresh');
+		  //	alert('masuk');
+	//  });
+	 
+	 //==== untuk tabel detil scan ============
+	 $(function() {
+		var lastsel2;
+		var cek=0;
+			
+	 "use strict";
+       $("#table_<?php echo $methodid ?>_detail_receive").jqGrid({
+			url: baseurl + '<?php echo $class_uri ?>/loaddata_detil_scan',
+			datatype: "json",
+			mtype: "post",
+			postData: {
+				'q': '1',
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				fabric_shipment_id : function() {
+					//return $('#form_<?php echo $methodid ?>_detail_scan_fabric_warehouse_receive_id').val();
+					//return $('#form_<?php echo $methodid ?>_detail_scan_fabric_shipment_id').val();
+					return $('#form_<?php echo $methodid ?>_fabric_shipment_id').val();
+										
+				}
+				
+			},
+			//colNames: ['temp_fabric_receive_id','fabric_shipment_id', 'fabric_shipment_list_id','fabric_shipment_detail_id','item_fabric_id','purchase_order_id',
+			//'SHIPMENT NO','PURCHASE ORDER', 'FABRIC CODE', 'COLOUR', 'LOT', 'BALE', 'ROLL', 'KGS', 'YDS','quantity_receive','uom','note','ITEM CODE','item_id','ACTION'],
+			colNames:['fabric_warehouse_receive_detail_id','fabric_warehouse_receive_id','item_id','purchase_order_id','item_fabric_id','SHIPMENT NO','PURCHASE ORDER',
+			 'FABRIC CODE','ITEM CODE', 'COLOUR', 'LOT', 'BALE', 'ROLL', 'KGS', 'QTY RECEIVE','NOTE','YDS','STATUS','RECEIVE TYPE','shipment_id','ACTION'],
+		    colModel: [{name: 'r1',index: 'r1',width: 30,hidden: true,"searchoptions": {"clearSearch": false}},
+		               {name: 'r2',index: 'r2',width: 30,hidden: true,"searchoptions": {"clearSearch": false}},
+		               {name: 'r3',index: 'r3',width: 30,hidden: true,"searchoptions": {"clearSearch": false}},
+		               {name: 'r4',index: 'r4',width: 30,hidden: true,"searchoptions": {"clearSearch": false}},
+		               {name: 'r5',index: 'r5',width: 30,hidden: true,"searchoptions": {"clearSearch": false}},
+		               {name: 'r6',index: 'r6',width: 150,"searchoptions": {"clearSearch": false}},
+		               {name: 'r7',index: 'r7',width: 150,"searchoptions": {"clearSearch": false}},
+		               {name: 'r8',index: 'r8',width: 100,"searchoptions": {"clearSearch": false}},
+		               {name: 'r9',index: 'r9',width:100,align: 'center',"searchoptions": {"clearSearch": false}},
+		               {name: 'r10',index: 'r10',width:150,"searchoptions": {"clearSearch": false}},
+		               {name: 'r11',index: 'r11',width:80,align: 'center',"searchoptions": {"clearSearch": false}},
+		               {name: 'r12',index: 'r12',width:80,align: 'center',"searchoptions": {"clearSearch": false}},
+		               {name: 'r13',index: 'r13',width:80,align: 'center',"searchoptions": {"clearSearch": false}},
+		               {name: 'r14',index: 'r14',width:90,align: 'center',"searchoptions": {"clearSearch": false}},
+					   {name: 'r15',index: 'r15',width:100,editable: true,"searchoptions": {"clearSearch": false}},
+		               {name: 'r16',index: 'r16',width:200,editable: true,"searchoptions": {"clearSearch": false}},
+		               {name: 'r17',index: 'r17',width:70,"searchoptions": {"clearSearch": false}},
+					   {name: 'r18',index: 'r18',width:100,hidden: true,"searchoptions": {"clearSearch": false}},
+					   {name: 'r19',index: 'r19',width:100,hidden: true,"searchoptions": {"clearSearch": false}},
+					   {name: 'r20',index: 'r20',width:80,hidden: true,"searchoptions": {"clearSearch": false}},
+		               {name: 'action',index:'action',width:200,
+					   // formatter:'actions',formatoptions:{keys:true}
+					   formatter: function(cellvalue, options, rowObject) {
+						    return ' <button class="btn btn-xs btn-success" onclick="javascript:Update_receive_warehouse_<?php echo $methodid ?>' + '(' + rowObject.r1 + ')"><i class="fa fa-save"></i> Update </button>  <button class="btn btn-xs btn-danger" onclick="javascript:cancel_receive_scan_<?php echo $methodid ?>' + '(' + rowObject.r1 + ')"><i class="fa fa-ban"></i> Cancel</button>';
+						   //  return ' <button class="btn btn-xs btn-success" onclick="javascript:Update_receive_warehouse_<?php echo $methodid ?>' + '(' + rowObject.r1 + ')"><i class="fa fa-save"></i> Receive</button> <button class="btn btn-xs btn-info" onclick="javascript:edit_temp_scan_<?php echo $methodid ?>' + '(' + rowObject.r1 + ')"><i class="fa fa-pencil-square-o"></i> Update</button> ';
+					   }
+					   }],
+			iconSet: "fontAwesome",
+			idPrefix: "g1_",
+			rownumbers: true,
+			//multiselect: true,
+			rowNum: 30,
+			rowList: [10, 20, 30],
+			pager: '#ptable_<?php echo $methodid ?>_detail_receive',
+			sortname: "r1",
+			sortorder: "asc",
+			shrinkToFit: false,
+			//cellEdit: true,
+			autowidth: true,
+			height: 250,
+			jsonReader: {
+				repeatitems: false
+			},
+			viewrecords: true,
+			gridview: true,
+			onSelectRow: function(id){
+			//cek jika 0 tidak , jika 1 edit
+          // alert (id +' Dan ' + lastsel2);			
+		     if(id && id!==lastsel2){
+				  jQuery('#table_<?php echo $methodid ?>_detail_receive').jqGrid('restoreRow',lastsel2);
+			    // jQuery('#table_<?php echo $methodid ?>_detail_scan').jqGrid('editRow',id,true);
+			     lastsel2=id;
+				}
+	      },
+		  ondblClickRow: function(id2) {
+			// alert(id2 + ' dan ' + lastSel_<?php echo $table_id ?>);
+			//alert('#'+id2);
+			   if(cek==1){
+			      $(this).restoreRow(lastSel_<?php echo $table_id ?>);
+				    cek=0;
+			   }else{
+				    jQuery('#table_<?php echo $methodid ?>_detail_receive').jqGrid('editRow',id2,true);
+					 cek=1;
+			   }
+			  
+			   if (id2 && id2 !== lastSel_<?php echo $table_id ?>) {
+				    //$('#'+id2).toggleClass("ui-state-hover ui-state-highlight");
+				    $(this).restoreRow(lastSel_<?php echo $table_id ?>);
+					lastSel_<?php echo $table_id ?> = id2;
+				
+				}
+			
+			}
+		 });
+		 
+		 $("#table_<?php echo $methodid ?>_detail_receive").jqGrid("setColProp", "rn", {
+			hidedlg: false
+		 });
+		 
+		 $("#table_<?php echo $methodid ?>_detail_receive").jqGrid('navGrid', '#ptable_<?php echo $methodid ?>_detail_receive', {
+			edit: false,
+			add: false,
+			del: false,
+			view: false,
+			search: false
+		});
+
+		$("#table_<?php echo $methodid ?>_detail_receive").jqGrid('filterToolbar', {
+			stringResult: true,
+			searchOnEnter: false,
+			defaultSearch: 'cn',
+			ignoreCase: false
+		});
+		
+		});
+	 //========================================  
+	 
+	 
+	 $('#form_<?php echo $methodid ?>_mdl_shipment_item_id_shipment').on('change', function (event, clickedIndex, newValue, oldValue){
+		  var po_warehouse_id = $('#form_<?php echo $methodid ?>_mdl_shipment_po_warehouse_id').val();
+		      item_id = $('#form_<?php echo $methodid ?>_mdl_shipment_item_id_shipment').val();
+			// alert(po_warehouse_id);
+		 $.ajax({
+				url: baseurl+'loader',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+					,param: 'get_temp_shipment_detail'
+					,po_warehouse_id:po_warehouse_id
+					,item_id : item_id
+				},
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					//console.log(data.purchase_order_detail_id);
+					
+					$('#form_<?php echo $methodid ?>_mdl_shipment_po_detail_id').val(data.purchase_order_detail_id);
+					$('#form_<?php echo $methodid ?>_mdl_shipment_po_warehouse_detail_id').val(data.purchase_order_warehouse_detail);
+					
+				}
+			});
+		
+//		// alert( $('#form_<?php echo $methodid ?>_mdl_shipment_item_id_shipment').val());
+	 })
+	
+	$('#form_<?php echo $methodid ?>_detail_item_fabric_id').on('change', function (event, clickedIndex, newValue, oldValue) {
+		//item_fabric_id
+		$('#form_<?php echo $methodid ?>_detail_item_id').html('');
+		$('#form_<?php echo $methodid ?>_detail_item_id').selectpicker('refresh');
+		//change_form_<?php echo $methodid ?>_detail_item_id();
+	 });
+	 
+			
+	 function scan_receive_<?php echo $methodid ?>(e){
+		 var code_barcode= $('#form_<?php echo $methodid ?>_detail_scan_fabric_barcode').val();
+		   var key=e.keyCode || e.which;
+            if(key==13){// => Karakter enter dikenali sebagai angka 13
+			     //alert(e);
+                 scan_barcode_<?php echo $methodid?>(code_barcode);
+            }
+		 
+	 }
+	 
+	 
+	  function scan_barcode_<?php echo $methodid?>(code_barcode){
+		//alert (code_barcode + " masuk barcode");
+		 var fabric_warehouse_receive_id= $('#form_<?php echo $methodid ?>_detail_scan_fabric_warehouse_receive_id').val();
+		 var fabric_shipment_id= $('#form_<?php echo $methodid ?>_detail_scan_fabric_shipment_id').val();
+		 var fabric_receive_detail_id= $('#form_<?php echo $methodid ?>_detail_scan_fabric_receive_detail_id').val();
+		 var fabric_barcode= $('#form_<?php echo $methodid ?>_detail_scan_fabric_barcode').val();
+		// alert (fabric_warehouse_receive_id + " masuk barcode");
+		 $.ajax({
+			 	url: baseurl+'<?php echo $class_uri ?>/post_add_edit_scan',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+					,code_barcode: code_barcode
+					,fabric_warehouse_receive_id: fabric_warehouse_receive_id
+					,fabric_shipment_id: fabric_shipment_id
+					,fabric_receive_detail_id: fabric_receive_detail_id
+					,q:1
+				},
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					//console.log(data);
+					$("label[id=label_message]").text(data.message);
+			
+					//if(strlen(code_barcode) >7){
+						if (data.total_lot !=''){
+					        $('#form_<?php echo $methodid ?>_detail_scan_total_lot').val(data.total_lot);
+					        $('#form_<?php echo $methodid ?>_detail_scan_total_roll').val(data.total_roll);
+							$('#form_<?php echo $methodid ?>_detail_scan_fabric_shipment_list_lot').val(data.fabric_shipment_list_lot);
+							$('#gs_table_<?php echo $methodid ?>_fabric_list_r10').val(data.fabric_shipment_list_lot);
+							$('#gs_table_<?php echo $methodid ?>_fabric_list_r9').val(data.fabric_shipment_list_colour);
+							//setTimeout(function () { $('#grid').trigger('reloadGrid', [{ page: 1}]); },150);
+												
+																			    
+						//	$("#table_<?php echo $methodid ?>_fabric_list").jqGrid('setGridParam',{
+		                //     postData: {
+			            //           '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+						//			 fabric_shipment_id : fabric_shipment_id,
+			            //            fabric_shipment_list_lot : data.fabric_shipment_list_lot
+			            //             } 
+		                //     });
+						}
+					$('#form_<?php echo $methodid ?>_detail_scan_fabric_barcode').focus();	
+					$('#form_<?php echo $methodid ?>_detail_scan_fabric_barcode').val('');
+										
+				   // $("#table_<?php echo $methodid ?>_fabric_list").trigger('reloadGrid');
+				    $("#table_<?php echo $methodid ?>_fabric_list")[0].triggerToolbar()
+					$("#table_<?php echo $methodid ?>_detail_receive").trigger('reloadGrid');
+					$("#table_<?php echo $methodid ?>_fabric_detail_receive").trigger('reloadGrid');
+					
+			      // $("#table_<?php echo $methodid ?>_detail_scan").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail_scan').width() - 20,true).trigger('resize');
+				  // }				  
+					
+			 	 }
+		 });
+	}
+	
+	function cancel_receive_scan_<?php echo $methodid?>(id){
+		page_loading("show",'<?php echo $page_title ?> Detail_scan','Please Wait...');
+	//	var fabric_warehouse_receive_id=$('#form_<?php echo $methodid ?>_detail_scan_fabric_warehouse_receive_id').val();
+	//	//alert (id);
+	//	var id = jQuery("#table_<?php echo $methodid ?>_detail_receive").jqGrid('getGridParam','selrow');
+	//	var row = jQuery("#table_<?php echo $methodid ?>_detail_receive").jqGrid('getRowData',id); 
+		//alert (row.r15);
+			 $.ajax({
+			 	url: baseurl+'<?php echo $class_uri ?>/cancel_receive_scan',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+					,fabric_warehouse_receive_detail_id:id
+				 },
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					page_loading("hide");
+					if(data.valid){
+						    
+						    $("#table_<?php echo $methodid ?>_fabric_list").trigger('reloadGrid');
+							
+							$("#table_<?php echo $methodid ?>_detail_receive").trigger('reloadGrid');
+		                    $("#table_<?php echo $methodid ?>_detail_receive").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail_receive').width() - 20,true).trigger('resize');
+							//show_success("show",'<?php echo $page_title ?> Detail_scan',data.message);
+							
+							$('#form_<?php echo $methodid ?>_detail_scan_fabric_barcode').focus();	
+					}else {
+						show_error("show",'Error',data.message);
+					}
+				}
+		 });
+	}
+	
+	function Update_receive_warehouse_<?php echo $methodid ?>(tmp_id){
+		page_loading("show",'<?php echo $page_title ?> Detail_scan','Please Wait...');
+		var fabric_warehouse_receive_id=$('#form_<?php echo $methodid ?>_detail_scan_fabric_warehouse_receive_id').val();
+		
+		var id = jQuery("#table_<?php echo $methodid ?>_detail_receive").jqGrid('getGridParam','selrow');
+		var row = jQuery("#table_<?php echo $methodid ?>_detail_receive").jqGrid('getRowData',id); 
+		
+		if(row.r15== null){
+			
+			show_error("show","Error","Try select again");
+		    //show_success("error",'<?php echo $page_title ?> Detail_scan','Try again');
+		}else{
+				//alert (row.r15);
+			 $.ajax({
+			 	url: baseurl+'<?php echo $class_uri ?>/add_edit_temp_receive',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+					,q:'1'
+					,quantity_received:row.r15
+					,note:row.r16
+					,fabric_warehouse_receive_detail_id: tmp_id
+	             },
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					page_loading("hide");
+					if(data.valid){
+						   $('#table_<?php echo $methodid ?>_detail_receive').restoreRow(id);
+						 //  $("#table_<?php echo $methodid ?>_detail_scan").jqGrid('setGridParam',{
+		                 //    postData: {
+		                 //	     '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+		                 // 	      fabric_shipment_id : data.fabric_shipment_id
+		                 // 	    } 
+		                 //   });	
+							$("#table_<?php echo $methodid ?>_detail_receive").trigger('reloadGrid');
+		                    $("#table_<?php echo $methodid ?>_detail_receive").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail_receive').width() - 20,true).trigger('resize');
+							show_success("show",'<?php echo $page_title ?> Detail_scan',data.message);
+					}else {
+						show_error("show",'Error',data.message);
+					}
+				}
+		 });
+		}
+		
+		
+	}
+	
+	function receive_list_<?php echo $methodid ?>(receive_id){
+		receive_manual_<?php echo $methodid?>(receive_id)
+		
+	}
+	
+	function receive_manual_<?php echo $methodid?>(receive_id){
+		//alert (receive_id + " masuk barcode");
+		 var code_barcode='';
+		 var fabric_warehouse_receive_id= $('#form_<?php echo $methodid ?>_detail_scan_fabric_warehouse_receive_id').val();
+		 var fabric_shipment_id= $('#form_<?php echo $methodid ?>_detail_scan_fabric_shipment_id').val();
+		 var fabric_receive_detail_id= $('#form_<?php echo $methodid ?>_detail_scan_fabric_receive_detail_id').val();
+		// alert (fabric_warehouse_receive_id + " masuk barcode");
+		 $.ajax({
+			 	url: baseurl+'<?php echo $class_uri ?>/post_add_edit_scan',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+					,fabric_warehouse_receive_id: fabric_warehouse_receive_id
+					,fabric_shipment_id: fabric_shipment_id
+					,fabric_receive_detail_id: fabric_receive_detail_id
+					,fabric_shipment_list_id:receive_id
+					,q:0
+				},
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					//console.log(data);
+					//show_success("show",'<?php echo $page_title ?>',data.message);	
+					$("label[id=label_message]").text(data.message);
+			
+					//if(strlen(code_barcode) >7){
+						if (data.total_lot !=''){
+					        $('#form_<?php echo $methodid ?>_detail_scan_total_lot').val(data.total_lot);
+					        $('#form_<?php echo $methodid ?>_detail_scan_total_roll').val(data.total_roll);
+							$('#form_<?php echo $methodid ?>_detail_scan_fabric_shipment_list_lot').val(data.fabric_shipment_list_lot);
+							//$('#gs_table_<?php echo $methodid ?>_fabric_list_r10').val(data.fabric_shipment_list_lot);
+							//$('#gs_table_<?php echo $methodid ?>_fabric_list_r9').val(data.fabric_shipment_list_colour);
+						
+						}
+					$('#form_<?php echo $methodid ?>_detail_scan_fabric_barcode').focus();	
+					$('#form_<?php echo $methodid ?>_detail_scan_fabric_barcode').val('');
+										
+				   $("#table_<?php echo $methodid ?>_fabric_list").trigger('reloadGrid');
+				   //$("#table_<?php echo $methodid ?>_fabric_list")[0].triggerToolbar()
+					$("#table_<?php echo $methodid ?>_detail_receive").trigger('reloadGrid');
+					$("#table_<?php echo $methodid ?>_fabric_detail_receive").trigger('reloadGrid');
+				
+			 	 }
+		 });
+	}
+	
+	function cancel_<?php echo $methodid ?>(){
+		$('#panel_content_<?php echo $methodid ?>').show();
+		$('#panel_content_form_<?php echo $methodid ?>').hide();
+		$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+	}
+	
+	function save_<?php echo $methodid ?>(){
+		$('#form_<?php echo $methodid ?>').submit();
+	}
+	
+	function save_<?php echo $methodid ?>_proforma(){
+		$('#form_<?php echo $methodid ?>_proforma').submit();
+	}
+	
+	var jvalidate = $("#form_<?php echo $methodid ?>").validate({
+		ignore: [],
+		rules: {                                            
+			gl_account_group: {
+				required: true
+			}
+		} 
+	});
+	
+	$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_unit_weight').on('change', function (event, clickedIndex, newValue, oldValue) {
+	    var	unit_weight = $(this).val();
+		$('#form_<?php echo $methodid ?>_mdl_detail_upload_unit_weight').val(unit_weight);
+		//change_form_<?php echo $methodid ?>_detail_item_id();
+	 });
+	 
+	 $('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_unit_qty').on('change', function (event, clickedIndex, newValue, oldValue) {
+	    var	unit_qty = $(this).val();
+		$('#form_<?php echo $methodid ?>_mdl_detail_upload_unit_quantity').val(unit_qty);
+		//change_form_<?php echo $methodid ?>_detail_item_id();
+	 });
+
+	
+	function edit_<?php echo $methodid?>(id){
+		page_loading("show",'<?php echo $page_title ?>','Please Wait...');
+		//alert(id+'loader');
+		$.ajax({
+			url: baseurl+'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				//,param: 'data_fabric_shipment'
+				,param: 'data_fabric_shipment_receive'
+				,param_pop:'db_pop'
+				,id : id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data){
+				page_loading("hide");
+				//console.log(data);
+				$('.button_<?php echo $methodid ?>_detail_edit').hide();
+				$('.button_<?php echo $methodid ?>_detail_new').show();
+				
+				$('.button_<?php echo $methodid ?>_import_shipment_edit').hide();
+				$('.button_<?php echo $methodid ?>_import_shipment_new').show();
+              //  console.log(data);				
+				//alert(data['detail'][0].fabric_shipment_detail_note);
+				
+				new_shipment = 0;
+				fabric_shipment_id = data[0].fabric_shipment_id;
+				//purchase_type_id = data[0].purchase_type_id;
+				//purchase_order_this_memo = data[0].this_memo;
+				//purchase_order_lock_data = data[0].lock_data;
+				//purchase_order_open_form = 1;
+				
+				$('#form_<?php echo $methodid ?>_fabric_shipment_id').val(data[0].fabric_shipment_id);
+				$('#form_<?php echo $methodid ?>_fabric_shipment_no').val(data[0].fabric_shipment_no);
+				$('#form_<?php echo $methodid ?>_fabric_shipment_date').val(data[0].fabric_shipment_date);
+				$('#form_<?php echo $methodid ?>_fabric_shipment_note').val(data[0].fabric_shipment_note);
+				
+				$('#form_<?php echo $methodid ?>_detail_fabric_shipment_id').val(data[0].fabric_shipment_id);
+				$('#form_<?php echo $methodid ?>_detail_scan_fabric_shipment_id').val(data[0].fabric_shipment_id);
+							
+				$('#form_<?php echo $methodid ?>_mdl_detail_upload_shipment_id').val(data[0].fabric_shipment_id);
+				//$('#form_<?php echo $methodid ?>_mdl_detail_upload_unit_weight').val(unit_weight);
+				
+				
+				$("#tab_<?php echo $methodid; ?>_detail").attr("data-toggle","tab");
+				$("#tab_<?php echo $methodid; ?>_detail").removeClass( "tab_disabled");
+				$('.panel_<?php echo $methodid ?>_panel_detail').show();
+				
+				$("#tab_<?php echo $methodid; ?>_shipment_receive").attr("data-toggle","tab");
+				$("#tab_<?php echo $methodid; ?>_shipment_receive").removeClass( "tab_disabled");
+				$('.panel_<?php echo $methodid ?>_shipment_receive').show();
+					//$('.panel_<?php echo $methodid ?>_panel_purchase_request').hide();
+				
+				setTimeout(function(){ 
+					$('.tab_scrollbar').getNiceScroll().resize(); 
+				}, 100);
+			}
+		});
+	}
+	
+	var check_submit = 0;
+	function post_<?php echo $methodid ?>(){
+		if(check_submit == 0) {
+			check_submit = 1;
+			page_loading("show",'Save <?php echo $page_title ?>','Please Wait...');
+			var data = $("#form_<?php echo $methodid ?>").serialize();
+			
+			$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					page_loading("hide");
+					check_submit = 0;
+					//alert(data.fabric_code);
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?>',data.message);	
+						
+						//if(new_purchase_order == 1){
+						if(new_shipment == 1){
+							//new_purchase_order = 0;
+							new_shipment = 0;
+							//fabric_shipment_id
+							$("#tab_<?php echo $methodid; ?>_detail").attr("data-toggle","tab");
+							$("#tab_<?php echo $methodid; ?>_detail").removeClass( "tab_disabled");
+					
+							//$("#tab_<?php echo $methodid; ?>_shipment_receive").attr("data-toggle","tab");
+		                   // $("#tab_<?php echo $methodid; ?>_shipment_receive").removeClass( "tab_disabled");
+							$("#tab_<?php echo $methodid; ?>_detail").click();
+							fabric_shipment_id = data.fabric_shipment_id;
+							$('#form_<?php echo $methodid ?>_fabric_shipment_id').val(fabric_shipment_id);
+							$('#form_<?php echo $methodid ?>_detail_fabric_shipment_id').val(fabric_shipment_id);
+							$('#form_<?php echo $methodid ?>_detail_scan_fabric_shipment_id').val(fabric_shipment_id);
+							$('#form_<?php echo $methodid ?>_mdl_detail_upload_shipment_id').val(fabric_shipment_id);
+								
+							setTimeout(function(){ 
+								$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+								$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20,true).trigger('resize');
+								$('.tab_scrollbar').getNiceScroll().resize(); 
+							}, 500);
+							
+							    $('.panel_<?php echo $methodid ?>_panel_detail').show();
+								//$('.panel_<?php echo $methodid ?>_shipment_receive').show();
+								//$('.panel_<?php echo $methodid ?>_panel_purchase_request').hide();
+							
+						//	if(purchase_type_id == 1){
+						//		$('.panel_<?php echo $methodid ?>_panel_detail').show();
+						//		$('.panel_<?php echo $methodid ?>_panel_purchase_request').hide();
+						//	} else {
+						//		$('.panel_<?php echo $methodid ?>_panel_detail').hide();
+						//		$('.panel_<?php echo $methodid ?>_panel_purchase_request').show();
+						//		
+						//	}
+							
+						} else {
+							//new_purchase_order = 1;
+							new_shipment = 1;
+							$('#panel_content_<?php echo $methodid ?>').show();
+							$('#panel_content_form_<?php echo $methodid ?>').hide();
+							$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+						}
+					} else {
+						show_error("show",'Error',data.message);
+					}
+				},
+				error: function(xhr,error){
+					show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+					check_submit = 0;
+				}
+			});
+		}
+	}
+	
+	function post_detil_shipment<?php echo $methodid ?>(){
+		page_loading("show",'Save <?php echo $page_title ?>','Please Wait...');
+	    var data = $("#form_<?php echo $methodid ?>_mdl_shipment").serialize();
+		//console.log(data);
+		$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detil_shipment',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					page_loading("hide");
+					if(data.valid){
+						
+						show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+							
+						$("#table_<?php echo $methodid ?>_mdl_detail").trigger('reloadGrid');
+		                $("#table_<?php echo $methodid ?>_mdl_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_mdl_detail').width(1)-20,true).trigger('resize');
+						$('.tab_scrollbar').getNiceScroll().resize(); 
+					}	
+				}
+		});
+	}
+	
+	
+	function post_detil_shipment_excel<?php echo $methodid ?>(){
+		page_loading("show",'Save <?php echo $page_title ?>','Please Wait...');
+	    var data = $("#form_<?php echo $methodid ?>_mdl_shipment_edit_excel").serialize();
+		//console.log(data);
+		$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detil_shipment_excel',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					page_loading("hide");
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+							
+						$("#table_<?php echo $methodid ?>_mdl_detail").trigger('reloadGrid');
+		                $("#table_<?php echo $methodid ?>_mdl_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_mdl_detail').width(1)-20,true).trigger('resize');
+						$('.tab_scrollbar').getNiceScroll().resize(); 
+						
+					}else {
+						show_error("show",'Error',data.message);
+					}		
+				}
+		});
+	}
+	
+	function add_upload_file<?php echo $methodid ?>(){
+		  // var data = $("#form_<?php echo $methodid ?>_mdl_shipment_upload").serialize();
+		const datafrm= new FormData();
+		page_loading("show",'Save <?php echo $page_title ?>','Please Wait...');
+			//var data = $("#form_<?php echo $methodid ?>_detail").serialize();
+	    var data2 = $("#form_<?php echo $methodid ?>_mdl_shipment_upload").serializeArray();
+		var file_data = $('#form_<?php echo $methodid ?>_mdl_shipment_upload_fabric_file_excel').prop('files')[0];
+			
+			$.each(data2, function (key,input) {
+	              datafrm.append(input.name,input.value);
+	        });
+			
+			if(file_data){
+			   datafrm.append('file',file_data);
+			   datafrm.append('info','Yes_excel');
+		    }else{
+               datafrm.append('info','No_excel');
+		     } 
+			 
+		//console.log(data);
+		$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detil_shipment_excel',
+				data: datafrm,
+				dataType: 'json',
+				method: 'post',
+				processData:false,
+			    contentType:false,
+				success: function(data){
+					page_loading("hide");
+					console.log(data);
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?> upload Excel',data.message);	
+							
+						$("#table_<?php echo $methodid ?>_mdl_detail").trigger('reloadGrid');
+		                $("#table_<?php echo $methodid ?>_mdl_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_mdl_detail').width(1)-20,true).trigger('resize');
+						$('.tab_scrollbar').getNiceScroll().resize(); 
+						
+					}else {
+						show_error("show",'Error',data.message);
+					}	
+				}
+		});
+	}
+	
+	function add_upload_detail_<?php echo $methodid ?>(){
+		const datafrm= new FormData();
+		page_loading("show",'Save <?php echo $page_title ?>','Please Wait...');
+			//var data = $("#form_<?php echo $methodid ?>_detail").serialize();
+	    var data2 = $("#form_<?php echo $methodid ?>_mdl_detail_upload").serializeArray();
+		var file_data = $('#form_<?php echo $methodid ?>_mdl_detail_upload_fabric_file_excel').prop('files')[0];
+			
+			$.each(data2, function (key,input) {
+	              datafrm.append(input.name,input.value);
+	        });
+			
+			if(file_data){
+			   datafrm.append('file',file_data);
+			   datafrm.append('info','Yes_excel');
+		    }else{
+               datafrm.append('info','No_excel');
+		     } 
+			 
+		$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit_upload_detail',
+				data: datafrm,
+				dataType: 'json',
+				method: 'post',
+				processData:false,
+			    contentType:false,
+				success: function(data){
+					page_loading("hide");
+					//console.log(data);
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?> upload Excel',data.message);	
+							
+						$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+		                $("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width(1)-20,true).trigger('resize');
+						$('.tab_scrollbar').getNiceScroll().resize(); 
+						
+					}else {
+						show_error("show",'Error',data.message);
+					}	
+				}
+		});
+	}
+	
+	function refresh_mt_po_<?php echo $methodid ?>(element){
+		var $btn = $(element);
+          //  Disable tombol segera setelah diklik
+        $btn.prop('disabled', true).css('opacity', '0.5');
+		page_loading("show",'Save <?php echo $page_title ?>','Please Wait...');
+		
+       $.ajax({
+          url: baseurl+'<?php echo $class_uri ?>/post_refresh',
+		  data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+		   },
+		  dataType: 'json',
+		  type: 'post',
+		  success: function(data){
+			  console.log(data);
+			  page_loading("hide");
+			     if(data.valid){
+				     show_success("show",'<?php echo $page_title ?>',data.message);	
+			     }else{
+				     show_error("show",'Error',data.message);
+			     }
+				 $btn.prop('disabled', false).css('opacity', '1');
+		  },
+          error: function(xhr,error){
+			 // show_error("show",'Error',data.message);
+			 show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+             // alert('Terjadi kesalahan pada server.');
+          }
+	  }); 
+	
+	}
+	
+	function post_<?php echo $methodid ?>_proforma(){
+		if(check_submit == 0) {
+			check_submit = 1;
+			page_loading("show",'Save <?php echo $page_title ?>','Please Wait...');
+			var data = $("#form_<?php echo $methodid ?>_proforma").serialize();
+						
+			$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit',
+				data: data,
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					page_loading("hide");
+					check_submit = 0;
+					alert(data.purchase_order_id);
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?>',data.message);	
+						
+						if(new_purchase_order == 1){
+							new_purchase_order = 0;
+							$("#tab_<?php echo $methodid; ?>_detail").attr("data-toggle","tab");
+							$("#tab_<?php echo $methodid; ?>_detail").removeClass( "tab_disabled");
+							$("#tab_<?php echo $methodid; ?>_detail").click();
+							purchase_order_id = data.purchase_order_id;
+							$('#form_<?php echo $methodid ?>_purchase_order_id').val(purchase_order_id);
+							$('#form_<?php echo $methodid ?>_detail_purchase_order_id').val(purchase_order_id);
+							$('#form_<?php echo $methodid ?>_proforma_performa_id').val(data.sales_performa_id);
+							$('#form_<?php echo $methodid ?>_proforma_purchase_order_id').val('');
+							
+							
+								
+							setTimeout(function(){ 
+								$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+								$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20,true).trigger('resize');
+								$('.tab_scrollbar').getNiceScroll().resize(); 
+							}, 500);
+							
+							$('.panel_<?php echo $methodid ?>_proforma_invoice').show();
+							$('.panel_<?php echo $methodid ?>_panel_detail').hide();
+							$('.panel_<?php echo $methodid ?>_panel_purchase_request').hide();
+						//	if(purchase_type_id == 1){
+						//		$('.panel_<?php echo $methodid ?>_panel_detail').show();
+						//		$('.panel_<?php echo $methodid ?>_panel_purchase_request').hide();
+						//	} else {
+						//		$('.panel_<?php echo $methodid ?>_panel_detail').hide();
+						//		$('.panel_<?php echo $methodid ?>_panel_purchase_request').show();
+						//								
+						//	}
+							
+						} else {
+							new_purchase_order = 1;
+							$('#panel_content_<?php echo $methodid ?>').show();
+							$('#panel_content_form_<?php echo $methodid ?>').hide();
+							$("#table_<?php echo $methodid ?>").trigger('reloadGrid');
+						}
+					} else {
+						show_error("show",'Error',data.message);
+					}
+				},
+				error: function(xhr,error){
+					show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+					check_submit = 0;
+				}
+			});
+		}
+	}
+	
+	/* Detail Function */
+	
+	var beforeclick_<?php echo $methodid ?>_purchase_request = function (rowid, e) {
+		$("#table_<?php echo $methodid ?>_purchase_request").jqGrid('resetSelection');
+		return(true);
+	}
+	
+	var beforeclick_<?php echo $methodid ?>_proforma = function (rowid, e) {
+		$("#table_<?php echo $methodid ?>_proforma").jqGrid('resetSelection');
+		return(true);
+	}
+	
+	var jvalidate2 = $("#form_<?php echo $methodid ?>_detail").validate({
+		ignore: [],
+		rules: {                                            
+			item_id: {
+				required: true
+			},
+			'quantity_ordered': {
+				min: 0
+			}
+		} 
+	});
+	
+	var check_submit = 0;
+	function add_<?php echo $methodid ?>(){
+		//new_purchase_order = 0;
+		new_shipment = 0;
+		//fabric_shipment_id = 0;
+		if(check_submit == 0) {
+			check_submit = 1;
+			const datafrm= new FormData();
+			page_loading("show",'<?php echo $page_title ?> Detail','Please Wait...');
+			//var data = $("#form_<?php echo $methodid ?>_detail").serialize();
+			var data2 = $("#form_<?php echo $methodid ?>_detail").serializeArray();
+			$.each(data2, function (key,input) {
+	              datafrm.append(input.name,input.value);
+	        });
+								
+			$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detail',
+				data: datafrm,
+				dataType: 'json',
+				type: 'post',
+				processData:false,
+			    contentType:false,
+				success: function(data){
+					//console.log(data);
+					page_loading("hide");
+					check_submit = 0;
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+						
+						$("#tab_<?php echo $methodid; ?>_shipment_receive").attr("data-toggle","tab");
+		                $("#tab_<?php echo $methodid; ?>_shipment_receive").removeClass( "tab_disabled");
+						//$("#tab_<?php echo $methodid; ?>_shipment_receive").click();
+						
+						
+						$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_id').val(0);
+						
+						$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+						cancel_detail_<?php echo $methodid ?>();
+						$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20,true).trigger('resize');
+									
+					} else {
+						show_error("show",'Error',data.message);
+					}
+				},
+				error: function(xhr,error){
+					show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+					check_submit = 0;
+				}
+			});
+		}
+	}
+	
+	function add_<?php echo $methodid ?>_16072025(){
+		//new_purchase_order = 0;
+		new_shipment = 0;
+		//fabric_shipment_id = 0;
+		if(check_submit == 0) {
+			check_submit = 1;
+			const datafrm= new FormData();
+			page_loading("show",'<?php echo $page_title ?> Detail','Please Wait...');
+			//var data = $("#form_<?php echo $methodid ?>_detail").serialize();
+			var data2 = $("#form_<?php echo $methodid ?>_detail").serializeArray();
+			
+			var file_data = $('#form_<?php echo $methodid ?>_detail_fabric_file_excel').prop('files')[0];
+			
+			$.each(data2, function (key,input) {
+	              datafrm.append(input.name,input.value);
+	        });
+			
+			if(file_data){
+			   datafrm.append('file',file_data);
+			   datafrm.append('info','Yes_excel');
+		    }else{
+               datafrm.append('info','No_excel');
+		     } 
+			
+			$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detail',
+				data: datafrm,
+				dataType: 'json',
+				type: 'post',
+				processData:false,
+			    contentType:false,
+				success: function(data){
+					page_loading("hide");
+					check_submit = 0;
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+						
+						$("#tab_<?php echo $methodid; ?>_shipment_receive").attr("data-toggle","tab");
+		                $("#tab_<?php echo $methodid; ?>_shipment_receive").removeClass( "tab_disabled");
+						//$("#tab_<?php echo $methodid; ?>_shipment_receive").click();
+						
+						
+						$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_id').val(0);
+						
+						$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+						cancel_detail_<?php echo $methodid ?>();
+						$("#table_<?php echo $methodid ?>_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_detail').width() - 20,true).trigger('resize');
+									
+					} else {
+						show_error("show",'Error',data.message);
+					}
+				},
+				error: function(xhr,error){
+					show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+					check_submit = 0;
+				}
+			});
+		}
+	}
+	
+	
+	function edit_detail_<?php echo $methodid ?>(fabric_shipment_detail_id){
+		page_loading("show",'<?php echo $page_title ?>','Please Wait...');
+	   // alert(fabric_shipment_detail_id);
+		$.ajax({
+			url: baseurl+'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				//,param: 'data_fabric_shipment_detail'
+				,param: 'data_fabric_shipment_detail_list'
+				,param_pop:'db_pop'
+				,id: fabric_shipment_detail_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data){
+				page_loading("hide");
+				console.log(data[0].item_id);
+				$('#form_<?php echo $methodid ?>_detail_fabric_shipment_id').val(data[0].fabric_shipment_id);
+				$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_id').val(data[0].fabric_shipment_detail_id);
+				$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_note').val(data[0].fabric_shipment_detail_note);
+				$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_invoice_number').val(data[0].fabric_shipment_detail_invoice_number);
+				$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_colour').val(data[0].fabric_shipment_detail_colour);
+				$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_made_in').val(data[0].fabric_shipment_detail_made_in);
+				$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_bale').val(data[0].fabric_shipment_detail_bale);
+				$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_colour_name').val(data[0].fabric_shipment_detail_colour_name);
+				//$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_colour_name').val(data[0].fabric_shipment_detail_colour);
+				
+				//$('#form_<?php echo $methodid ?>_detail_fabric_colour_id2').val(data[0].fabric_shipment_detail_colour_id);
+				
+				//$('#form_<?php echo $methodid ?>_detail_fabric_shipment_id').val(data[0].fabric_shipment_id);
+				//$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_id').val(data['detail'][0].fabric_shipment_detail_id);
+				//$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_note').val(data['detail'][0].fabric_shipment_detail_note);
+				//$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_invoice_number').val(data['detail'][0].fabric_shipment_detail_invoice_number);
+				//$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_colour').val(data['detail'][0].fabric_shipment_detail_colour);
+				//$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_made_in').val(data['detail'][0].fabric_shipment_detail_made_in);
+				//$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_bale').val(data['detail'][0].fabric_shipment_detail_bale);
+				
+				//change_form_<?php echo $methodid ?>_detail_fabric_colour_id(data[0].fabric_shipment_detail_colour_id);
+                change_form_<?php echo $methodid ?>_detail_purchase_order_warehouse_id(data[0].purchase_order_id);
+                change_form_<?php echo $methodid ?>_detail_shipment_code(data[0].item_id);	
+				//change_form_<?php echo $methodid ?>_detail_item_id(data['detail'][0].item_id);
+                change_form_<?php echo $methodid ?>_detail_fabric_shipment_detail_unit_weight(data[0].fabric_shipment_detail_unit_weight);	
+                change_form_<?php echo $methodid ?>_detail_fabric_shipment_detail_unit_qty(data[0].fabric_shipment_detail_unit_qty);	
+				
+				//fabric_shipment_detail_colour_id
+				
+				$('.button_<?php echo $methodid ?>_detail_edit').show();
+				$('.button_<?php echo $methodid ?>_detail_new').hide();	
+								
+				//if(purchase_type_id == 1){
+				//	$('.button_<?php echo $methodid ?>_detail_edit').show();
+				//	$('.button_<?php echo $methodid ?>_detail_new').hide();	
+				//	
+				//	change_form_<?php echo $methodid ?>_detail_item_id(data[0].item_id);
+				//	change_form_<?php echo $methodid ?>_detail_uom_id(data[0].uom_id);
+				//	change_form_<?php echo $methodid ?>_detail_fabric_code_detail(data[0].colour_code_id);
+				//} else {
+				//	$("#table_<?php echo $methodid ?>_purchase_request").trigger('reloadGrid');
+				//}		
+			}
+		});
+	}
+	
+	 $(function() {
+		"use strict";
+	
+		$("#table_<?php echo $methodid ?>_mdl_shipment_detail").jqGrid({
+			url: baseurl + '<?php echo $class_uri ?>/loaddata_detail_list',
+			datatype: "json",
+			mtype: "post",
+			postData: {
+				'q': '1',
+				'<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+				fabric_shipment_detail_id: 0
+			},
+			colNames: ['LIST ID','SHIPMENT ID','SHIPMENT DETAIL ID','COLOUR','LOT (#)','BALE','ROLL','WEIGHT (KGS)','QUANTITY (YDS)','ITEM CODE','SHIPMENT CODE','NOTE'],
+		    colModel: [{name: 'r1',hidden: true,index: 'r1',align: 'center'},
+					{name: 'r2',hidden: true,index: 'r2'},
+					{name: 'r3',hidden: true,index:'r3'},
+					{name: 'r4',width:200,index: 'r4'},
+					{name: 'r5',width:80,index: 'r5',align: 'center'},
+					{name: 'r6',width:80,index: 'r6',align: 'center'},
+					{name: 'r7',width:80,index: 'r7',align: 'center'},
+					{name: 'r8',width:100,index: 'r8',align: 'center'},
+					{name: 'r9',width:100,index: 'r9',align: 'center'},
+					{name: 'r15',width:120,index: 'r15',align: 'center'},
+					{name: 'r16',width:150,index: 'r16',align: 'center'},
+					{name: 'r10',width:200,index: 'r10'}],
+			iconSet: "fontAwesome",
+            caption:".:: Detail Shipment ::.",
+            rownumbers: true,
+			rowNum:10,
+			rowList:[10,20,30],
+			pager: '#ptable_<?php echo $methodid ?>_mdl_shipment_detail',
+            sortname: "r1",
+            sortorder: "asc",
+			shrinkToFit:false,
+			autowidth: true,
+			height: 350,
+            jsonReader: { repeatitems : false },
+			viewrecords : true,
+			gridview:true,
+			//footerrow: true,
+			//userDataOnFooter: true
+			
+			
+		});
+		$("#table_<?php echo $methodid ?>_mdl_shipment_detail").jqGrid("setColProp", "rn", {
+			hidedlg: false
+		});
+
+		$("#table_<?php echo $methodid ?>_monitor_contract_subcon").jqGrid('navGrid', '#ptable_<?php echo $methodid ?>_mdl_shipment_detail', {
+			edit: false,
+			add: false,
+			del: false,
+			view: false,
+			search: false
+		});
+
+		$("#table_<?php echo $methodid ?>_mdl_shipment_detail").jqGrid('filterToolbar', {
+			stringResult: true,
+			searchOnEnter: false,
+			defaultSearch: 'cn',
+			ignoreCase: false
+		});
+		
+		
+	  // $("#table_<?php echo $methodid ?>_monitor_contract_subcon").trigger('reloadGrid');
+	 
+	});
+
+	
+	function view_detail_<?php echo $methodid ?>(fabric_shipment_detail_id){
+		//alert(fabric_shipment_detail_id);
+		var id = jQuery("#table_<?php echo $methodid ?>_detail").jqGrid('getGridParam','selrow');
+		if (id) { 
+		var row = jQuery("#table_<?php echo $methodid ?>_detail").jqGrid('getRowData',id);   
+           let po_id= row.r4;
+		   let shipment_id= row.r2;
+		  // console.log(row);
+		  // unwrap_cell_value(row.r9).replace(/,/g, '')
+		 
+		  
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_fabric_shipment_detail_id').val(fabric_shipment_detail_id);
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_fabric_shipment_detail_id').val(fabric_shipment_detail_id);
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_po_warehouse_id').val(po_id.replace(",",""));
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_shipment_id').val(shipment_id);
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_unit_weight').val(row.r10);
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_unit_quantity').val(row.r12);
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_item_id').val(unwrap_cell_value(row.r7).replace(/,/g, ''));
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_purchase_order_detail_id').val(unwrap_cell_value(row.r19).replace(/,/g, ''));
+		  //
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_item_code').val(unwrap_cell_value(row.r7).replace(/,/g, ''));
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_code_brg').val(unwrap_cell_value(row.r5).replace(/,/g, ''));
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_purchase_order_detail_id').val(unwrap_cell_value(row.r19).replace(/,/g, ''));
+		  
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_fabric_shipment_detail_id').val(fabric_shipment_detail_id);
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_fabric_shipment_detail_id').val(fabric_shipment_detail_id);
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_po_warehouse_id').val(po_id.replace(",",""));
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_shipment_id').val(shipment_id);
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_unit_weight').val(row.r13);
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_unit_quantity').val(row.r16);
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_item_id').val(unwrap_cell_value(row.r7).replace(/,/g, ''));
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_purchase_order_detail_id').val(unwrap_cell_value(row.r23).replace(/,/g, ''));
+		  
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_item_code').val(unwrap_cell_value(row.r7).replace(/,/g, ''));
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_code_brg').val(unwrap_cell_value(row.r5).replace(/,/g, ''));
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_purchase_order_detail_id').val(unwrap_cell_value(row.r23).replace(/,/g, ''));
+		
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_upload_fabric_shipment_detail_id').val(fabric_shipment_detail_id);
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_upload_shipment_id').val(shipment_id);
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_upload_unit_weight').val(row.r13);
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_upload_unit_quantity').val(row.r16);
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_upload_unit_weight').val(row.r10);
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_upload_unit_quantity').val(row.r12);
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_upload_list_item_code').val(unwrap_cell_value(row.r7).replace(/,/g, ''));
+		  //$('#form_<?php echo $methodid ?>_mdl_shipment_upload_list_item_code').val(unwrap_cell_value(row.r7).replace(/,/g, ''));
+		  $('#form_<?php echo $methodid ?>_mdl_shipment_upload_purchase_order_detail_id').val(unwrap_cell_value(row.r23).replace(/,/g, ''));
+		 //  $('#form_<?php echo $methodid ?>_mdl_shipment_upload_purchase_order_detail_id').val(unwrap_cell_value(row.r19).replace(/,/g, ''));
+		 
+		  
+		  $("#table_<?php echo $methodid ?>_mdl_shipment_detail").jqGrid('setGridParam',{
+		   postData: {
+			     '<?php echo $this->security->get_csrf_token_name() ?>': '<?php echo $this->security->get_csrf_hash() ?>',
+			      fabric_shipment_detail_id:fabric_shipment_detail_id
+			    } 
+		  });
+	      $("#table_<?php echo $methodid ?>_mdl_shipment_detail").trigger('reloadGrid');
+		
+		  $("#table_<?php echo $methodid ?>_mdl_detail").trigger('reloadGrid');
+		  $("#table_<?php echo $methodid ?>_mdl_detail").setGridWidth($('.grid_container_<?php echo $methodid; ?>_mdl_detail').width(1)-20,true).trigger('resize');
+		
+		  //$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_id').val(fabric_shipment_detail_id);
+		
+	      $('#modal_fabric_shipment').modal('show');
+		  
+		  $('.form_<?php echo $methodid ?>_shipment_edit').hide();
+		  $('.form_<?php echo $methodid ?>_shipment_button').show();
+		  $('.form_<?php echo $methodid ?>_detail_update').hide();
+		  
+		  $('.form_<?php echo $methodid ?>_shipment_upload_file').hide();
+	
+		} else {
+			show_error("show",'Error','Please select row');
+		}
+			
+	}
+	
+	function modal_detail_upload_<?php echo $methodid ?>(){
+		 var made_in = $('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_made_in').val();
+		 $('#form_<?php echo $methodid ?>_mdl_detail_upload_made_in').val(made_in);
+		 $('#modal_fabric_shipment_detail_upload').modal('show');
+	}
+	
+	function cancel_detail_upload_<?php echo $methodid ?>(){
+		 $('#modal_fabric_shipment_detail_upload').modal('hide');
+	}
+	
+	function edit_detail_excel_<?php echo $methodid ?>(shipment_list_id){
+		page_loading("show",'<?php echo $page_title ?>','Please Wait...');
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_shipment_list_id').val(shipment_list_id);
+	  // alert(fabric_shipment_detail_id);
+		$.ajax({
+			url: baseurl+'loader',
+			data: {
+				'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+				,param: 'data_shipment_detail_list'
+				,param_pop:'db_pop'
+				,id : shipment_list_id
+			},
+			dataType: 'json',
+			method: 'post',
+			success: function(data){
+				page_loading("hide");
+				//console.log(data[0]);
+				
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_colour').val(data[0].fabric_shipment_list_colour);
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_shipment_list_lot').val(data[0].fabric_shipment_list_lot);
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_bale').val(data[0].fabric_shipment_list_bale);
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_roll').val(data[0].fabric_shipment_list_roll);
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_weight').val(data[0].fabric_shipment_list_weight);
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_qty').val(data[0].fabric_shipment_list_quantity);
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_Shipment_code').val(data[0].fabric_shipment_list_code);
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_note').val(data[0].fabric_shipment_list_note);
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_lot').val(data[0].fabric_shipment_list_lot);
+				
+				$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_item_code').val(data[0].item_id);
+				 //change_form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_item_code(data[0].item_id);
+				// change_form_<?php echo $methodid ?>_mdl_shipment_edit_excel_fabric_colour_id(data[0].fabric_colour_id);
+				 $('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_colour').val(data[0].fabric_shipment_list_colour);
+				 
+				$('.form_<?php echo $methodid ?>_shipment_edit').show();
+		        $('.form_<?php echo $methodid ?>_detail_update').hide();
+                $('.form_<?php echo $methodid ?>_shipment_button').hide();		
+                $('.form_<?php echo $methodid ?>_shipment_upload_file').hide();				
+			}
+		});
+	}
+	
+	function delete_detail_upload_<?php echo $methodid ?>(shipment_list_id){
+		//alert(shipment_list_id);
+		swal({
+				title: "Confirm Delete <?php echo $page_title ?> shipment upload  ?",
+				type: "question",
+				dangerMode: true,
+				showCancelButton: !0,
+				confirmButtonClass: "btn btn-danger m-1",
+				cancelButtonClass: "btn btn-secondary m-1",
+				confirmButtonText: "Confirm",
+				cancelButtonText: "Cancel",
+				backdrop: true,
+				allowOutsideClick : false,
+			}).then((result) => {
+				if (result.value) {
+					page_loading("show",'Delete <?php echo $page_title ?> Shipment upload','Please Wait...');
+					$.ajax({
+						url: baseurl+'<?php echo $class_uri ?>/delete_detail_upload',								
+						data: {'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>',fabric_shipment_list_id:shipment_list_id},
+						dataType: 'json',
+						method: 'post',
+						success: function(data){
+							page_loading("hide");
+							//check_submit = 0;
+							if(data.valid){
+								show_success("show",'Delete <?php echo $page_title ?> Shipment Excel',data.message);			
+								$("#table_<?php echo $methodid ?>_mdl_detail").trigger('reloadGrid');
+							//	cancel_detail_<?php echo $methodid ?>();
+								
+								setTimeout(function(){ 
+									$('.tab_scrollbar').getNiceScroll().resize(); 
+								}, 100);
+							} else {
+								show_error("show",'Error',data.message);
+							}
+						},
+						error: function(xhr,error){
+							show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+							//check_submit = 0;
+						}
+					});
+				} else if (result.dismiss === swal.DismissReason.cancel) {
+					swal.closeModal();	
+					check_submit = 0;
+				}
+			});
+	}
+	function delete_detail_<?php echo $methodid ?>(fabric_shipment_detail_id){
+		//alert(fabric_shipment_detail_id);
+		if(check_submit == 0) {
+			swal({
+				title: "Confirm Delete <?php echo $page_title ?> Detail And Detil List  ?",
+				type: "question",
+				dangerMode: true,
+				showCancelButton: !0,
+				confirmButtonClass: "btn btn-danger m-1",
+				cancelButtonClass: "btn btn-secondary m-1",
+				confirmButtonText: "Confirm",
+				cancelButtonText: "Cancel",
+				backdrop: true,
+				allowOutsideClick : false,
+			}).then((result) => {
+				if (result.value) {
+					page_loading("show",'Delete <?php echo $page_title ?> Detail','Please Wait...');
+					$.ajax({
+						url: baseurl+'<?php echo $class_uri ?>/delete_detail',								
+						data: {'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>',fabric_shipment_detail_id:fabric_shipment_detail_id},
+						dataType: 'json',
+						method: 'post',
+						success: function(data){
+							page_loading("hide");
+							check_submit = 0;
+							if(data.valid){
+								show_success("show",'Delete <?php echo $page_title ?> Detail',data.message);			
+								$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+								cancel_detail_<?php echo $methodid ?>();
+								
+								setTimeout(function(){ 
+									$('.tab_scrollbar').getNiceScroll().resize(); 
+								}, 100);
+							} else {
+								show_error("show",'Error',data.message);
+							}
+						},
+						error: function(xhr,error){
+							show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+							check_submit = 0;
+						}
+					});
+				} else if (result.dismiss === swal.DismissReason.cancel) {
+					swal.closeModal();	
+					check_submit = 0;
+				}
+			});
+		}
+	}
+	
+	function cancel_detail_<?php echo $methodid ?>(){
+		
+		$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_id').val('');
+		$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_note').val('');
+	    $('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_invoice_number').val('');
+	    $('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_colour').val('');
+	    $('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_made_in').val('');
+		$('#form_<?php echo $methodid ?>_detail_fabric_shipment_detail_bale').val(0);
+				
+	    change_form_<?php echo $methodid ?>_detail_purchase_order_warehouse_id();
+        //change_form_<?php echo $methodid ?>_detail_item_fabric_id();	
+	
+		//$('#form_<?php echo $methodid ?>_detail_purchase_order_detail_id').val('');
+		//$('#form_<?php echo $methodid ?>_detail_quantity_ordered').val(0);
+		//$('#form_<?php echo $methodid ?>_detail_conversion').val(1);
+		//$('#form_<?php echo $methodid ?>_detail_unit_price').val(0);
+		//$('#form_<?php echo $methodid ?>_detail_purchase_order_detail_memo').val('');
+		//$('#form_<?php echo $methodid ?>_detail_order_delivery_date').val('');
+		//$('#form_<?php echo $methodid ?>_detail_purchase_order_warehouse_detail_id').val('');
+		
+		$('.button_<?php echo $methodid ?>_detail_edit').hide();
+		$('.button_<?php echo $methodid ?>_detail_new').show();	
+		
+	//	$("#table_<?php echo $methodid ?>_purchase_request").trigger('reloadGrid');
+	}	
+	/* End Detail Function */
+	
+	function add_detail_shitment_<?php echo $methodid ?>(){
+		//alert('Coba');
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_shipment_list_id').val(null);
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_colour').val();
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_shipment_list_lot').val(0);
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_bale').val(0);
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_roll').val(0);
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_weight').val(0);
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_qty').val(0);
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_Shipment_code').val();
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_note').val();
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_lot').val(0);
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_Shipment_code').val('');
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_note').val('');
+				
+		//$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_item_code').val(data[0].item_id);
+	   //$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_item_code').val('');
+		//change_form_<?php echo $methodid ?>_mdl_shipment_edit_excel_list_item_code();
+		//change_form_<?php echo $methodid ?>_mdl_shipment_edit_excel_fabric_colour_id();
+		$('#form_<?php echo $methodid ?>_mdl_shipment_edit_excel_colour').val('');
+				 
+    	$('.form_<?php echo $methodid ?>_shipment_edit').show();
+		$('.form_<?php echo $methodid ?>_shipment_button').hide();
+		$('.form_<?php echo $methodid ?>_detail_update').hide();
+		
+		//$('.button_<?php echo $methodid ?>_detail_edit').hide();
+		//$('.button_<?php echo $methodid ?>_detail_new').show();
+	}
+	
+	function upload_file_excel_<?php echo $methodid ?>(){
+		$('#form_<?php echo $methodid ?>_mdl_shipment_upload_fabric_file_excel').val(null);
+				
+		$('.form_<?php echo $methodid ?>_shipment_upload_file').show();
+		$('.form_<?php echo $methodid ?>_shipment_button').hide();
+	}
+	
+	function cancel_detail_excel_<?php echo $methodid ?>(){
+	    $('.form_<?php echo $methodid ?>_shipment_edit').hide();
+		$('.form_<?php echo $methodid ?>_detail_update').show();	
+		$('.form_<?php echo $methodid ?>_shipment_button').show();
+		
+		$('.form_<?php echo $methodid ?>_shipment_upload_file').hide();
+		
+	}
+	
+	var check_submit = 0;
+	function add_list_<?php echo $methodid ?>(rh_id){
+		page_loading("show",'<?php echo $page_title ?> Detail','Please Wait...');
+		setTimeout(function(){ 
+			var id = jQuery("#table_<?php echo $methodid ?>_purchase_request").jqGrid('getGridParam','selrow');
+			if (id) {
+				var row = jQuery("#table_<?php echo $methodid ?>_purchase_request").jqGrid('getRowData',id);   
+				
+				purchase_order_id = $('#form_<?php echo $methodid ?>_purchase_order_id').val();
+				purchase_order_detail_id = rh_id;
+				purchase_request_detail_id = parseInt(unwrap_cell_value(row.r1).replace(/,/g, ''));
+				item_id = parseInt(unwrap_cell_value(row.r19).replace(/,/g, ''));
+				quantity_ordered = parseFloat(unwrap_cell_value(row.r12).replace(/,/g, ''));
+				uom_id = parseInt(unwrap_cell_value(row.r13).replace(/,/g, ''));
+				conversion = parseFloat(unwrap_cell_value(row.r14).replace(/,/g, ''));
+				unit_price = parseFloat(unwrap_cell_value(row.r15).replace(/,/g, ''));
+				order_delivery_date = unwrap_cell_value(row.r16);
+				purchase_order_detail_memo = unwrap_cell_value(row.r17);
+				
+				$.ajax({
+				url: baseurl+'<?php echo $class_uri ?>/post_add_edit_detail',
+				data: {
+					'<?php echo $this->security->get_csrf_token_name() ?>':'<?php echo $this->security->get_csrf_hash() ?>'
+					,purchase_order_detail_id:purchase_order_detail_id
+					,purchase_request_detail_id :purchase_request_detail_id
+					,purchase_order_id :purchase_order_id
+					,item_id :item_id
+					,quantity_ordered :quantity_ordered
+					,uom_id :uom_id
+					,conversion :conversion
+					,unit_price :unit_price
+					,order_delivery_date :order_delivery_date
+					,purchase_order_detail_memo :purchase_order_detail_memo
+					,trans_type :2
+				},
+				dataType: 'json',
+				method: 'post',
+				success: function(data){
+					
+					page_loading("hide");
+					check_submit = 0;
+					if(data.valid){
+						show_success("show",'<?php echo $page_title ?> Detail',data.message);	
+						cancel_detail_<?php echo $methodid ?>();
+						$("#table_<?php echo $methodid ?>_purchase_request").trigger('reloadGrid');
+						$("#table_<?php echo $methodid ?>_detail").trigger('reloadGrid');
+						page_loading("hide");			
+					} else {
+						show_error("show",'Error',data.message);
+					}
+				},
+				error: function(xhr,error){
+					show_error("show",xhr.status.toString() + ' ' + xhr.statusText,'Please try again');
+					check_submit = 0;
+				}
+			});
+				
+				
+			} else {
+				show_error("show",'Error','Please select row');
+			}
+			
+		}, 500);	
+		
+	}
+	
+	function template_<?php echo $methodid?>_detail_shipment(){
+		//$date=date('_Ymd_His');  
+		var template='C:/tmp_sipop/template/shipment_detail/contoh_template_shipment_detail-01.xlsx';
+		//var template= FCPATH.'/assets/template/warehouse/contoh_template_shipment_detail-01.xlsx';
+		//var template= baseurl+'assets/template/warehouse/contoh_template_shipment_detail-01.xlsx';
+		var nama_file='contoh_template_shipment_detail1.xlsx';
+		//var template='C:/tmp_sipop/template/shipment_detail/';
+		//var nama_file='contoh_template_shipment_detail2.xls';
+		//alert('<?php echo $methodid ?>');
+		window.open(baseurl+'<?php echo $class_uri ?>/download_template_detail_shipment?'+'lokasi='+template+'&nama_file=' +nama_file,'_BLANK');		 
+	//	download_file_copy('<?php echo $methodid ?>',template,nama_file,'<?php echo $this->security->get_csrf_token_name() ?>','<?php echo $this->security->get_csrf_hash() ?>'); 
+		
+		
+	}
+	
+	//function download_file_copy(form_id, filename, address, token_name, token_val) {
+	function template_<?php echo $methodid?>_detail_shipment_2(){
+		var filename='contoh_template_shipment_detail.xlsx';
+		var address='C:/tmp_sipop/template/shipment_detail/contoh_template_shipment_detail.xlsx';
+		var token_name='<?php echo $this->security->get_csrf_token_name() ?>';
+		var token_val='<?php echo $this->security->get_csrf_hash() ?>';
+		var form_id='<?php echo $methodid ?>';
+	//	alert(baseurl);
+		//var dialog = jQuery('<form hidden id="frmDownload' + form_id + '"   method="POST" action="' + baseurl + 'loader/download_file_copy" />')
+		var dialog = jQuery('<form hidden id="frmDownload' + form_id + '"  method="POST" action="' + baseurl + 'fabric_shipment/download_template_detail_shipment" />')
+		dialog.appendTo('body');
+		$("#frmDownload" + form_id).append($("<input>").attr({
+			"value": address,
+			"name": 'saveAs'
+		}));
+		$("#frmDownload" + form_id).append($("<input>").attr({
+			"value": filename,
+			"name": 'filename'
+		}));
+		$("#frmDownload" + form_id).append($("<input>").attr({
+			"value": token_val,
+			"name": token_name
+		}));
+		$("#frmDownload" + form_id).submit();
+		dialog.remove();
+	}
+	
+	function generate_barcode_<?php echo $methodid?>(){
+		var fabric_shipment_detail_id = $('#form_<?php echo $methodid ?>_mdl_shipment_fabric_shipment_detail_id').val();
+		window.open(baseurl+'<?php echo $class_uri ?>/coba_barcode?'+'fabric_shipment_detail_id=' +fabric_shipment_detail_id, '_BLANK');
+			
+	}
+	
+	function cetak_barcode_shipment_<?php echo $methodid ?>(receive_id) {
+		//alert('masuk');
+
+		var fabric_shipment_list_id = receive_id;
+		//var fabric_shipment_detail_id = $('#form_<?php echo $methodid ?>_mdl_shipment_fabric_shipment_detail_id').val();
+		window.open(baseurl + '<?php echo $class_uri ?>/cetak_barcode_shipment?' + 'fabric_shipment_list_id=' + fabric_shipment_list_id, '_BLANK');
+
+	}
+	
+</script>
